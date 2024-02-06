@@ -26,8 +26,11 @@ public class Member {
     // 회원 비밀번호
     String password;
 
+    // 로그인용 아이디
+    String username;
+
     // 닉네임
-    String nickName;
+    String nickname;
 
     // 회원 이메일
     String email;
