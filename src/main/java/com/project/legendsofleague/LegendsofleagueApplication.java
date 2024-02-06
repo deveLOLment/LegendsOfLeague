@@ -9,6 +9,8 @@ public class LegendsofleagueApplication {
     public static void main(String[] args) {
         SpringApplication.run(LegendsofleagueApplication.class, args);
 
+
+
     }
 
 }
