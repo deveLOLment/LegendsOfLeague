@@ -32,9 +32,7 @@ public class Item {
 
   private String thumbnailImage; //originalFileName은 필요가 없으니까 s3 url만 있으면 된다.
 
-  @ColumnDefault("false")
-  @Column(columnDefinition = "TINYINT(1)")
-  private boolean deleteYn;
+  private boolean isDeleted = false;
 
   /**
    * ItemImage는 1대N 매핑이 되어 있음.
