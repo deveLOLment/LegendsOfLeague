@@ -1,0 +1,52 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Build For LegendOfLeague
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-server:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_DATABASE: LegendsOfLeague
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create an env.properties file
+        run: |
+          echo "${{secrets.ENV_YML}}" > ./src/main/resources/env.yml
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Run build with Gradle Wrapper
+        run: cd ./server && ./gradlew build --stacktrace
