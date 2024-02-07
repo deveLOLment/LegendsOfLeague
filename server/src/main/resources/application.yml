@@ -2,3 +2,4 @@ spring:
   config:
     import:
       env.yml
+      ,s3.yml
