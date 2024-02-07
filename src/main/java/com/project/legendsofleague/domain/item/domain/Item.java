@@ -30,12 +30,14 @@ public class Item {
 
   private ItemCategory category;
 
+  private String thumbnailImage; //originalFileName은 필요가 없으니까 s3 url만 있으면 된다.
+
   @ColumnDefault("false")
   @Column(columnDefinition = "TINYINT(1)")
   private boolean deleteYn;
 
   /**
-   * ThumbnailImage는 1대1매핑, ItemImage는 1대N 매핑이 되어 있음.
+   * ItemImage는 1대N 매핑이 되어 있음.
    */
 
 }
