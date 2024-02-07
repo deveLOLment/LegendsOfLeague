@@ -1,8 +1,8 @@
-package com.project.legendsofleague.member.service;
+package com.project.legendsofleague.domain.member.service;
 
-import com.project.legendsofleague.member.domain.Member;
-import com.project.legendsofleague.member.dto.RegisterDto;
-import com.project.legendsofleague.member.repository.MemberRepository;
+import com.project.legendsofleague.domain.member.domain.Member;
+import com.project.legendsofleague.domain.member.dto.RegisterDto;
+import com.project.legendsofleague.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

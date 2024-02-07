@@ -1,6 +1,6 @@
-package com.project.legendsofleague.member.controller;
+package com.project.legendsofleague.domain.member.controller;
 
-import com.project.legendsofleague.member.domain.Member;
+import com.project.legendsofleague.domain.member.domain.Member;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

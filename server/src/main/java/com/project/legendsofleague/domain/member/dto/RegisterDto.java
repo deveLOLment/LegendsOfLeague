@@ -1,6 +1,6 @@
-package com.project.legendsofleague.member.dto;
+package com.project.legendsofleague.domain.member.dto;
 
-import com.project.legendsofleague.member.domain.ROLE;
+import com.project.legendsofleague.domain.member.domain.ROLE;
 import lombok.Getter;
 
 @Getter

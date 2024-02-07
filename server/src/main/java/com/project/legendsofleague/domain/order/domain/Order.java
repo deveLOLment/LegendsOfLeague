@@ -1,7 +1,6 @@
-package com.project.legendsofleague.domain.item.domain;
+package com.project.legendsofleague.domain.order.domain;
 
-
-import jakarta.persistence.Column;
+import com.project.legendsofleague.domain.member.domain.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,15 +16,19 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemImage {
+public class Order {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "item_image_id")
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "item_id")
-  private Item item;
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-  private String saveUrl;
+  private LocalDateTime orderDate;
+
+  private String orderCode; //UUID로 부여
+
+  private Integer totalOrderPrice; //전체 주문 가격
 }

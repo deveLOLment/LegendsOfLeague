@@ -1,14 +1,11 @@
-package com.project.legendsofleague.member.dto;
+package com.project.legendsofleague.domain.member.dto;
 
-import com.project.legendsofleague.member.domain.Member;
+import com.project.legendsofleague.domain.member.domain.Member;
+import java.util.ArrayList;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.ArrayBlockingQueue;
 
 @RequiredArgsConstructor
 public class MemberDto implements UserDetails {
@@ -30,7 +27,7 @@ public class MemberDto implements UserDetails {
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         return member.getPassword();
     }
 
