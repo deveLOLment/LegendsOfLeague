@@ -2,3 +2,8 @@ spring:
   config:
     import:
       env.yml
+      ,s3.yml
+
+jpa:
+  hibernate:
+    ddl-auto: update
