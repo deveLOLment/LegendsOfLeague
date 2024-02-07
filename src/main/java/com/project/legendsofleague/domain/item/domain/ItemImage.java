@@ -27,6 +27,5 @@ public class ItemImage {
   @JoinColumn(name = "item_id")
   private Item item;
 
-  private String originalFileName;
-  private String savedFileName;
+  private String saveUrl;
 }
