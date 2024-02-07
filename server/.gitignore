@@ -38,3 +38,4 @@ out/
 
 ### DB ###
 env.yml
+s3.yml
