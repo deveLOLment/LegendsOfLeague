@@ -1,6 +1,6 @@
-package com.project.legendsofleague.member.repository;
+package com.project.legendsofleague.domain.member.repository;
 
-import com.project.legendsofleague.member.domain.Member;
+import com.project.legendsofleague.domain.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
