@@ -16,7 +16,7 @@ public class Rate {
     @Column(name = "rate_id")
     private Long id;
 
-    private int score;
+    private Integer score;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")

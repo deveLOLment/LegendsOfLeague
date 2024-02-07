@@ -21,8 +21,8 @@ public class Game {
 
     private boolean isBlueTeamVictory;
     private boolean isRedTeamVictory;
-    private int blueTeamScore;
-    private int redTeamScore;
+    private Integer blueTeamScore;
+    private Integer redTeamScore;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "blue_team_id")
