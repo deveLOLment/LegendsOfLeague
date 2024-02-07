@@ -1,6 +1,6 @@
-package com.project.legendsofleague.member.controller;
-import com.project.legendsofleague.member.dto.RegisterDto;
-import com.project.legendsofleague.member.service.RegisterService;
+package com.project.legendsofleague.domain.member.controller;
+import com.project.legendsofleague.domain.member.service.RegisterService;
+import com.project.legendsofleague.domain.member.dto.RegisterDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

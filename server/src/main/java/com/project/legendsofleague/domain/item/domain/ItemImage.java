@@ -1,8 +1,7 @@
-package com.project.legendsofleague.domain.cartItem.domain;
+package com.project.legendsofleague.domain.item.domain;
 
 
-import com.project.legendsofleague.domain.Member;
-import com.project.legendsofleague.domain.item.domain.Item;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,16 +16,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CartItem {
+public class ItemImage {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "item_image_id")
   private Long id;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "member_id")
-  private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "item_id")
   private Item item;
+
+  private String saveUrl;
 }
