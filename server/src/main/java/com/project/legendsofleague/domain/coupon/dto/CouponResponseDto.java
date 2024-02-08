@@ -28,9 +28,19 @@ public class CouponResponseDto {
         this.description = coupon.getDescription();
         this.validityStartDate = coupon.getValidityStartDate();
         this.validityEndDate = coupon.getValidityEndDate();
-        this.appliedCategory = coupon.getAppliedCategory().name();
-        this.couponType = coupon.getCouponType().name();
-        this.itemName = coupon.getItem().getName();
+        
+        if (coupon.getAppliedCategory() != null) {
+            this.appliedCategory = coupon.getAppliedCategory().name();
+        }
+
+        if (coupon.getCouponType() != null) {
+            this.couponType = coupon.getCouponType().name();
+        }
+
+        if (coupon.getItem() != null) {
+            this.itemName = coupon.getItem().getName();
+        }
+
     }
 
 }
