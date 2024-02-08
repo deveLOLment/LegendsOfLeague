@@ -43,10 +43,6 @@ dependencies {
     //For S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-    //For Webflux
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

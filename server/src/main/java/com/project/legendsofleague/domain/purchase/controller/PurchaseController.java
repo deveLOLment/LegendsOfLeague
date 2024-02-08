@@ -1,6 +1,7 @@
-package com.project.legendsofleague.purchase;
+package com.project.legendsofleague.domain.purchase.controller;
 
-import com.project.legendsofleague.purchase.dto.KakaoReadyResponseDto;
+import com.project.legendsofleague.domain.purchase.dto.KakaoReadyResponseDto;
+import com.project.legendsofleague.domain.purchase.repository.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class PurchaseController {
     @Operation(summary = "kakaoPay Approve API.")
     @GetMapping("/purchase/approve")
     public ResponseEntity<String> success(@RequestParam("pg_token") String pgToken,
-                                          @RequestParam(value = "tid", required = false) String tid) {
+        @RequestParam(value = "tid", required = false) String tid) {
 
         String purchaseId = purchaseService.kakaoPaySuccess(pgToken, tid);
         return new ResponseEntity<String>(purchaseId, HttpStatus.OK);

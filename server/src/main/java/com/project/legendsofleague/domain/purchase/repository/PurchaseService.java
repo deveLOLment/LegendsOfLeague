@@ -1,9 +1,9 @@
-package com.project.legendsofleague.purchase;
+package com.project.legendsofleague.domain.purchase.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.legendsofleague.purchase.dto.KakaoReadyRequestDto;
-import com.project.legendsofleague.purchase.dto.KakaoReadyResponseDto;
-import com.project.legendsofleague.purchase.dto.KakaoSuccessRequestDto;
+import com.project.legendsofleague.domain.purchase.dto.KakaoReadyRequestDto;
+import com.project.legendsofleague.domain.purchase.dto.KakaoReadyResponseDto;
+import com.project.legendsofleague.domain.purchase.dto.KakaoSuccessRequestDto;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
