@@ -32,4 +32,6 @@ public class CouponCreateDto {
     @Enum(enumClass = CouponType.class, ignoreCase = true)
     private String couponTypeName;
 
+    private Long itemId;
+
 }
