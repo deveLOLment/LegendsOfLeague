@@ -1,4 +1,4 @@
-package com.project.legendsofleague.domain.purchase;
+package com.project.legendsofleague.domain.purchase.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.legendsofleague.domain.purchase.dto.KakaoReadyRequestDto;

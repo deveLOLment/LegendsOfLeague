@@ -1,6 +1,7 @@
-package com.project.legendsofleague.domain.purchase;
+package com.project.legendsofleague.domain.purchase.controller;
 
 import com.project.legendsofleague.domain.purchase.dto.KakaoReadyResponseDto;
+import com.project.legendsofleague.domain.purchase.repository.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
