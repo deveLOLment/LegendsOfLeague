@@ -4,7 +4,7 @@ spring:
       env.yml
       ,s3.yml
       ,kakaoPay.yml
-
-jpa:
-  hibernate:
-    ddl-auto: update
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
