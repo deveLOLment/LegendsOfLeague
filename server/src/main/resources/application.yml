@@ -3,6 +3,7 @@ spring:
     import:
       env.yml
       ,s3.yml
+      ,kakaoPay.yml
 
 jpa:
   hibernate:

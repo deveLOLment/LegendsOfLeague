@@ -1,6 +1,7 @@
 package com.project.legendsofleague.domain.item.domain;
 
 
+import com.project.legendsofleague.domain.item.dto.ItemRqDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,29 @@ public class Item {
   private boolean isDeleted = false;
 
   /**
+   * 양방향 매핑서 쿼리 1개를 줄여준다.
+   *
+   * @param id
+   */
+  public Item(Long id) {
+    this.id = id;
+  }
+
+  /**
    * ItemImage는 1대N 매핑이 되어 있음.
    */
+
+
+  public static Item toEntity(ItemRqDto itemRqDto, String thumbnailImage) {
+    Item item = new Item();
+    item.name = itemRqDto.getName();
+    item.price = itemRqDto.getPrice();
+    item.stock = itemRqDto.getStock();
+    item.description = itemRqDto.getDescription();
+    item.category = itemRqDto.getCategory();
+    item.thumbnailImage = thumbnailImage;
+
+    return item;
+  }
 
 }
