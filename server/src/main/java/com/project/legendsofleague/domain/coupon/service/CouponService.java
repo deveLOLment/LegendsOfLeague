@@ -58,8 +58,17 @@ public class CouponService {
 
             MemberCoupon memberCoupon = memberCouponMap.get(memberCouponId);
             Coupon coupon = memberCoupon.getCoupon();
-
             Item item = itemMap.get(itemId);
+
+            //적용한 쿠폰이 없는 경우
+            if (coupon == null) {
+
+                //가격만 검증
+                if (item.getPrice() * quantity != price) {
+                    return false;
+                }
+                continue;
+            }
 
             /**
              * 해당 쿠폰이 해당 아이템에 적용 가능한지 검증
@@ -99,14 +108,15 @@ public class CouponService {
             //정량 할인 검증
             if (coupon.getCouponType().equals(CouponType.CATEGORY_AMOUNT_DISCOUNT
             ) || coupon.getCouponType().equals(CouponType.ITEM_AMOUNT_DISCOUNT)) {
-                if (price != item.getPrice() - coupon.getDiscountPrice()) {
+                if (price != item.getPrice() * quantity - coupon.getDiscountPrice()) {
                     return false;
                 }
 
                 //퍼센트 할인 검증
             } else if (coupon.getCouponType().equals(CouponType.CATEGORY_PERCENT_DISCOUNT
             ) || coupon.getCouponType().equals(CouponType.ITEM_PERCENT_DISCOUNT)) {
-                Integer discountPrice = item.getPrice() * (100 - coupon.getDiscountPrice()) / 100;
+                Integer discountPrice =
+                    item.getPrice() * quantity * (100 - coupon.getDiscountPrice()) / 100;
                 //최대 할인 가격 검증
                 discountPrice =
                     discountPrice > coupon.getMaxPrice() ? coupon.getMaxPrice() : discountPrice;
