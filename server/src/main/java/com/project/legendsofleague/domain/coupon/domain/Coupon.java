@@ -28,37 +28,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Coupon {
 
+    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
+    private final List<MemberCoupon> memberCouponList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coupon_id")
     private Long id;
-
     private String name;
-
     private String description;
-
     private Integer stock;
-
     private String code;
-
     private LocalDate validityStartDate;
-
     private LocalDate validityEndDate;
-
     private Integer discountPrice;
-
+    private Integer minPrice;
+    private Integer maxPrice;
     @Enumerated(value = EnumType.STRING)
     private ItemCategory appliedCategory;
-
     @Enumerated(value = EnumType.STRING)
     private CouponType couponType;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
-
-    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
-    private final List<MemberCoupon> memberCouponList = new ArrayList<>();
 
 
     public Coupon(Long id) {
@@ -73,6 +64,7 @@ public class Coupon {
         coupon.validityStartDate = dto.getValidityStartDate();
         coupon.validityEndDate = dto.getValidityEndDate();
         coupon.discountPrice = dto.getDiscountPrice();
+        coupon.minPrice = dto.getMinPrice();
         coupon.appliedCategory = ItemCategory.valueOf(dto.getAppliedCategoryName());
         coupon.couponType = CouponType.valueOf(dto.getCouponTypeName());
         coupon.item = new Item(dto.getItemId());

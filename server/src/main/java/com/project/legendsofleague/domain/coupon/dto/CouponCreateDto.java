@@ -20,6 +20,10 @@ public class CouponCreateDto {
 
     private Integer stock;
 
+    private Integer minPrice;
+
+    private Integer maxPrice;
+
     private LocalDate validityStartDate;
 
     private LocalDate validityEndDate;
