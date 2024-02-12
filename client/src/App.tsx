@@ -6,6 +6,8 @@ import KakaoPayReady from "./kakaopay/KakaoPayReady";
 import KakaoPayApprove from "./kakaopay/KakaoPayApprove";
 import KakaoPayStart from "./kakaopay/KakaoPayStart";
 import KakaoPaySuccess from "./kakaopay/KakaoPaySuccess";
+import TossPayReady from "./tosspay/TossPay";
+import TossPayApprove from "./tosspay/TossPayApprove";
 
 function App() {
   return (
@@ -21,6 +23,11 @@ function App() {
         element={<KakaoPayApprove />}
       ></Route>
       <Route path="purchase/success" element={<KakaoPaySuccess />}></Route>
+      <Route path="purchase/tossPay" element={<TossPayReady />}></Route>
+      <Route
+        path="purchase/tossPay/success"
+        element={<TossPayApprove />}
+      ></Route>
     </Routes>
   );
 }
