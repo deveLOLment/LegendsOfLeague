@@ -1,4 +1,4 @@
-package com.project.legendsofleague.purchase.dto;
+package com.project.legendsofleague.domain.purchase.dto.kakao;
 
 import lombok.AccessLevel;
 import lombok.Getter;
