@@ -20,6 +20,15 @@ public class AfterPurchaseService {
                 "주문 정보를 찾을수 없습니다."));
 
         purchase.updatePurchaseCode(code);
+
+        //OrderDate, OrderId, TotalPrice를 orderservice의 특정 메서드로 넘기기
+    }
+
+    @Transactional
+    public void cancelPurchase(Purchase purchase) {
+        purchase.cancelPurchase();
+
+        //orderId를 넘기면 해당 order를 REFUND로 바꾸는 로직 수행
     }
 
 }

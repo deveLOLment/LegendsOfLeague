@@ -140,7 +140,8 @@ public class KakaoService {
 
         Integer cancel_amount = Integer.parseInt(
             objectMapper.readTree(body).get("approved_cancel_amount").get("total").toString());
-        purchase.cancelPurchase(cancel_amount);
+
+        afterPurchaseService.cancelPurchase(purchase);
     }
 
 

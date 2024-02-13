@@ -55,13 +55,12 @@ public class CouponService {
             Integer price = dto.getPrice();
             Long memberCouponId = dto.getMemberCouponId();
             Integer quantity = dto.getQuantity();
-
-            MemberCoupon memberCoupon = memberCouponMap.get(memberCouponId);
-            Coupon coupon = memberCoupon.getCoupon();
             Item item = itemMap.get(itemId);
 
+            MemberCoupon memberCoupon = memberCouponMap.get(memberCouponId);
+
             //적용한 쿠폰이 없는 경우
-            if (coupon == null) {
+            if (memberCoupon == null) {
 
                 //가격만 검증
                 if (item.getPrice() * quantity != price) {
@@ -69,6 +68,8 @@ public class CouponService {
                 }
                 continue;
             }
+
+            Coupon coupon = memberCoupon.getCoupon();
 
             /**
              * 해당 쿠폰이 해당 아이템에 적용 가능한지 검증

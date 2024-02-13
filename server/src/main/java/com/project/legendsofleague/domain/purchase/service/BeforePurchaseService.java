@@ -14,6 +14,7 @@ import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,8 @@ public class BeforePurchaseService {
 
     private final CouponService couponService;
 
+    private final AfterPurchaseService afterPurchaseService;
+
     /*
     결제 시작 전 체크 로직
      */
@@ -41,7 +44,7 @@ public class BeforePurchaseService {
         PurchaseStartRequestDto purchaseStartRequestDto) {
         //임시 코드
         String nickname = "test nickname";
-        String orderCode = "TESTORDERCODE";
+        String orderCode = UUID.randomUUID().toString().substring(0, 16);
 
         //실제 코드
         Long orderId = purchaseStartRequestDto.getOrderId();
@@ -49,8 +52,11 @@ public class BeforePurchaseService {
         Integer purchaseTotalPrice = purchaseStartRequestDto.getPurchaseTotalPrice();
         PurchaseType purchaseType = PurchaseType.valueOf(purchaseStartRequestDto.getProvider());
 
+        //재고 체크
+
         //쿠폰 사용 여부, 유효성 검증
         List<Long> memberCouponIdList = itemList.stream()
+            .filter(dto -> dto.getMemberCouponId() != null)
             .map(ItemCouponAppliedDto::getMemberCouponId)
             .toList();
         Map<Long, MemberCoupon> memberCouponMap = memberCouponRepository.queryMemberCouponsByIdList(
@@ -97,7 +103,7 @@ public class BeforePurchaseService {
     }
 
     public void cancelPurchase(Long memberId, Long purchaseId) throws JsonProcessingException {
-        //TODO : 해당 회원이 한 주문을 취소하는지 검증
+        //orderServiced에서 memberId, orderId를 넘기면 -> 검증 로직 진행
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
             throw new RuntimeException("주문 정보를 찾을수 없습니다.");
@@ -109,5 +115,7 @@ public class BeforePurchaseService {
         } else if (purchaseType == PurchaseType.TOSS) {
             tossService.cancelPurchase(purchase);
         }
+
+        afterPurchaseService.cancelPurchase(purchase);
     }
 }

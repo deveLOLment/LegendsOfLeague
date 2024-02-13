@@ -67,7 +67,7 @@ public class TossService {
             .uri(uriBuilder -> uriBuilder
                 .scheme("https")
                 .host("api.tosspayments.com")
-                .path("/v1/payments/confirm/" + purchase.getCode())
+                .path("/v1/payments/" + purchase.getCode() + "/cancel")
                 .build()
             )
             .header("Content-Type", "application/json")
@@ -79,6 +79,8 @@ public class TossService {
                 throw new RuntimeException("TossPay Cancel error : " + e.getMessage());
             })
             .block();
+
+        afterPurchaseService.cancelPurchase(purchase);
     }
 
     private String getAuthorizations() {

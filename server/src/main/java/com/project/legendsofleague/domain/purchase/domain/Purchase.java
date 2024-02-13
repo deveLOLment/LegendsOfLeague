@@ -75,8 +75,7 @@ public class Purchase {
         }
     }
 
-    public void cancelPurchase(Integer cancelAmount) {
-        this.totalPrice -= cancelAmount;
+    public void cancelPurchase() {
         this.purchaseStatus = PurchaseStatus.CANCEL;
     }
 }
