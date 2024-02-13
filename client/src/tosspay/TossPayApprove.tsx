@@ -6,6 +6,7 @@ import { useEffect } from "react";
 const TossPayApprove = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const purchaseId = localStorage.getItem("purchaseId");
 
   useEffect(() => {
     const fetchPayUrl = async () => {
@@ -13,7 +14,10 @@ const TossPayApprove = () => {
         const orderId = searchParams.get("orderId");
         const paymentKey = searchParams.get("paymentKey");
         const amount = searchParams.get("amount");
-        const url = "http://localhost:8080/purchase/toss-pay/approve";
+        const url =
+          "http://localhost:8080/purchase/toss-pay/approve" +
+          "?purchaseId=" +
+          purchaseId;
         const response = await axios.post(url, {
           orderId: orderId,
           paymentKey: paymentKey,

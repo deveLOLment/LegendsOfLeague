@@ -12,16 +12,20 @@ const KakaoPayApprove = () => {
     const fetchPayUrl = async () => {
       try {
         const tid = localStorage.getItem("tid");
+        const purchaseId = localStorage.getItem("purchaseId");
         console.log(tid);
         console.log(pgToken);
         const url =
           "http://localhost:8080/purchase/approve?pg_token=" +
           pgToken +
           "&tid=" +
-          tid;
+          tid +
+          "&purchaseId=" +
+          purchaseId;
         console.log(url);
         const response = await axios.get(url);
         localStorage.removeItem("tid");
+        localStorage.removeItem("purchaseId");
 
         navigate("/purchase/success");
       } catch (error) {}
