@@ -18,7 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemImage {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "item_image_id")
   private Long id;
 
@@ -26,5 +27,14 @@ public class ItemImage {
   @JoinColumn(name = "item_id")
   private Item item;
 
-  private String saveUrl;
+  private String imageUrl;
+
+
+  public ItemImage(String saveUrl) {
+    this.imageUrl = saveUrl;
+  }
+
+  public void connectItem(Item item) {
+    this.item = item;
+  }
 }

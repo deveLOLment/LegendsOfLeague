@@ -29,7 +29,7 @@ public class Member {
 
     // 로그인용 아이디
     // 스프링 시큐리티에서는 username, password를 통해 로그인을 하기 때문에 username이 중복되지 않게 unique 키로 설정한다.
-   @Column(unique = true)
+    @Column(unique = true)
     String username;
 
     // 닉네임
@@ -43,12 +43,17 @@ public class Member {
     ROLE role;
 
     /*
-    *연관관계 매핑할 것들, ORDER, CART
-    *
-    **/
+     *연관관계 매핑할 것들, ORDER, CART
+     *
+     **/
+
+
+    public Member(Long id) {
+        this.id = id;
+    }
 
     // 팩토리 메서드(테스트용)
-    public static Member create(RegisterDto dto, BCryptPasswordEncoder encoder){
+    public static Member create(RegisterDto dto, BCryptPasswordEncoder encoder) {
         Member member = new Member();
         member.username = dto.getUsername();
         member.password = encoder.encode(dto.getPassword());
