@@ -20,6 +20,7 @@ public class CouponResponseDto {
     private String appliedCategory;
     private String couponType;
     private String itemName;
+    private Long itemId;
 
     public CouponResponseDto(Coupon coupon) {
         this.id = coupon.getId();
@@ -28,7 +29,7 @@ public class CouponResponseDto {
         this.description = coupon.getDescription();
         this.validityStartDate = coupon.getValidityStartDate();
         this.validityEndDate = coupon.getValidityEndDate();
-        
+
         if (coupon.getAppliedCategory() != null) {
             this.appliedCategory = coupon.getAppliedCategory().name();
         }
@@ -39,6 +40,7 @@ public class CouponResponseDto {
 
         if (coupon.getItem() != null) {
             this.itemName = coupon.getItem().getName();
+            this.itemId = coupon.getItem().getId();
         }
 
     }

@@ -28,4 +28,10 @@ public class MemberCouponService {
             .map(memberCoupon -> new CouponResponseDto(memberCoupon.getCoupon()))
             .collect(Collectors.toList());
     }
+
+    public List<CouponResponseDto> getMemberCouponsByOrder(Long memberId, Long orderId) {
+        return memberCouponRepository.queryMemberCouponsByOrder(memberId, orderId).stream()
+            .map(memberCoupon -> new CouponResponseDto(memberCoupon.getCoupon()))
+            .collect(Collectors.toList());
+    }
 }

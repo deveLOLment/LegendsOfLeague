@@ -40,4 +40,6 @@ public class MemberCouponController {
             memberId);
         return new ResponseEntity<List<CouponResponseDto>>(couponResponseDtoList, HttpStatus.OK);
     }
+
+    
 }
