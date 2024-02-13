@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,14 +41,5 @@ public class MemberCouponController {
         return new ResponseEntity<List<CouponResponseDto>>(couponResponseDtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "회원의 주문 상품에서 적용할수 있는 쿠폰을 조회하는 API")
-    @GetMapping("/order")
-    public ResponseEntity<List<CouponResponseDto>> getMemberCouponsByOrder(
-        @RequestParam("orderId") Long orderId) {
-        //임시 코드
-        Long memberId = 1L;
-        List<CouponResponseDto> couponResponseDtoList = memberCouponService.getMemberCouponsByOrder(
-            memberId, orderId);
-        return new ResponseEntity<List<CouponResponseDto>>(couponResponseDtoList, HttpStatus.OK);
-    }
+    
 }
