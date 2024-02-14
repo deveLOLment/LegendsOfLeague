@@ -9,16 +9,12 @@ import com.project.legendsofleague.domain.purchase.service.BeforePurchaseService
 import com.project.legendsofleague.domain.purchase.service.KakaoService;
 import com.project.legendsofleague.domain.purchase.service.TossService;
 import io.swagger.v3.oas.annotations.Operation;
-import java.io.UnsupportedEncodingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,11 +27,11 @@ public class PurchaseController {
     @Operation(summary = "결제 시작 API")
     @PostMapping("/purchase/ready")
     public ResponseEntity<PurchaseResponseDto> startPurchase(
-        @RequestBody PurchaseStartRequestDto purchaseStartRequestDto) {
+            @RequestBody PurchaseStartRequestDto purchaseStartRequestDto) {
         //임시 코드
         Long memberId = 1L;
         PurchaseResponseDto purchaseResponseDto = beforePurchaseService.startPurchase(memberId,
-            purchaseStartRequestDto);
+                purchaseStartRequestDto);
 
         return new ResponseEntity<PurchaseResponseDto>(purchaseResponseDto, HttpStatus.OK);
     }
@@ -43,7 +39,7 @@ public class PurchaseController {
     @Operation(summary = "kakaoPay Ready API.")
     @GetMapping("/purchase/kakao-pay/ready")
     public ResponseEntity<KakaoReadyResponseDto> kakaoPay(
-        @RequestParam(value = "purchaseId") Long purchaseId) {
+            @RequestParam(value = "purchaseId") Long purchaseId) {
         KakaoReadyResponseDto dto = kakaoService.kakaoPay(purchaseId);
         return new ResponseEntity<KakaoReadyResponseDto>(dto, HttpStatus.OK);
     }
@@ -51,8 +47,8 @@ public class PurchaseController {
     @Operation(summary = "kakaoPay Approve API.")
     @GetMapping("/purchase/approve")
     public ResponseEntity<Void> success(@RequestParam("pg_token") String pgToken,
-        @RequestParam(value = "tid", required = false) String tid,
-        @RequestParam(value = "purchaseId") Long purchaseId) {
+                                        @RequestParam(value = "tid", required = false) String tid,
+                                        @RequestParam(value = "purchaseId") Long purchaseId) {
 
         kakaoService.kakaoPaySuccess(purchaseId, pgToken, tid);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -61,7 +57,7 @@ public class PurchaseController {
     @Operation(summary = "주문 취소 API.")
     @GetMapping("/purchase/{purchaseId}/cancel")
     public ResponseEntity<Void> purchaseCancel(@PathVariable("purchaseId") Long purchaseId)
-        throws JsonProcessingException {
+            throws JsonProcessingException {
 
         //임시 코드
         Long memberId = 1L;
@@ -72,8 +68,8 @@ public class PurchaseController {
     @Operation(summary = "tossPay Approve API")
     @PostMapping("/purchase/toss-pay/approve")
     public ResponseEntity<Void> tossPaySuccess(@RequestBody TossPayApproveRequestDto requestDto,
-        @RequestParam(value = "purchaseId") Long purchaseId)
-        throws UnsupportedEncodingException {
+                                               @RequestParam(value = "purchaseId") Long purchaseId)
+            throws UnsupportedEncodingException {
 
         tossService.tossPaySuccess(purchaseId, requestDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
