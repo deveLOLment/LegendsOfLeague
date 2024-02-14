@@ -55,17 +55,7 @@ public class BeforePurchaseService {
         //재고 체크
 
         //쿠폰 사용 여부, 유효성 검증
-        List<Long> memberCouponIdList = itemList.stream()
-            .filter(dto -> dto.getMemberCouponId() != null)
-            .map(ItemCouponAppliedDto::getMemberCouponId)
-            .toList();
-        Map<Long, MemberCoupon> memberCouponMap = memberCouponRepository.queryMemberCouponsByIdList(
-            memberId,
-            memberCouponIdList);
-
-        if (memberCouponMap.size() != memberCouponIdList.size()) {
-            throw new RuntimeException("잘못된 쿠폰이 적용되었습니다.");
-        }
+        Map<Long, MemberCoupon> memberCouponMap = getMemberCouponMap(memberId, itemList);
 
         //쿠폰의 유효성, 적용 여부, 적용 가격 검증
         if (!couponService.checkValidity(memberCouponMap, itemList)) {
@@ -78,14 +68,25 @@ public class BeforePurchaseService {
             throw new RuntimeException("가격 계산이 틀렸습니다.");
         }
 
-        //결제 진행
+        /*
+        결제 진행
+         */
+
+        //결제 이름 생성
         int quantity = itemList.stream().mapToInt(ItemCouponAppliedDto::getQuantity).sum();
         String orderName = makeOrderName(
             itemList.stream().map(ItemCouponAppliedDto::getItemName).toList(), quantity);
+
+        //결제 엔티티 생성
         Purchase createdPurchase
             = Purchase.toEntity(quantity, orderName, purchaseTotalPrice, purchaseType,
             new Order(orderId));
         purchaseRepository.save(createdPurchase);
+
+        //쿠폰과 결제 연결하기
+        for (MemberCoupon memberCoupon : memberCouponMap.values()) {
+            memberCoupon.updatePurchase(createdPurchase);
+        }
 
         return new PurchaseResponseDto(createdPurchase.getId(),
             purchaseTotalPrice, purchaseType.name(), orderName, orderCode, nickname);
@@ -117,5 +118,23 @@ public class BeforePurchaseService {
         }
 
         afterPurchaseService.cancelPurchase(purchase);
+    }
+
+
+    public Map<Long, MemberCoupon> getMemberCouponMap(Long memberId,
+        List<ItemCouponAppliedDto> itemList) {
+        List<Long> memberCouponIdList = itemList.stream()
+            .filter(dto -> dto.getMemberCouponId() != null)
+            .map(ItemCouponAppliedDto::getMemberCouponId)
+            .toList();
+        Map<Long, MemberCoupon> memberCouponMap = memberCouponRepository.queryMemberCouponsByIdList(
+            memberId,
+            memberCouponIdList);
+
+        if (memberCouponMap.size() != memberCouponIdList.size()) {
+            throw new RuntimeException("잘못된 쿠폰이 적용되었습니다.");
+        }
+
+        return memberCouponMap;
     }
 }
