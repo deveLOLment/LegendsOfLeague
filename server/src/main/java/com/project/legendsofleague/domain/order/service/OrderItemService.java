@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -22,5 +24,16 @@ public class OrderItemService {
         OrderItem orderItem = OrderItem.toEntity(order, item, count);
         orderItemRepository.save(orderItem);
         return orderItem;
+    }
+
+
+    /**
+     * fetch join을 통해 orderItem의 order, item을 함께 가져옴 + order의 주인인 member까지
+     *
+     * @param orderId
+     * @return
+     */
+    public List<OrderItem> getOrderItemList(Long orderId) {
+        return orderItemRepository.queryOrderItemByOrder(orderId);
     }
 }

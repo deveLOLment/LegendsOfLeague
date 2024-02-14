@@ -1,10 +1,19 @@
 package com.project.legendsofleague.domain.order.dto;
 
 import com.project.legendsofleague.domain.coupon.dto.CouponResponseDto;
+import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.order.domain.OrderItem;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Getter
+@Slf4j
 public class OrderItemResponseDto {
-    private Long id;
+    private Long id; //item의 id
 
     private String name;
 
@@ -16,17 +25,21 @@ public class OrderItemResponseDto {
 
     private String thumbnailImage;
 
-    private CouponResponseDto couponResponseDto;
+    private List<CouponResponseDto> couponList = new ArrayList<>();
 
-    public static OrderItemResponseDto toDto(OrderItem orderItem) {
+    public static OrderItemResponseDto toDto(OrderItem orderItem, Map<Long, List<CouponResponseDto>> couponResponseList) {
         OrderItemResponseDto orderItemResponseDto = new OrderItemResponseDto();
-        orderItemResponseDto.id = orderItem.getId();
-        orderItemResponseDto.name = orderItem.getItem().getName();
+        Item item = orderItem.getItem();
+        orderItemResponseDto.id = item.getId();
+        orderItemResponseDto.name = item.getName();
         orderItemResponseDto.price = orderItem.getOrderPrice();
         orderItemResponseDto.count = orderItem.getCount();
-        orderItemResponseDto.category = String.valueOf(orderItem.getItem().getCategory());
-        orderItemResponseDto.thumbnailImage = orderItem.getItem().getThumbnailImage();
-
+        orderItemResponseDto.category = item.getCategory().getDisplayName();
+        orderItemResponseDto.thumbnailImage = item.getThumbnailImage();
+        List<CouponResponseDto> couponResponseDtos = couponResponseList.get(item.getId());
+        if (couponResponseDtos != null) {
+            orderItemResponseDto.couponList = couponResponseDtos;
+        }
         return orderItemResponseDto;
     }
 }
