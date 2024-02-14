@@ -55,7 +55,6 @@ public class MemberCoupon {
     @JoinColumn(name = "purchase_id")
     private Purchase purchase;
 
-
     public MemberCoupon(Long id) {
         this.id = id;
     }
@@ -68,5 +67,18 @@ public class MemberCoupon {
         memberCoupon.isUsed = false;
         memberCoupon.usedDate = null;
         return memberCoupon;
+    }
+
+    public void updatePurchase(Purchase purchase) {
+        this.purchase = purchase;
+    }
+
+    public void updatedUsedHistory(LocalDate usedDate) {
+        this.isUsed = true;
+        this.usedDate = usedDate;
+    }
+
+    public void revertUsedHistory() {
+        this.isUsed = false;
     }
 }
