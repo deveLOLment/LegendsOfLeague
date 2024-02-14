@@ -6,7 +6,6 @@ import com.project.legendsofleague.domain.coupon.dto.CouponCreateDto;
 import com.project.legendsofleague.domain.coupon.dto.CouponResponseDto;
 import com.project.legendsofleague.domain.coupon.repository.CouponRepository;
 import com.project.legendsofleague.domain.item.domain.Item;
-import com.project.legendsofleague.domain.item.domain.ItemCategory;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.purchase.dto.ItemCouponAppliedDto;
@@ -37,12 +36,12 @@ public class CouponService {
             .collect(Collectors.toList());
 
         return couponResponseDtoList;
-
-
     }
 
-    public Boolean checkValidity(Map<Long, MemberCoupon> memberCouponMap,
-        List<ItemCouponAppliedDto> itemCouponList) {
+    public Boolean checkValidity(
+        Map<Long, MemberCoupon> memberCouponMap,
+        List<ItemCouponAppliedDto> itemCouponList
+    ) {
 
         Map<Long, Item> itemMap = itemRepository.findAllById(
                 itemCouponList.stream().map(ItemCouponAppliedDto::getItemId)
@@ -60,73 +59,106 @@ public class CouponService {
             MemberCoupon memberCoupon = memberCouponMap.get(memberCouponId);
 
             //적용한 쿠폰이 없는 경우
-            if (memberCoupon == null) {
-
-                //가격만 검증
-                if (item.getPrice() * quantity != price) {
-                    return false;
-                }
-                continue;
+            if (!checkPriceWithoutCoupon(item, price, quantity)) {
+                return false;
             }
 
+            //적용한 쿠폰이 있는 경우
             Coupon coupon = memberCoupon.getCoupon();
 
             /**
              * 해당 쿠폰이 해당 아이템에 적용 가능한지 검증
              */
             //카테고리에 적용하는 쿠폰의 경우 아이템의 카테고리와 쿠폰의 적용 카테고리가 일치하는지 검증
-            if (coupon.getCouponType().equals(CouponType.CATEGORY_AMOUNT_DISCOUNT
-            ) || coupon.getCouponType().equals(CouponType.CATEGORY_PERCENT_DISCOUNT)) {
-                ItemCategory category = item.getCategory();
-                if (!coupon.getAppliedCategory().equals(category)) {
-                    return false;
-                }
+            if (!checkCategoryAppliedCoupon(item, coupon)) {
+                return false;
             }
 
             //아이템에 적용하는 쿠폰의 경우 아이템과 쿠폰 아이템 비교
-            else if (coupon.getCouponType().equals(CouponType.ITEM_AMOUNT_DISCOUNT
-            ) || coupon.getCouponType().equals(CouponType.ITEM_PERCENT_DISCOUNT)) {
-                if (!coupon.getItem().getId().equals(itemId)) {
-                    return false;
-                }
+            if (!checkItemAppliedCoupon(item, coupon)) {
+                return false;
             }
 
             /**
              * 최소 가격 검증
              */
-            if (coupon.getCouponType().equals(CouponType.CATEGORY_AMOUNT_DISCOUNT
-            ) || coupon.getCouponType().equals(CouponType.CATEGORY_PERCENT_DISCOUNT)) {
-
-                if (coupon.getMinPrice() > item.getPrice()) {
-                    return false;
-                }
+            if (!checkMinPrice(coupon, price)) {
+                return false;
             }
 
             /**
              * 적용 가격 검증
              */
 
-            //정량 할인 검증
-            if (coupon.getCouponType().equals(CouponType.CATEGORY_AMOUNT_DISCOUNT
-            ) || coupon.getCouponType().equals(CouponType.ITEM_AMOUNT_DISCOUNT)) {
-                if (price != item.getPrice() * quantity - coupon.getDiscountPrice()) {
-                    return false;
-                }
+            if (!checkAmountDiscountedPrice(item, coupon, price, quantity)) {
+                return false;
+            }
 
-                //퍼센트 할인 검증
-            } else if (coupon.getCouponType().equals(CouponType.CATEGORY_PERCENT_DISCOUNT
-            ) || coupon.getCouponType().equals(CouponType.ITEM_PERCENT_DISCOUNT)) {
-                Integer discountPrice =
-                    item.getPrice() * quantity * (100 - coupon.getDiscountPrice()) / 100;
-                //최대 할인 가격 검증
-                discountPrice =
-                    discountPrice > coupon.getMaxPrice() ? coupon.getMaxPrice() : discountPrice;
-                if (price != item.getPrice() - discountPrice) {
-                    return false;
-                }
+            if (!checkPercentDiscountedPrice(item, coupon, price, quantity)) {
+                return false;
             }
         }
 
+        return true;
+    }
+
+    public Boolean checkPriceWithoutCoupon(Item item, Integer price, Integer quantity) {
+        //가격만 검증
+        return item.getPrice() * quantity == price;
+    }
+
+    public Boolean checkCategoryAppliedCoupon(Item item, Coupon coupon) {
+        CouponType couponType = coupon.getCouponType();
+        if (couponType.equals(CouponType.CATEGORY_AMOUNT_DISCOUNT
+        ) || couponType.equals(CouponType.CATEGORY_PERCENT_DISCOUNT)) {
+            return coupon.getAppliedCategory().equals(item.getCategory());
+        }
+
+        return true;
+    }
+
+    public Boolean checkItemAppliedCoupon(Item item, Coupon coupon) {
+        CouponType couponType = coupon.getCouponType();
+        if (couponType.equals(CouponType.ITEM_AMOUNT_DISCOUNT
+        ) || couponType.equals(CouponType.ITEM_PERCENT_DISCOUNT)) {
+            return coupon.getItem().equals(item);
+        }
+
+        return true;
+    }
+
+    public Boolean checkMinPrice(Coupon coupon, Integer price) {
+        CouponType couponType = coupon.getCouponType();
+        if (couponType.equals(CouponType.ITEM_PERCENT_DISCOUNT
+        ) || couponType.equals(CouponType.CATEGORY_PERCENT_DISCOUNT)) {
+            return coupon.getMinPrice() <= price;
+        }
+        return true;
+    }
+
+    public Boolean checkAmountDiscountedPrice(Item item, Coupon coupon, Integer price,
+        Integer quantity) {
+        CouponType couponType = coupon.getCouponType();
+        if (couponType.equals(CouponType.CATEGORY_AMOUNT_DISCOUNT
+        ) || couponType.equals(CouponType.ITEM_AMOUNT_DISCOUNT)) {
+            return price == item.getPrice() * quantity - coupon.getDiscountPrice();
+        }
+        return true;
+    }
+
+    public Boolean checkPercentDiscountedPrice(Item item, Coupon coupon, Integer price,
+        Integer quantity) {
+        CouponType couponType = coupon.getCouponType();
+        if (couponType.equals(CouponType.CATEGORY_PERCENT_DISCOUNT
+        ) || couponType.equals(CouponType.ITEM_PERCENT_DISCOUNT)) {
+            Integer discountPrice =
+                item.getPrice() * quantity * (100 - coupon.getDiscountPrice()) / 100;
+            //최대 할인 가격 검증
+            discountPrice =
+                discountPrice > coupon.getMaxPrice() ? coupon.getMaxPrice() : discountPrice;
+            return price != item.getPrice() - discountPrice;
+
+        }
         return true;
     }
 }

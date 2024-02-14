@@ -32,8 +32,9 @@ public class CustomMemberCouponRepositoryImpl implements CustomMemberCouponRepos
 
     @Override
     public List<MemberCoupon> queryMemberCouponsByOrder(Long memberId, Long orderId) {
-        return queryFactory.selectFrom(memberCoupon)
+        return queryFactory.selectFrom(memberCoupon).distinct()
             .leftJoin(memberCoupon.coupon, coupon).fetchJoin()
+            .leftJoin(coupon.item, item).fetchJoin()
             .where(memberCoupon.member.id.eq(memberId))
             .where(checkValidity())
             .where(memberCoupon.coupon.item.in(
