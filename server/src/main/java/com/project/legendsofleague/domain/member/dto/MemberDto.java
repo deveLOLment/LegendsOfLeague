@@ -1,58 +1,34 @@
 package com.project.legendsofleague.domain.member.dto;
 
-import com.project.legendsofleague.domain.member.domain.Member;
-import java.util.ArrayList;
-import java.util.Collection;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-@RequiredArgsConstructor
-public class MemberDto implements UserDetails {
+import com.project.legendsofleague.domain.member.domain.ROLE;
+import lombok.Getter;
 
-    private final Member member;
+@Getter
+public class MemberDto {
 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    private String role;
+    private String name;
+    private String username;
 
-        Collection<GrantedAuthority> collection = new ArrayList<>();
+    // 정적 팩토리 메서드
+    public static MemberDto of(OAuth2Response oAuth2Response, String username){
+        MemberDto memberDto = new MemberDto();
+        memberDto.role = ROLE.ROLE_USER.toString();
+        memberDto.name = oAuth2Response.getName();
+        memberDto.username = username;
 
-        collection.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return member.getRole().toString();
-            }
-        });
-
-        return collection;
+        return memberDto;
     }
 
-    @Override
-    public String getPassword() {
-        return member.getPassword();
+    // 정적 팩토리 메서드 2
+    public static MemberDto of(String username, String nickname){
+        MemberDto memberDto = new MemberDto();
+        memberDto.username = username;
+        memberDto.name = nickname;
+        memberDto.role = ROLE.ROLE_USER.toString();
+
+        return memberDto;
     }
 
-    @Override
-    public String getUsername() {
-        return member.getUsername();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }
