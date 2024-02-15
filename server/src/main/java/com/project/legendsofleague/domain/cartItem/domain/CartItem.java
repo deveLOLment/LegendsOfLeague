@@ -27,4 +27,14 @@ public class CartItem {
     private Item item;
 
     private Integer count;
+
+
+    public static CartItem toEntity(Member member, Item item, Integer count) {
+        CartItem cartItem = new CartItem();
+        cartItem.item = item;
+        cartItem.member = member;
+        cartItem.count = count;
+        return cartItem;
+    }
+
 }
