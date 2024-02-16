@@ -3,7 +3,9 @@ spring:
     import:
       env.yml
       ,s3.yml
-
-jpa:
-  hibernate:
-    ddl-auto: update
+      ,kakaoPay.yml
+      ,tossPay.yml
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
