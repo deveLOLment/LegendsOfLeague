@@ -24,7 +24,7 @@ public class RegisterService {
         // username이 존재하지 않을 경우 회원가입 처리
         if(!checkUser) {
             // 회원정보를 생성할 때 비밀번호를 인코딩 처리해야 하므로 create의 매개변수로 인코더를 넘겨준다.
-            Member member = Member.create(dto, bCryptPasswordEncoder);
+            Member member = Member.from(dto, bCryptPasswordEncoder);
             memberRepository.save(member);
         }
 

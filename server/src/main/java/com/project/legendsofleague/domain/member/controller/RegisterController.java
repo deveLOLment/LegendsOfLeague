@@ -17,7 +17,7 @@ public class RegisterController {
 //        return null;
 //    }
 
-      @PostMapping("/registerProc")
+      @PostMapping("/register")
     public void registerProc(@RequestBody RegisterDto dto){
 
           registerService.joinProcess(dto);
