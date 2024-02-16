@@ -13,18 +13,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_item_id")
-    private Long id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "cart_item_id")
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
     private Integer count;
+
+
+    public static CartItem toEntity(Member member, Item item, Integer count) {
+        CartItem cartItem = new CartItem();
+        cartItem.item = item;
+        cartItem.member = member;
+        cartItem.count = count;
+        return cartItem;
+    }
+
 }

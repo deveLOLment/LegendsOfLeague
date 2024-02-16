@@ -25,17 +25,23 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    private Integer orderPrice; //한 아이템에 대한 가격 (아이템 가격 * count)
+    private Integer orderPrice; //한 아이템에 대한 가격
 
     private Integer count; //한 아이템에 선택한 수량
 
-    public static OrderItem toEntity(Order order, Item item, Integer count) {
+
+    public static OrderItem createOrderItem(Item item, Integer count) {
         OrderItem orderItem = new OrderItem();
-        orderItem.order = order;
         orderItem.item = item;
         orderItem.orderPrice = item.getPrice();
         orderItem.count = count;
+
         return orderItem;
+    }
+
+
+    public void addOrder(Order order) {
+        this.order = order;
     }
 
 }

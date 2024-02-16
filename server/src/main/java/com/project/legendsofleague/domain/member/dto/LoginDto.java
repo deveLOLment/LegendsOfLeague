@@ -1,12 +1,9 @@
 package com.project.legendsofleague.domain.member.dto;
 
-import com.project.legendsofleague.domain.member.domain.ROLE;
 import lombok.Getter;
 
 @Getter
-public class RegisterDto {
+public class LoginDto {
     private String username;
     private String password;
-    private ROLE role;
-//    private String role;
 }
