@@ -46,6 +46,9 @@ public class S3Util {
     return new ItemImage(amazonS3.getUrl(bucket, savedFileName).toString());
   }
 
+
+
+
   private String createStoreFileName(String data) {
     String ext = extractExt(data); //ext 추출하기
     String uuid = UUID.randomUUID().toString();
