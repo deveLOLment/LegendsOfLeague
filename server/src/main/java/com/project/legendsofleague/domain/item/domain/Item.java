@@ -64,4 +64,8 @@ public class Item {
         return item;
     }
 
+    public void removeStock(Integer count) {
+        this.stock -= count;
+    }
+
 }

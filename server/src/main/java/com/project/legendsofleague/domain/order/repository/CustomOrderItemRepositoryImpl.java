@@ -21,7 +21,7 @@ public class CustomOrderItemRepositoryImpl implements CustomOrderItemRepository 
 
     @Override
     public List<OrderItem> queryOrderItemByOrder(Long orderId) {
-
+        //order가 null이어도 가지고 온다.
         return queryFactory.selectFrom(orderItem)
                 .leftJoin(orderItem.order, order).fetchJoin()
                 .leftJoin(orderItem.item, item).fetchJoin()

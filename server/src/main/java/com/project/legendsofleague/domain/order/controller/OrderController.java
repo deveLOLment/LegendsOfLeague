@@ -49,7 +49,10 @@ public class OrderController {
     @Operation(summary = "주문 관련 컨트롤러입니다.(장바구니 창에서 주문하기 버튼을 누르면 실행됩니다.)")
     @PostMapping("/order/cart")
     public ResponseEntity<Long> orderCartItems(@RequestBody List<CartItemRequestDto> cartItemRequestList) {
-        return ResponseEntity.ok(1L);
+        Long memberId = 1L;
+        Long orderId = orderService.createOrderFromCart(cartItemRequestList, memberId);
+
+        return ResponseEntity.ok(orderId);
     }
 
     @Operation(summary = "주문 페이지 관련 컨트롤러입니다.")
