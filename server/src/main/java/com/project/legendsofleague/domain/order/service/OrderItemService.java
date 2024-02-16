@@ -17,7 +17,7 @@ public class OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
 
-    
+
     /**
      * fetch join을 통해 orderItem의 order, item을 함께 가져옴 + order의 주인인 member까지
      *

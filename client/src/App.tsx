@@ -9,6 +9,8 @@ import KakaoPaySuccess from "./kakaopay/KakaoPaySuccess";
 import TossPayReady from "./tosspay/TossPayReady";
 import TossPayApprove from "./tosspay/TossPayApprove";
 import Order from "./order/Order";
+import GoogleLoginReady from "./login/GoogleLoginReady";
+
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
         path="purchase/tossPay/success"
         element={<TossPayApprove />}
       ></Route>
+
+      <Route path="login/google" element={<GoogleLoginReady/>}></Route>
     </Routes>
   );
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 public class CartItemResponseDto {
 
     private Long cartItemId;
-    
+
     private Long itemId;
 
     private String name;
