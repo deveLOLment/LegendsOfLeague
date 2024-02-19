@@ -1,4 +1,4 @@
-package com.project.legendsofleague.domain.order.repository;
+package com.project.legendsofleague.domain.order.repository.orderItem;
 
 import com.project.legendsofleague.domain.order.domain.OrderItem;
 

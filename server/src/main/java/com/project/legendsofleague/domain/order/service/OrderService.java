@@ -1,7 +1,8 @@
 package com.project.legendsofleague.domain.order.service;
 
 
-import com.project.legendsofleague.domain.cartItem.dto.CartItemRequestDto;
+import com.project.legendsofleague.domain.cartItem.domain.CartItem;
+import com.project.legendsofleague.domain.cartItem.dto.CartItemOrderRequestDto;
 import com.project.legendsofleague.domain.cartItem.service.CartItemService;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
@@ -9,9 +10,10 @@ import com.project.legendsofleague.domain.member.domain.Member;
 import com.project.legendsofleague.domain.membercoupon.service.MemberCouponService;
 import com.project.legendsofleague.domain.order.domain.Order;
 import com.project.legendsofleague.domain.order.domain.OrderItem;
+import com.project.legendsofleague.domain.order.domain.OrderStatus;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
-import com.project.legendsofleague.domain.order.repository.OrderRepository;
+import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,17 @@ public class OrderService {
     private final MemberCouponService memberCouponService;
     private final CartItemService cartItemService;
 
+
+    public List<Order> getOrderList(Long memberId) {
+        return orderRepository.queryOrderByMember(memberId);
+    }
+
+    public List<OrderResponseDto> findOrderList(Long memberId) {
+        List<Order> orders = getOrderList(memberId);
+
+        return orders.stream()
+                .map(OrderResponseDto::toDto).toList();
+    }
 
     /**
      * 단일 주문에 대한 주문 객체 생성
@@ -61,19 +74,38 @@ public class OrderService {
      * @return
      */
     @Transactional
-    public Long createOrderFromCart(List<CartItemRequestDto> cartItemRequestList, Long memberId) {
+    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList, Long memberId) {
         List<OrderItem> orderItems = new ArrayList<>();
+        List<CartItem> cartItems = cartItemService.getCartItemList(memberId);
+        List<Long> cartItemIds = cartItems.stream().map(CartItem::getId).toList();
 
-        for (CartItemRequestDto cartItemRequestDto : cartItemRequestList) {
-            Item item = itemRepository.findById(cartItemRequestDto.getItemId())
-                    .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
-            OrderItem orderItem = OrderItem.createOrderItem(item, cartItemRequestDto.getCount());
+        //요청의 cartItemId가 유효한(존재하는) id인지 검증
+        validateCateList(cartItemIds, cartItemRequestList);
+
+        for (CartItem cartItem : cartItems) {
+            Item item = cartItem.getItem();
+            OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
             orderItems.add(orderItem);
         }
 
         Order order = Order.toEntity(new Member(memberId), orderItems);
         orderRepository.save(order);
         return order.getId();
+    }
+
+    /**
+     * 장바구니를 통해 요청했는데, 장바구니에 item 목록이 없는 요청이 있는 지 확인
+     * ex) 장바구니를 통해 item2, item3에 대한 order를 만드려고 하는데, cart에 item2가 없는 지 확인
+     *
+     * @param cartItemIds
+     * @param cartItemRequestList
+     */
+    private void validateCateList(List<Long> cartItemIds, List<CartItemOrderRequestDto> cartItemRequestList) {
+        for (CartItemOrderRequestDto cartItemRequestDto : cartItemRequestList) {
+            if (!cartItemIds.contains(cartItemRequestDto.getCartItemId())) {
+                throw new RuntimeException("옳지 않은 요청입니다.");
+            }
+        }
     }
 
     /**
@@ -104,6 +136,28 @@ public class OrderService {
                 .map((oi) -> oi.getItem()).toList();
 
         return OrderResponseDto.toDto(orderItems, memberCouponService.getMemberCouponsByOrder(member.getId(), orderId, items));
+    }
+
+    /**
+     * 결제가 성공이 된 주문에 한하여 환불 요청이 들어왔을 때 실행되는 메소드
+     *
+     * @param orderId
+     */
+    @Transactional
+    public void refundOrder(Long orderId) {
+        List<OrderItem> orderItems = orderItemService.getOrderItemList(orderId);
+
+        //유효하지 않은 order를 요청한 거였다면 (이미 삭제된 order라면)
+        if (orderItems.isEmpty()) {
+            throw new RuntimeException("유효하지 않은 요청입니다.");
+        }
+        Order order = orderItems.get(0).getOrder();
+
+        if (order.getOrderStatus() != OrderStatus.SUCCESS) {
+            throw new RuntimeException("유효하지 않은 요청입니다.");
+        }
+
+        order.refundOrder();
     }
 
 

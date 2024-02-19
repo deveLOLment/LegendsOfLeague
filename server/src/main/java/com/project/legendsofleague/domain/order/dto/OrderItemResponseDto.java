@@ -42,4 +42,16 @@ public class OrderItemResponseDto {
         }
         return orderItemResponseDto;
     }
+
+    public static OrderItemResponseDto toDto(OrderItem orderItem) {
+        OrderItemResponseDto orderItemResponseDto = new OrderItemResponseDto();
+        Item item = orderItem.getItem();
+        orderItemResponseDto.id = item.getId();
+        orderItemResponseDto.name = item.getName();
+        orderItemResponseDto.price = orderItem.getOrderPrice();
+        orderItemResponseDto.count = orderItem.getCount();
+        orderItemResponseDto.category = item.getCategory().getDisplayName();
+        orderItemResponseDto.thumbnailImage = item.getThumbnailImage();
+        return orderItemResponseDto;
+    }
 }

@@ -68,4 +68,7 @@ public class Item {
         this.stock -= count;
     }
 
+    public void addStock(Integer count) {
+        this.stock += count;
+    }
 }

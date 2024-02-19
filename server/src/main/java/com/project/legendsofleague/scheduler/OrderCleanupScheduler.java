@@ -1,7 +1,7 @@
 package com.project.legendsofleague.scheduler;
 
 import com.project.legendsofleague.domain.order.domain.OrderStatus;
-import com.project.legendsofleague.domain.order.repository.OrderRepository;
+import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

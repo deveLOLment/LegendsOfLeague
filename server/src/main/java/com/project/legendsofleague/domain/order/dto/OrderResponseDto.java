@@ -19,6 +19,13 @@ public class OrderResponseDto {
     private List<OrderItemResponseDto> orderItemList = new ArrayList<>();
 
 
+    /**
+     * 주문 상세 페이지를 보여주기 위한 정적 팩토리 메소드
+     *
+     * @param orderItems
+     * @param couponResponseList
+     * @return
+     */
     public static OrderResponseDto toDto(List<OrderItem> orderItems, Map<Long, List<CouponResponseDto>> couponResponseList) {
         OrderResponseDto orderResponseDto = new OrderResponseDto();
 
@@ -27,6 +34,22 @@ public class OrderResponseDto {
         orderResponseDto.id = order.getId();
         orderResponseDto.orderItemList = orderItems
                 .stream().map((oi) -> OrderItemResponseDto.toDto(oi, couponResponseList)).toList();
+
+        return orderResponseDto;
+    }
+
+    /**
+     * 주문 목록을 리스트로 보여주기 위한 정적 팩토리 메소드
+     *
+     * @param order
+     * @return
+     */
+    public static OrderResponseDto toDto(Order order) {
+        OrderResponseDto orderResponseDto = new OrderResponseDto();
+
+        orderResponseDto.id = order.getId();
+        orderResponseDto.orderItemList = order.getOrderItemList()
+                .stream().map(OrderItemResponseDto::toDto).toList();
 
         return orderResponseDto;
     }

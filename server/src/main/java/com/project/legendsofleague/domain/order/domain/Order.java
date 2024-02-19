@@ -85,5 +85,11 @@ public class Order {
         this.orderStatus = CANCEL;
     }
 
+    public void refundOrder() {
+        this.orderStatus = REFUND;
+        for (OrderItem orderItem : orderItemList) {
+            orderItem.getItem().addStock(orderItem.getCount());
+        }
+    }
 
 }
