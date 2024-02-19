@@ -40,14 +40,10 @@ public class CouponService {
 
     public Boolean checkValidity(
         Map<Long, MemberCoupon> memberCouponMap,
-        List<ItemCouponAppliedDto> itemCouponList
-    ) {
+        List<ItemCouponAppliedDto> itemCouponList,
+        Map<Long, Item> itemMap
 
-        Map<Long, Item> itemMap = itemRepository.findAllById(
-                itemCouponList.stream().map(ItemCouponAppliedDto::getItemId)
-                    .collect(Collectors.toList()))
-            .stream()
-            .collect(Collectors.toMap(Item::getId, item -> item));
+    ) {
 
         for (ItemCouponAppliedDto dto : itemCouponList) {
             Long itemId = dto.getItemId();
@@ -57,10 +53,12 @@ public class CouponService {
             Item item = itemMap.get(itemId);
 
             MemberCoupon memberCoupon = memberCouponMap.get(memberCouponId);
-
-            //적용한 쿠폰이 없는 경우
-            if (!checkPriceWithoutCoupon(item, price, quantity)) {
-                return false;
+            if (memberCoupon == null) {
+                //적용한 쿠폰이 없는 경우
+                if (!checkPriceWithoutCoupon(item, price, quantity)) {
+                    return false;
+                }
+                continue;
             }
 
             //적용한 쿠폰이 있는 경우

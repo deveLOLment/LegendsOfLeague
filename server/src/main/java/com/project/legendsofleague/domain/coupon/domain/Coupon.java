@@ -63,12 +63,22 @@ public class Coupon {
         coupon.stock = dto.getStock();
         coupon.validityStartDate = dto.getValidityStartDate();
         coupon.validityEndDate = dto.getValidityEndDate();
+        CouponType inputCouponType = CouponType.valueOf(dto.getCouponTypeName());
+        coupon.couponType = inputCouponType;
+        if (inputCouponType == CouponType.CATEGORY_PERCENT_DISCOUNT
+            || inputCouponType == CouponType.CATEGORY_AMOUNT_DISCOUNT) {
+            coupon.appliedCategory = ItemCategory.valueOf(dto.getAppliedCategoryName());
+        } else {
+            coupon.item = new Item(dto.getItemId());
+        }
         coupon.discountPrice = dto.getDiscountPrice();
         coupon.minPrice = dto.getMinPrice();
-        coupon.appliedCategory = ItemCategory.valueOf(dto.getAppliedCategoryName());
-        coupon.couponType = CouponType.valueOf(dto.getCouponTypeName());
-        coupon.item = new Item(dto.getItemId());
+        coupon.maxPrice = dto.getMaxPrice();
         coupon.code = UUID.randomUUID().toString().substring(0, 16);
         return coupon;
+    }
+
+    public void decreaseCouponStock() {
+        this.stock--;
     }
 }

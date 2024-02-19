@@ -3,7 +3,6 @@ package com.project.legendsofleague.domain.membercoupon.domain;
 
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.member.domain.Member;
-import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponCreateDto;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,11 +58,10 @@ public class MemberCoupon {
         this.id = id;
     }
 
-    public static MemberCoupon toEntity(Long memberId,
-        MemberCouponCreateDto memberCouponCreateDto) {
+    public static MemberCoupon toEntity(Long memberId, Coupon coupon) {
         MemberCoupon memberCoupon = new MemberCoupon();
         memberCoupon.member = new Member(memberId);
-        memberCoupon.coupon = new Coupon(memberCouponCreateDto.getCouponId());
+        memberCoupon.coupon = coupon;
         memberCoupon.isUsed = false;
         memberCoupon.usedDate = null;
         return memberCoupon;

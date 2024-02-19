@@ -3,6 +3,9 @@ package com.project.legendsofleague.domain.coupon.dto;
 import com.project.legendsofleague.common.EnumValidator.Enum;
 import com.project.legendsofleague.domain.coupon.domain.CouponType;
 import com.project.legendsofleague.domain.item.domain.ItemCategory;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,10 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CouponCreateDto {
 
+    @NotBlank
     private String name;
 
     private String description;
 
+    @Min(1)
     private Integer stock;
 
     private Integer minPrice;
@@ -28,6 +33,7 @@ public class CouponCreateDto {
 
     private LocalDate validityEndDate;
 
+    @NotNull
     private Integer discountPrice;
 
     @Enum(enumClass = ItemCategory.class, ignoreCase = true)

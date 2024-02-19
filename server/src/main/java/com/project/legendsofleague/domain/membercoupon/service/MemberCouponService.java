@@ -2,12 +2,14 @@ package com.project.legendsofleague.domain.membercoupon.service;
 
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.coupon.domain.CouponType;
-import com.project.legendsofleague.domain.coupon.dto.CouponResponseDto;
+import com.project.legendsofleague.domain.coupon.repository.CouponRepository;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.domain.ItemCategory;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponCreateDto;
+import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponResponseDto;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,23 +23,32 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberCouponService {
 
     private final MemberCouponRepository memberCouponRepository;
+    private final CouponRepository couponRepository;
 
     @Transactional
     public void createMemberCoupon(Long memberId, MemberCouponCreateDto memberCouponCreateDto) {
-        memberCouponRepository.save(MemberCoupon.toEntity(memberId, memberCouponCreateDto));
+        Coupon coupon = couponRepository.findById(memberCouponCreateDto.getCouponId())
+            .orElseThrow(() -> new RuntimeException("해당ID를 가진 쿠폰이 존재하지 않습니다."));
+        if (coupon.getStock() <= 0) {
+            throw new RuntimeException("쿠폰이 모두 소진되었습니다.");
+        }
 
+        memberCouponRepository.save(MemberCoupon.toEntity(memberId, coupon));
+
+        coupon.decreaseCouponStock();
     }
 
-    public List<CouponResponseDto> getMemberCoupons(Long memberId) {
+    public List<MemberCouponResponseDto> getMemberCoupons(Long memberId) {
         return memberCouponRepository.queryMemberCoupons(
                 memberId).stream()
-            .map(memberCoupon -> new CouponResponseDto(memberCoupon.getCoupon()))
+            .map(MemberCouponResponseDto::new)
             .collect(Collectors.toList());
     }
 
-    public Map<Long, List<CouponResponseDto>> getMemberCouponsByOrder(Long memberId, Long orderId,
+    public Map<Long, List<MemberCouponResponseDto>> getMemberCouponsByOrder(Long memberId,
+        Long orderId,
         List<Item> itemList) {
-        Map<Long, List<CouponResponseDto>> couponMap = new HashMap<>();
+        Map<Long, List<MemberCouponResponseDto>> couponMap = new HashMap<>();
         Map<Long, List<MemberCoupon>> itemMemberCouponMap = new HashMap<>();
         Map<Long, List<MemberCoupon>> itemCouponMap = new HashMap<>();
         Map<ItemCategory, List<MemberCoupon>> categoryCouponMap = new HashMap<>();
@@ -53,7 +64,7 @@ public class MemberCouponService {
                     if (itemCouponMap.containsKey(itemId)) {
                         itemCouponMap.get(itemId).add(memberCoupon);
                     } else {
-                        itemCouponMap.put(itemId, List.of(memberCoupon));
+                        itemCouponMap.put(itemId, new ArrayList<>(List.of(memberCoupon)));
                     }
                 }
 
@@ -63,7 +74,8 @@ public class MemberCouponService {
                     if (categoryCouponMap.containsKey(appliedCategory)) {
                         categoryCouponMap.get(appliedCategory).add(memberCoupon);
                     } else {
-                        categoryCouponMap.put(appliedCategory, List.of(memberCoupon));
+                        categoryCouponMap.put(appliedCategory,
+                            new ArrayList<>(List.of(memberCoupon)));
                     }
                 }
             });
@@ -76,12 +88,17 @@ public class MemberCouponService {
             if (itemCouponMap.containsKey(itemId)) {
                 if (itemMemberCouponMap.containsKey(itemId)) {
                     itemMemberCouponMap.get(itemId).addAll(itemCouponMap.get(itemId));
+                } else {
+                    itemMemberCouponMap.put(itemId, new ArrayList<>(itemCouponMap.get(itemId)));
                 }
             }
 
             if (categoryCouponMap.containsKey(category)) {
                 if (itemMemberCouponMap.containsKey(itemId)) {
                     itemMemberCouponMap.get(itemId).addAll(categoryCouponMap.get(category));
+                } else {
+                    itemMemberCouponMap.put(itemId,
+                        new ArrayList<>(categoryCouponMap.get(category)));
                 }
             }
         });
@@ -89,7 +106,7 @@ public class MemberCouponService {
         //DTO 변환
         itemMemberCouponMap.forEach((key, value) -> {
             couponMap.put(key, value.stream()
-                .map(memberCoupon -> new CouponResponseDto(memberCoupon.getCoupon()))
+                .map(MemberCouponResponseDto::new)
                 .collect(Collectors.toList()));
         });
 
