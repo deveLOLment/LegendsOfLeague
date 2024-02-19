@@ -17,6 +17,7 @@ import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,21 +45,6 @@ public class BeforePurchaseService {
     결제 시작 전 체크 로직
      */
 
-    private void checkItemStock(List<ItemCouponAppliedDto> itemList,
-        Map<Long, Item> itemMap) {
-        for (ItemCouponAppliedDto dto : itemList) {
-            Integer quantity = dto.getQuantity();
-            Long itemId = dto.getItemId();
-            Item item = itemMap.get(itemId);
-            if (item == null) {
-                throw new RuntimeException("잘못된 입력입니다.");
-            }
-            Integer stock = item.getStock();
-            if (stock < quantity) {
-                throw new RuntimeException("재고가 부족합니다!");
-            }
-        }
-    }
 
     @Transactional
     public PurchaseResponseDto startPurchase(Long memberId,
@@ -92,11 +78,7 @@ public class BeforePurchaseService {
         }
 
         //총 가격 검증
-        int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice)
-            .sum();
-        if (totalPrice != purchaseTotalPrice) {
-            throw new RuntimeException("가격 계산이 틀렸습니다.");
-        }
+        checkTotalPrice(itemList, purchaseTotalPrice);
 
         //재고 체크
         checkItemStock(itemList, itemMap);
@@ -126,22 +108,20 @@ public class BeforePurchaseService {
             purchaseTotalPrice, purchaseType.name(), orderName, orderCode, nickname);
     }
 
-    private String makeOrderName(List<String> itemNameList, Integer quantity) {
-        if (itemNameList.isEmpty()) {
-            return null;
-        } else {
-            String exampleItemName = itemNameList.get(0);
 
-            return exampleItemName + " 외 " + quantity + "건";
-        }
-    }
-
+    /**
+     * 주문을 취소하는 로직.
+     *
+     * @param memberId
+     * @param purchaseId
+     * @throws JsonProcessingException
+     */
     public void cancelPurchase(Long memberId, Long purchaseId) throws JsonProcessingException {
         //orderService에서 memberId, orderId를 넘기면 -> 검증 로직 진행
 
-        Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw new RuntimeException("주문 정보를 찾을수 없습니다.");
-        });
+        Purchase purchase = purchaseRepository.findById(purchaseId)
+            .orElseThrow(() -> new RuntimeException(
+                "주문 정보를 찾을수 없습니다."));
 
         PurchaseType purchaseType = purchase.getPurchaseType();
         if (purchaseType == PurchaseType.KAKAO) {
@@ -154,12 +134,21 @@ public class BeforePurchaseService {
     }
 
 
-    public Map<Long, MemberCoupon> getMemberCouponMap(Long memberId,
+    /**
+     * 입력받은 MemberCoupon의  id 전체를 가지고 쿼리문을 날리고 하나의 Map으로 만드는 메서드.
+     *
+     * @param memberId
+     * @param itemList
+     * @return <memberCouponId, MemberCoupon>
+     */
+    private Map<Long, MemberCoupon> getMemberCouponMap(Long memberId,
         List<ItemCouponAppliedDto> itemList) {
+
         List<Long> memberCouponIdList = itemList.stream()
-            .filter(dto -> dto.getMemberCouponId() != null)
             .map(ItemCouponAppliedDto::getMemberCouponId)
+            .filter(Objects::nonNull)
             .toList();
+
         Map<Long, MemberCoupon> memberCouponMap = memberCouponRepository.queryMemberCouponsByIdList(
             memberId,
             memberCouponIdList);
@@ -169,5 +158,58 @@ public class BeforePurchaseService {
         }
 
         return memberCouponMap;
+    }
+
+    /**
+     * 입력받은 각 아이템에 최종 가격의 합과 구매 전체 가격이 같은지 검증
+     *
+     * @param itemList
+     * @param purchaseTotalPrice
+     */
+    private void checkTotalPrice(List<ItemCouponAppliedDto> itemList, Integer purchaseTotalPrice) {
+        int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice)
+            .sum();
+        if (totalPrice != purchaseTotalPrice) {
+            throw new RuntimeException("가격 계산이 틀렸습니다.");
+        }
+    }
+
+    /**
+     * 구매할 각 item의 재고를 체크하는 로직 해당 로직에서 재고를 차감하지는 않음.
+     *
+     * @param itemList
+     * @param itemMap
+     */
+    private void checkItemStock(List<ItemCouponAppliedDto> itemList,
+        Map<Long, Item> itemMap) {
+        for (ItemCouponAppliedDto dto : itemList) {
+            Integer quantity = dto.getQuantity();
+            Long itemId = dto.getItemId();
+            Item item = itemMap.get(itemId);
+            if (item == null) {
+                throw new RuntimeException("잘못된 입력입니다.");
+            }
+            Integer stock = item.getStock();
+            if (stock < quantity) {
+                throw new RuntimeException("재고가 부족합니다!");
+            }
+        }
+    }
+
+    /**
+     * 주문 이름을 만들어주는 메서드
+     *
+     * @param itemNameList
+     * @param quantity
+     * @return
+     */
+    private String makeOrderName(List<String> itemNameList, Integer quantity) {
+        if (itemNameList.isEmpty()) {
+            return null;
+        } else {
+            String exampleItemName = itemNameList.get(0);
+
+            return exampleItemName + " 외 " + quantity + "건";
+        }
     }
 }

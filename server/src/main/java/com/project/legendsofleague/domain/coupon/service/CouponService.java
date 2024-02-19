@@ -15,7 +15,6 @@ import com.project.legendsofleague.domain.coupon.validation.validator.CouponVali
 import com.project.legendsofleague.domain.coupon.validation.validator.ItemAmountCouponValidator;
 import com.project.legendsofleague.domain.coupon.validation.validator.ItemPercentCouponValidator;
 import com.project.legendsofleague.domain.item.domain.Item;
-import com.project.legendsofleague.domain.item.repository.ItemRepository;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.purchase.dto.ItemCouponAppliedDto;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouponService {
 
     private final CouponRepository couponRepository;
-    private final ItemRepository itemRepository;
 
     private final CategoryCouponCondition categoryCouponCondition;
     private final ItemCouponCondition itemCouponCondition;
@@ -38,11 +36,22 @@ public class CouponService {
     private final AmountDiscountedPriceCondition amountDiscountedPriceCondition;
 
 
+    /**
+     * Coupon정보를 입력받아 생성하는 메서드
+     *
+     * @param couponCreateDto 쿠폰정보를 입력받은 DTO
+     */
     @Transactional
     public void createCoupon(CouponCreateDto couponCreateDto) {
         couponRepository.save(Coupon.toEntity(couponCreateDto));
     }
 
+    /**
+     * 회원이 등록가능한 쿠폰 리스트 조회하는 메서드
+     *
+     * @param memberId 로그인한 회원의 아이디
+     * @return
+     */
     public List<CouponResponseDto> getApplicableCoupons(Long memberId) {
         return couponRepository.queryApplicableCoupons(
                 memberId).stream()
@@ -51,6 +60,14 @@ public class CouponService {
     }
 
 
+    /**
+     * 입력받은 아이템, 쿠폰, 가격 정보를 보고 올바르게 쿠폰이 적용되고 가격이 계산되엇는지 체크하는 로직
+     *
+     * @param memberCouponMap <memberCouponId, MemberCoupon> 가짐.
+     * @param itemCouponList
+     * @param itemMap         <itemId, Item> 가짐.
+     * @return
+     */
     public Boolean checkValidity(Map<Long, MemberCoupon> memberCouponMap,
         List<ItemCouponAppliedDto> itemCouponList,
         Map<Long, Item> itemMap) {
@@ -80,6 +97,12 @@ public class CouponService {
         return true;
     }
 
+    /**
+     * couponType에 따라서 CouponValidator를 선택하는 메서드
+     *
+     * @param couponType
+     * @return
+     */
     private CouponValidator getCouponValidator(CouponType couponType) {
         return switch (couponType) {
             case CATEGORY_PERCENT_DISCOUNT ->
@@ -96,6 +119,14 @@ public class CouponService {
         };
     }
 
+    /**
+     * 쿠폰이 적용하지 않은 경우 가격 검증
+     *
+     * @param item
+     * @param price
+     * @param quantity
+     * @return
+     */
     public Boolean checkPriceWithoutCoupon(Item item, Integer price, Integer quantity) {
         //가격만 검증
         return item.getPrice() * quantity == price;

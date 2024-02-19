@@ -18,6 +18,13 @@ public class AfterPurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final OrderService orderService;
 
+    /**
+     * 구매를 성공적으로 마치고 이후 해야할 작업을 처리하는 과정
+     *
+     * @param purchaseId
+     * @param code
+     * @return
+     */
     @Transactional
     public Boolean finishPurchase(Long purchaseId, String code) {
         Purchase purchase = purchaseRepository.findById(purchaseId)
@@ -36,6 +43,11 @@ public class AfterPurchaseService {
             purchase.getTotalPrice());
     }
 
+    /**
+     * 성공적으로 환불한 경우에 이후에 해야할 작업을 진행하는 과정
+     *
+     * @param purchase
+     */
     @Transactional
     public void cancelPurchase(Purchase purchase) {
         purchase.cancelPurchase();
