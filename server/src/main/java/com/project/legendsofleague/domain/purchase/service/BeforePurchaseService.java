@@ -44,6 +44,22 @@ public class BeforePurchaseService {
     결제 시작 전 체크 로직
      */
 
+    private void checkItemStock(List<ItemCouponAppliedDto> itemList,
+        Map<Long, Item> itemMap) {
+        for (ItemCouponAppliedDto dto : itemList) {
+            Integer quantity = dto.getQuantity();
+            Long itemId = dto.getItemId();
+            Item item = itemMap.get(itemId);
+            if (item == null) {
+                throw new RuntimeException("잘못된 입력입니다.");
+            }
+            Integer stock = item.getStock();
+            if (stock < quantity) {
+                throw new RuntimeException("재고가 부족합니다!");
+            }
+        }
+    }
+
     @Transactional
     public PurchaseResponseDto startPurchase(Long memberId,
         PurchaseStartRequestDto purchaseStartRequestDto) {
@@ -60,6 +76,7 @@ public class BeforePurchaseService {
         Integer purchaseTotalPrice = purchaseStartRequestDto.getPurchaseTotalPrice();
         PurchaseType purchaseType = PurchaseType.valueOf(purchaseStartRequestDto.getProvider());
 
+        //전체 아이템 조회해서 Map으로 변환
         Map<Long, Item> itemMap = itemRepository.findAllById(
                 itemList.stream().map(ItemCouponAppliedDto::getItemId)
                     .collect(Collectors.toList()))
@@ -82,18 +99,7 @@ public class BeforePurchaseService {
         }
 
         //재고 체크
-        for (ItemCouponAppliedDto dto : itemList) {
-            Integer quantity = dto.getQuantity();
-            Long itemId = dto.getItemId();
-            Item item = itemMap.get(itemId);
-            if (item == null) {
-                throw new RuntimeException("잘못된 입력입니다.");
-            }
-            Integer stock = item.getStock();
-            if (stock < quantity) {
-                throw new RuntimeException("재고가 부족합니다!");
-            }
-        }
+        checkItemStock(itemList, itemMap);
 
 
         /*
@@ -119,7 +125,6 @@ public class BeforePurchaseService {
         return new PurchaseResponseDto(createdPurchase.getId(),
             purchaseTotalPrice, purchaseType.name(), orderName, orderCode, nickname);
     }
-
 
     private String makeOrderName(List<String> itemNameList, Integer quantity) {
         if (itemNameList.isEmpty()) {
