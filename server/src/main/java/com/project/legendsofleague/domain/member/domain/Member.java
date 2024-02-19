@@ -33,6 +33,7 @@ public class Member {
     String username;
 
     // 닉네임
+    @Column(unique = true)
     String nickname;
 
     // 회원 이메일
@@ -42,10 +43,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     ROLE role;
 
+//    String role;
+
     /*
-     *연관관계 매핑할 것들, ORDER, CART
-     *
-     **/
+    *연관관계 매핑할 것들, ORDER, CART
+    *
+    **/
 
 
     public Member(Long id) {
@@ -53,11 +56,31 @@ public class Member {
     }
 
     // 팩토리 메서드(테스트용)
-    public static Member create(RegisterDto dto, BCryptPasswordEncoder encoder) {
+    public static Member from(RegisterDto dto, BCryptPasswordEncoder bCryptPasswordEncoder) {
         Member member = new Member();
         member.username = dto.getUsername();
-        member.password = encoder.encode(dto.getPassword());
+        member.password = bCryptPasswordEncoder.encode(dto.getPassword());
         member.role = dto.getRole();
         return member;
     }
+
+    public static Member create(String username, String email, String nickname){
+        Member member = new Member();
+        member.username = username;
+        member.email = email;
+        member.role = ROLE.ROLE_USER;
+        return member;
+    }
+
+    // 팩토리 메서드(테스트용2)
+    public static Member with(String username, String password, String role) {
+        Member member = new Member();
+        member.username = username;
+        member.password = password;
+        // 문자열로 넘어온 role을 ENUM 타입으로 다시 변환
+        member.role = ROLE.valueOf(role);
+        return member;
+    }
+
+
 }
