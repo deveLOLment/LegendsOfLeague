@@ -62,7 +62,7 @@ public class CustomMemberCouponRepositoryImpl implements CustomMemberCouponRepos
             .leftJoin(coupon.item, item).fetchJoin()
             .where(memberCoupon.member.id.eq(memberId))
             .where(memberCoupon.id.in(memberCouponIdList))
-            .where(checkValidity())
+//            .where(checkValidity())
             .transform(groupBy(memberCoupon.id).as(memberCoupon));
     }
 

@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.purchase.repository;
 
+
 import static com.project.legendsofleague.domain.purchase.domain.QPurchase.purchase;
 
 import com.project.legendsofleague.domain.purchase.domain.Purchase;

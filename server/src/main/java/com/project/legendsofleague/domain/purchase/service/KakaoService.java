@@ -84,7 +84,7 @@ public class KakaoService {
     }
 
     @Transactional
-    public void kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
+    public Boolean kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
             throw new NotFoundException("주문 내역을 찾을수 없습니다.");
@@ -110,7 +110,7 @@ public class KakaoService {
             })
             .block();
 
-        afterPurchaseService.finishPurchase(purchaseId, tid);
+        return afterPurchaseService.finishPurchase(purchaseId, tid);
     }
 
     @Transactional

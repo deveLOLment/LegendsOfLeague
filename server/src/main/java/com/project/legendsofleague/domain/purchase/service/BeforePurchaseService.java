@@ -2,10 +2,13 @@ package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.legendsofleague.domain.coupon.service.CouponService;
+import com.project.legendsofleague.domain.item.domain.Item;
+import com.project.legendsofleague.domain.item.repository.ItemRepository;
 import com.project.legendsofleague.domain.member.repository.MemberRepository;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
 import com.project.legendsofleague.domain.order.domain.Order;
+import com.project.legendsofleague.domain.order.repository.OrderRepository;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.domain.PurchaseType;
 import com.project.legendsofleague.domain.purchase.dto.ItemCouponAppliedDto;
@@ -14,7 +17,7 @@ import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class BeforePurchaseService {
 
     private final PurchaseRepository purchaseRepository;
+    private final ItemRepository itemRepository;
 
     private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
+    private final OrderRepository orderRepository;
 
     private final KakaoService kakaoService;
     private final TossService tossService;
@@ -44,29 +49,52 @@ public class BeforePurchaseService {
         PurchaseStartRequestDto purchaseStartRequestDto) {
         //임시 코드
         String nickname = "test nickname";
-        String orderCode = UUID.randomUUID().toString().substring(0, 16);
 
         //실제 코드
         Long orderId = purchaseStartRequestDto.getOrderId();
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("잘못된 입력입니다."));
+        String orderCode = order.getOrderCode();
+
         List<ItemCouponAppliedDto> itemList = purchaseStartRequestDto.getItemList();
         Integer purchaseTotalPrice = purchaseStartRequestDto.getPurchaseTotalPrice();
         PurchaseType purchaseType = PurchaseType.valueOf(purchaseStartRequestDto.getProvider());
 
-        //재고 체크
+        Map<Long, Item> itemMap = itemRepository.findAllById(
+                itemList.stream().map(ItemCouponAppliedDto::getItemId)
+                    .collect(Collectors.toList()))
+            .stream()
+            .collect(Collectors.toMap(Item::getId, item -> item));
 
         //쿠폰 사용 여부, 유효성 검증
         Map<Long, MemberCoupon> memberCouponMap = getMemberCouponMap(memberId, itemList);
 
         //쿠폰의 유효성, 적용 여부, 적용 가격 검증
-        if (!couponService.checkValidity(memberCouponMap, itemList)) {
+        if (!couponService.checkValidity(memberCouponMap, itemList, itemMap)) {
             throw new RuntimeException("쿠폰 적용에 실패했습니다.");
         }
 
         //총 가격 검증
-        int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice).sum();
+        int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice)
+            .sum();
         if (totalPrice != purchaseTotalPrice) {
             throw new RuntimeException("가격 계산이 틀렸습니다.");
         }
+
+        //재고 체크
+        for (ItemCouponAppliedDto dto : itemList) {
+            Integer quantity = dto.getQuantity();
+            Long itemId = dto.getItemId();
+            Item item = itemMap.get(itemId);
+            if (item == null) {
+                throw new RuntimeException("잘못된 입력입니다.");
+            }
+            Integer stock = item.getStock();
+            if (stock < quantity) {
+                throw new RuntimeException("재고가 부족합니다!");
+            }
+        }
+
 
         /*
         결제 진행
@@ -80,7 +108,7 @@ public class BeforePurchaseService {
         //결제 엔티티 생성
         Purchase createdPurchase
             = Purchase.toEntity(quantity, orderName, purchaseTotalPrice, purchaseType,
-            new Order(orderId));
+            order);
         purchaseRepository.save(createdPurchase);
 
         //쿠폰과 결제 연결하기
@@ -104,7 +132,7 @@ public class BeforePurchaseService {
     }
 
     public void cancelPurchase(Long memberId, Long purchaseId) throws JsonProcessingException {
-        //orderServiced에서 memberId, orderId를 넘기면 -> 검증 로직 진행
+        //orderService에서 memberId, orderId를 넘기면 -> 검증 로직 진행
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
             throw new RuntimeException("주문 정보를 찾을수 없습니다.");

@@ -30,7 +30,7 @@ public class TossService {
     private String tossSecretKey;
 
     @Transactional
-    public void tossPaySuccess(Long purchaseId, TossPayApproveRequestDto requestDto)
+    public Boolean tossPaySuccess(Long purchaseId, TossPayApproveRequestDto requestDto)
         throws UnsupportedEncodingException {
 
         String authorizations = getAuthorizations();
@@ -53,7 +53,7 @@ public class TossService {
             })
             .block();
 
-        afterPurchaseService.finishPurchase(purchaseId, map.get("paymentKey"));
+        return afterPurchaseService.finishPurchase(purchaseId, map.get("paymentKey"));
 
     }
 

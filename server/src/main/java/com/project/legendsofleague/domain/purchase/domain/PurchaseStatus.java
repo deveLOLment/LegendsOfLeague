@@ -7,9 +7,9 @@ public enum PurchaseStatus {
     PENDING("PENDING"),
     SUCCESS("SUCCESS"),
     CANCEL("CANCEL"),
-    FAIL("FAIL");
+    FAIL("FAIL"),
+    REFUND("REFUND");
 
-    //TODO : 결제중 취소와 결제후 환불을 다른 상태로 두기.
 
     private final String type;
 
