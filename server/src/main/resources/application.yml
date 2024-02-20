@@ -9,9 +9,9 @@ spring:
       ,excel.yml
 
   jpa:
-    generate-ddl: true
     hibernate:
       ddl-auto: update
+    generate-ddl: true
     properties:
       hibernate:
         show_sql: true

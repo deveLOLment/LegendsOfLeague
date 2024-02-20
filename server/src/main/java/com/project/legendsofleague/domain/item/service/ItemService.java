@@ -7,12 +7,13 @@ import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
 import com.project.legendsofleague.domain.item.dto.ItemSelectResponseDto;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
 import com.project.legendsofleague.util.S3Util;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,13 +37,13 @@ public class ItemService {
 
     public List<String> getCategories() {
         return Arrays.stream(ItemCategory.values()).map(ItemCategory::name)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public List<ItemSelectResponseDto> getItemSelectList() {
         return itemRepository.findAll()
-            .stream()
-            .map(ItemSelectResponseDto::new)
-            .collect(Collectors.toList());
+                .stream()
+                .map(ItemSelectResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

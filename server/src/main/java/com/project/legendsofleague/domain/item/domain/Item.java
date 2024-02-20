@@ -1,6 +1,7 @@
 package com.project.legendsofleague.domain.item.domain;
 
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Item {
+public class Item extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
