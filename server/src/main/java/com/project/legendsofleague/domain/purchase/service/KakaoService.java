@@ -2,11 +2,14 @@ package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
+import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoCancelRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoReadyRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoReadyResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoSuccessRequestDto;
+import com.project.legendsofleague.domain.purchase.exception.ExternalApiResponseException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.webjars.NotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +51,7 @@ public class KakaoService {
         final Integer tax_free_amount = 0;
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw new NotFoundException("주문 내역을 찾을수 없습니다.");
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
         KakaoReadyRequestDto kakaoReadyRequestDto
@@ -72,7 +74,7 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw new RuntimeException("kakaoPay error : " + e.getMessage());
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
@@ -84,10 +86,10 @@ public class KakaoService {
     }
 
     @Transactional
-    public void kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
+    public Boolean kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw new NotFoundException("주문 내역을 찾을수 없습니다.");
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
         KakaoSuccessRequestDto kakaoSuccessRequestDto = KakaoSuccessRequestDto.toDto(cid, tid,
@@ -106,11 +108,11 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw new RuntimeException("kakaoPay Success error : " + e.getMessage());
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
-        afterPurchaseService.finishPurchase(purchaseId, tid);
+        return afterPurchaseService.finishPurchase(purchaseId, tid);
     }
 
     @Transactional
@@ -134,7 +136,7 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(String.class)
             .onErrorResume(e -> {
-                throw new RuntimeException("kakaoPay Success error : " + e.getMessage());
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
