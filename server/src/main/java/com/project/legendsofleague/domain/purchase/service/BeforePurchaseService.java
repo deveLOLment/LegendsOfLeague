@@ -1,6 +1,9 @@
 package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.NotFoundInputValueException;
+import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.coupon.service.CouponService;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
@@ -14,6 +17,9 @@ import com.project.legendsofleague.domain.purchase.domain.PurchaseType;
 import com.project.legendsofleague.domain.purchase.dto.ItemCouponAppliedDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
+import com.project.legendsofleague.domain.purchase.exception.InvalidMemberCouponException;
+import com.project.legendsofleague.domain.purchase.exception.NotEnoughStockException;
+import com.project.legendsofleague.domain.purchase.exception.WrongPriceException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +60,9 @@ public class BeforePurchaseService {
 
         //실제 코드
         Long orderId = purchaseStartRequestDto.getOrderId();
-        Order order = orderRepository.findById(orderId)
-            .orElseThrow(() -> new RuntimeException("잘못된 입력입니다."));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> {
+            throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+        });
         String orderCode = order.getOrderCode();
 
         List<ItemCouponAppliedDto> itemList = purchaseStartRequestDto.getItemList();
@@ -74,7 +81,7 @@ public class BeforePurchaseService {
 
         //쿠폰의 유효성, 적용 여부, 적용 가격 검증
         if (!couponService.checkValidity(memberCouponMap, itemList, itemMap)) {
-            throw new RuntimeException("쿠폰 적용에 실패했습니다.");
+            throw GeneralExceptionFactory.getInstance(InvalidMemberCouponException.class);
         }
 
         //총 가격 검증
@@ -120,8 +127,8 @@ public class BeforePurchaseService {
         //orderService에서 memberId, orderId를 넘기면 -> 검증 로직 진행
 
         Purchase purchase = purchaseRepository.findById(purchaseId)
-            .orElseThrow(() -> new RuntimeException(
-                "주문 정보를 찾을수 없습니다."));
+            .orElseThrow(
+                () -> GeneralExceptionFactory.getInstance(NotFoundInputValueException.class));
 
         PurchaseType purchaseType = purchase.getPurchaseType();
         if (purchaseType == PurchaseType.KAKAO) {
@@ -154,7 +161,7 @@ public class BeforePurchaseService {
             memberCouponIdList);
 
         if (memberCouponMap.size() != memberCouponIdList.size()) {
-            throw new RuntimeException("잘못된 쿠폰이 적용되었습니다.");
+            throw GeneralExceptionFactory.getInstance(InvalidMemberCouponException.class);
         }
 
         return memberCouponMap;
@@ -170,7 +177,7 @@ public class BeforePurchaseService {
         int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice)
             .sum();
         if (totalPrice != purchaseTotalPrice) {
-            throw new RuntimeException("가격 계산이 틀렸습니다.");
+            throw GeneralExceptionFactory.getInstance(WrongPriceException.class);
         }
     }
 
@@ -187,11 +194,11 @@ public class BeforePurchaseService {
             Long itemId = dto.getItemId();
             Item item = itemMap.get(itemId);
             if (item == null) {
-                throw new RuntimeException("잘못된 입력입니다.");
+                throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
             }
             Integer stock = item.getStock();
             if (stock < quantity) {
-                throw new RuntimeException("재고가 부족합니다!");
+                throw GeneralExceptionFactory.getInstance(NotEnoughStockException.class);
             }
         }
     }
@@ -205,7 +212,7 @@ public class BeforePurchaseService {
      */
     private String makeOrderName(List<String> itemNameList, Integer quantity) {
         if (itemNameList.isEmpty()) {
-            return null;
+            throw GeneralExceptionFactory.getInstance(WrongInputException.class);
         } else {
             String exampleItemName = itemNameList.get(0);
 

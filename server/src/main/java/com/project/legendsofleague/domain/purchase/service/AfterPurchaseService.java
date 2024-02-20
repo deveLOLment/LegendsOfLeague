@@ -1,5 +1,7 @@
 package com.project.legendsofleague.domain.purchase.service;
 
+import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.order.service.OrderService;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
@@ -9,7 +11,6 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +28,9 @@ public class AfterPurchaseService {
      */
     @Transactional
     public Boolean finishPurchase(Long purchaseId, String code) {
-        Purchase purchase = purchaseRepository.findById(purchaseId)
-            .orElseThrow(() -> new NotFoundException(
-                "주문 정보를 찾을수 없습니다."));
+        Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
+            throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+        });
 
         purchase.updatePurchaseCode(code);
 

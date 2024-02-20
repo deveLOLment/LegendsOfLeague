@@ -1,5 +1,7 @@
 package com.project.legendsofleague.domain.membercoupon.service;
 
+import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.coupon.domain.CouponType;
 import com.project.legendsofleague.domain.coupon.repository.CouponRepository;
@@ -8,6 +10,8 @@ import com.project.legendsofleague.domain.item.domain.ItemCategory;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponCreateDto;
 import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponResponseDto;
+import com.project.legendsofleague.domain.membercoupon.exception.AlreadyRegisteredCouponException;
+import com.project.legendsofleague.domain.membercoupon.exception.NotEnoughCouponStockException;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +38,9 @@ public class MemberCouponService {
     @Transactional
     public void createMemberCoupon(Long memberId, MemberCouponCreateDto memberCouponCreateDto) {
         Coupon coupon = couponRepository.findById(memberCouponCreateDto.getCouponId())
-            .orElseThrow(() -> new RuntimeException("해당ID를 가진 쿠폰이 존재하지 않습니다."));
+            .orElseThrow(() -> {
+                throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+            });
 
         //등록 가능한 쿠폰인지 검증하는 로직
         validateRegisterCoupon(coupon);
@@ -54,12 +60,12 @@ public class MemberCouponService {
     private void validateRegisterCoupon(Coupon coupon) {
         //쿠폰 재고 체크
         if (coupon.getStock() <= 0) {
-            throw new RuntimeException("쿠폰이 모두 소진되었습니다.");
+            throw GeneralExceptionFactory.getInstance(NotEnoughCouponStockException.class);
         }
 
         //이미 등록된 쿠폰인지 체크하는 로직
         memberCouponRepository.findByCouponId(coupon.getId()).ifPresent(memberCoupon -> {
-            throw new RuntimeException("이미 등록된 쿠폰입니다.");
+            throw GeneralExceptionFactory.getInstance(AlreadyRegisteredCouponException.class);
         });
     }
 
@@ -107,24 +113,15 @@ public class MemberCouponService {
                 //아이템에 적용하는 쿠폰의 경우 아이템과 적용 아이템 같은지 체크
                 if (coupon.getCouponType() == CouponType.ITEM_PERCENT_DISCOUNT
                     || coupon.getCouponType() == CouponType.ITEM_AMOUNT_DISCOUNT) {
-                    Long itemId = coupon.getItem().getId();
-                    if (itemCouponMap.containsKey(itemId)) {
-                        itemCouponMap.get(itemId).add(memberCoupon);
-                    } else {
-                        itemCouponMap.put(itemId, new ArrayList<>(List.of(memberCoupon)));
-                    }
+                    itemCouponMap.computeIfAbsent(coupon.getItem().getId(), k -> new ArrayList<>())
+                        .add(memberCoupon);
                 }
 
                 //카테고리의 적용하는 쿠폰의 경우, 아이템의 카테고리와 쿠폰의 카테고리가 일치하는지 체크
                 if (coupon.getCouponType() == CouponType.CATEGORY_PERCENT_DISCOUNT
                     || coupon.getCouponType() == CouponType.CATEGORY_AMOUNT_DISCOUNT) {
-                    ItemCategory appliedCategory = coupon.getAppliedCategory();
-                    if (categoryCouponMap.containsKey(appliedCategory)) {
-                        categoryCouponMap.get(appliedCategory).add(memberCoupon);
-                    } else {
-                        categoryCouponMap.put(appliedCategory,
-                            new ArrayList<>(List.of(memberCoupon)));
-                    }
+                    categoryCouponMap.computeIfAbsent(coupon.getAppliedCategory(),
+                        k -> new ArrayList<>()).add(memberCoupon);
                 }
             });
 
@@ -134,20 +131,15 @@ public class MemberCouponService {
             ItemCategory category = item.getCategory();
 
             if (itemCouponMap.containsKey(itemId)) {
-                if (itemMemberCouponMap.containsKey(itemId)) {
-                    itemMemberCouponMap.get(itemId).addAll(itemCouponMap.get(itemId));
-                } else {
-                    itemMemberCouponMap.put(itemId, new ArrayList<>(itemCouponMap.get(itemId)));
-                }
+                itemMemberCouponMap.computeIfAbsent(itemId,
+                        k -> new ArrayList<>(itemCouponMap.get(itemId)))
+                    .addAll(itemCouponMap.get(itemId));
             }
 
             if (categoryCouponMap.containsKey(category)) {
-                if (itemMemberCouponMap.containsKey(itemId)) {
-                    itemMemberCouponMap.get(itemId).addAll(categoryCouponMap.get(category));
-                } else {
-                    itemMemberCouponMap.put(itemId,
-                        new ArrayList<>(categoryCouponMap.get(category)));
-                }
+                itemMemberCouponMap.computeIfAbsent(itemId,
+                        k -> new ArrayList<>(categoryCouponMap.get(category)))
+                    .addAll(categoryCouponMap.get(category));
             }
         });
 

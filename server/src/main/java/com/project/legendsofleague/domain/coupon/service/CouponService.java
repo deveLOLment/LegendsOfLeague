@@ -1,5 +1,7 @@
 package com.project.legendsofleague.domain.coupon.service;
 
+import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.coupon.domain.CouponType;
 import com.project.legendsofleague.domain.coupon.dto.CouponCreateDto;
@@ -115,7 +117,7 @@ public class CouponService {
                 percentDiscountedPriceCondition);
             case ITEM_AMOUNT_DISCOUNT -> new ItemAmountCouponValidator(itemCouponCondition,
                 amountDiscountedPriceCondition);
-            default -> throw new RuntimeException("잘못된 쿠폰 타입 이름입니다.");
+            default -> throw GeneralExceptionFactory.getInstance(WrongInputException.class);
         };
     }
 

@@ -1,9 +1,11 @@
 package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossCancelRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossPayApproveRequestDto;
+import com.project.legendsofleague.domain.purchase.exception.ExternalApiResponseException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +51,7 @@ public class TossService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw new RuntimeException("TossPay Success error : " + e.getMessage());
+                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
@@ -76,7 +78,7 @@ public class TossService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw new RuntimeException("TossPay Cancel error : " + e.getMessage());
+                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
