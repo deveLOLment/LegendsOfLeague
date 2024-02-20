@@ -4,6 +4,7 @@ import com.project.legendsofleague.domain.coupon.dto.CouponCreateDto;
 import com.project.legendsofleague.domain.coupon.dto.CouponResponseDto;
 import com.project.legendsofleague.domain.coupon.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class CouponController {
 
     @Operation(summary = "쿠폰 생성 API")
     @PostMapping()
-    public ResponseEntity<Void> createCoupon(@RequestBody CouponCreateDto couponCreateDto) {
+    public ResponseEntity<Void> createCoupon(@Valid @RequestBody CouponCreateDto couponCreateDto) {
         couponService.createCoupon(couponCreateDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

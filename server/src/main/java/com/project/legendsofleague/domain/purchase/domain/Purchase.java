@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.purchase.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.order.domain.Order;
 import jakarta.persistence.Column;
@@ -22,37 +23,29 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Purchase {
+public class Purchase extends BaseEntity {
 
+    @OneToMany(mappedBy = "purchase")
+    private final List<MemberCoupon> memberCouponList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "purchase_id")
     private Long id;
-
     private String name;
-
     private Integer quantity;
-
     /*
      KAKAO : tid
      TOSS : paymentKey
      */
     private String code;
-
     private Integer totalPrice;
-
     @Enumerated(value = EnumType.STRING)
     private PurchaseStatus purchaseStatus;
-
     @Enumerated(value = EnumType.STRING)
     private PurchaseType purchaseType;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @OneToMany(mappedBy = "purchase")
-    private final List<MemberCoupon> memberCouponList = new ArrayList<>();
 
     public Purchase(Long id) {
         this.id = id;
@@ -71,9 +64,6 @@ public class Purchase {
         return purchase;
     }
 
-    public void updatePurchaseStatus(PurchaseStatus purchaseStatus) {
-        this.purchaseStatus = purchaseStatus;
-    }
 
     public void updatePurchaseCode(String code) {
         this.code = code;
