@@ -1,6 +1,7 @@
 package com.project.legendsofleague.domain.membercoupon.domain;
 
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.member.domain.Member;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
@@ -31,7 +32,7 @@ import lombok.NoArgsConstructor;
         )
     }
 )
-public class MemberCoupon {
+public class MemberCoupon extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

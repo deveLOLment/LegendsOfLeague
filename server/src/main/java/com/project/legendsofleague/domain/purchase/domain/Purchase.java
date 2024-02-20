@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.purchase.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.order.domain.Order;
 import jakarta.persistence.Column;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Purchase {
+public class Purchase extends BaseEntity {
 
     @OneToMany(mappedBy = "purchase")
     private final List<MemberCoupon> memberCouponList = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.coupon.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.coupon.dto.CouponCreateDto;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.domain.ItemCategory;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Coupon {
+public class Coupon extends BaseEntity {
 
     @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
     private final List<MemberCoupon> memberCouponList = new ArrayList<>();
