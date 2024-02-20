@@ -41,4 +41,5 @@ env.yml
 s3.yml
 kakaoPay.yml
 tossPay.yml
+jwt.yml
 excel.yml

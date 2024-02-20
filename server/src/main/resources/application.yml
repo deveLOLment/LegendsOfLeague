@@ -5,6 +5,7 @@ spring:
       ,s3.yml
       ,kakaoPay.yml
       ,tossPay.yml
+      ,jwt.yml
       ,excel.yml
 
   jpa:
@@ -15,18 +16,3 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-
-  jwt:
-    secret: adfadsfadsfasdfdasfdsafdsfdsfdsfdsfwewedsfwefwedfdf
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-name: google
-            client-id: 228184786235-rvht76qso2q917pspl0fvtips3oq4q45.apps.googleusercontent.com
-            client-secret: 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
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-            authorization-grant-type: authorization_code
-            scope: profile,email
