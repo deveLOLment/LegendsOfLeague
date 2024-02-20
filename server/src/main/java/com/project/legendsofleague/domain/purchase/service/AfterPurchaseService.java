@@ -1,6 +1,6 @@
 package com.project.legendsofleague.domain.purchase.service;
 
-import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.order.service.OrderService;
@@ -29,7 +29,7 @@ public class AfterPurchaseService {
     @Transactional
     public Boolean finishPurchase(Long purchaseId, String code) {
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
         purchase.updatePurchaseCode(code);

@@ -1,6 +1,6 @@
 package com.project.legendsofleague.domain.coupon.service;
 
-import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.coupon.domain.CouponType;
@@ -117,7 +117,7 @@ public class CouponService {
                 percentDiscountedPriceCondition);
             case ITEM_AMOUNT_DISCOUNT -> new ItemAmountCouponValidator(itemCouponCondition,
                 amountDiscountedPriceCondition);
-            default -> throw GeneralExceptionFactory.getInstance(WrongInputException.class);
+            default -> throw GlobalExceptionFactory.getInstance(WrongInputException.class);
         };
     }
 

@@ -1,6 +1,6 @@
 package com.project.legendsofleague.domain.membercoupon.service;
 
-import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.coupon.domain.Coupon;
 import com.project.legendsofleague.domain.coupon.domain.CouponType;
@@ -39,7 +39,7 @@ public class MemberCouponService {
     public void createMemberCoupon(Long memberId, MemberCouponCreateDto memberCouponCreateDto) {
         Coupon coupon = couponRepository.findById(memberCouponCreateDto.getCouponId())
             .orElseThrow(() -> {
-                throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+                throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
             });
 
         //등록 가능한 쿠폰인지 검증하는 로직
@@ -60,12 +60,12 @@ public class MemberCouponService {
     private void validateRegisterCoupon(Coupon coupon) {
         //쿠폰 재고 체크
         if (coupon.getStock() <= 0) {
-            throw GeneralExceptionFactory.getInstance(NotEnoughCouponStockException.class);
+            throw GlobalExceptionFactory.getInstance(NotEnoughCouponStockException.class);
         }
 
         //이미 등록된 쿠폰인지 체크하는 로직
         memberCouponRepository.findByCouponId(coupon.getId()).ifPresent(memberCoupon -> {
-            throw GeneralExceptionFactory.getInstance(AlreadyRegisteredCouponException.class);
+            throw GlobalExceptionFactory.getInstance(AlreadyRegisteredCouponException.class);
         });
     }
 

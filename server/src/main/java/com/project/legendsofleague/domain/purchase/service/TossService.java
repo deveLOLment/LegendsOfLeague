@@ -1,7 +1,7 @@
 package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossCancelRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossPayApproveRequestDto;
@@ -51,7 +51,7 @@ public class TossService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
@@ -78,7 +78,7 @@ public class TossService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 

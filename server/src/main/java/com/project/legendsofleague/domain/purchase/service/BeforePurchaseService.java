@@ -1,7 +1,7 @@
 package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.coupon.service.CouponService;
@@ -61,7 +61,7 @@ public class BeforePurchaseService {
         //실제 코드
         Long orderId = purchaseStartRequestDto.getOrderId();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> {
-            throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
         String orderCode = order.getOrderCode();
 
@@ -81,7 +81,7 @@ public class BeforePurchaseService {
 
         //쿠폰의 유효성, 적용 여부, 적용 가격 검증
         if (!couponService.checkValidity(memberCouponMap, itemList, itemMap)) {
-            throw GeneralExceptionFactory.getInstance(InvalidMemberCouponException.class);
+            throw GlobalExceptionFactory.getInstance(InvalidMemberCouponException.class);
         }
 
         //총 가격 검증
@@ -128,7 +128,7 @@ public class BeforePurchaseService {
 
         Purchase purchase = purchaseRepository.findById(purchaseId)
             .orElseThrow(
-                () -> GeneralExceptionFactory.getInstance(NotFoundInputValueException.class));
+                () -> GlobalExceptionFactory.getInstance(NotFoundInputValueException.class));
 
         PurchaseType purchaseType = purchase.getPurchaseType();
         if (purchaseType == PurchaseType.KAKAO) {
@@ -161,7 +161,7 @@ public class BeforePurchaseService {
             memberCouponIdList);
 
         if (memberCouponMap.size() != memberCouponIdList.size()) {
-            throw GeneralExceptionFactory.getInstance(InvalidMemberCouponException.class);
+            throw GlobalExceptionFactory.getInstance(InvalidMemberCouponException.class);
         }
 
         return memberCouponMap;
@@ -177,7 +177,7 @@ public class BeforePurchaseService {
         int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice)
             .sum();
         if (totalPrice != purchaseTotalPrice) {
-            throw GeneralExceptionFactory.getInstance(WrongPriceException.class);
+            throw GlobalExceptionFactory.getInstance(WrongPriceException.class);
         }
     }
 
@@ -194,11 +194,11 @@ public class BeforePurchaseService {
             Long itemId = dto.getItemId();
             Item item = itemMap.get(itemId);
             if (item == null) {
-                throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+                throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
             }
             Integer stock = item.getStock();
             if (stock < quantity) {
-                throw GeneralExceptionFactory.getInstance(NotEnoughStockException.class);
+                throw GlobalExceptionFactory.getInstance(NotEnoughStockException.class);
             }
         }
     }
@@ -212,7 +212,7 @@ public class BeforePurchaseService {
      */
     private String makeOrderName(List<String> itemNameList, Integer quantity) {
         if (itemNameList.isEmpty()) {
-            throw GeneralExceptionFactory.getInstance(WrongInputException.class);
+            throw GlobalExceptionFactory.getInstance(WrongInputException.class);
         } else {
             String exampleItemName = itemNameList.get(0);
 

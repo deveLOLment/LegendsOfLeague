@@ -2,7 +2,7 @@ package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.legendsofleague.common.exception.GeneralExceptionFactory;
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoCancelRequestDto;
@@ -51,7 +51,7 @@ public class KakaoService {
         final Integer tax_free_amount = 0;
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
         KakaoReadyRequestDto kakaoReadyRequestDto
@@ -74,7 +74,7 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
@@ -89,7 +89,7 @@ public class KakaoService {
     public Boolean kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
 
         Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw GeneralExceptionFactory.getInstance(NotFoundInputValueException.class);
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
         KakaoSuccessRequestDto kakaoSuccessRequestDto = KakaoSuccessRequestDto.toDto(cid, tid,
@@ -108,7 +108,7 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
-                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 
@@ -136,7 +136,7 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(String.class)
             .onErrorResume(e -> {
-                throw GeneralExceptionFactory.getInstance(ExternalApiResponseException.class);
+                throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
 

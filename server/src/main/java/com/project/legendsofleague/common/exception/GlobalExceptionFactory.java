@@ -4,11 +4,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class GeneralExceptionFactory {
+public class GlobalExceptionFactory {
 
     private static final Map<Class<? extends CustomException>, CustomException> exceptionMap = new ConcurrentHashMap<>();
 
-    private GeneralExceptionFactory() {
+    private GlobalExceptionFactory() {
     }
 
     public static <T extends CustomException> T getInstance(Class<T> clazz) {
