@@ -5,10 +5,13 @@ spring:
       ,s3.yml
       ,kakaoPay.yml
       ,tossPay.yml
+      ,jwt.yml
+      ,excel.yml
+
   jpa:
+    generate-ddl: true
     hibernate:
       ddl-auto: update
-    generate-ddl: true
     properties:
       hibernate:
         show_sql: true
