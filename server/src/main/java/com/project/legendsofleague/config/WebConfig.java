@@ -1,4 +1,4 @@
-package com.project.legendsofleague.common;
+package com.project.legendsofleague.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +17,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedHeaders("*")
-                .allowedMethods("*");
+            .allowedOrigins("*")
+            .allowedHeaders("*")
+            .allowedMethods("*");
     }
 }
