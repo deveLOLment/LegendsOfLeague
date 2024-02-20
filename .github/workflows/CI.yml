@@ -48,11 +48,9 @@ jobs:
       - name: Check Node v            # Node v 확인
         run: node -v
 
-      - name: Install Dependencies    # 의존 파일 설치
-        run: npm install
-
-      - name: Build                   # React Build
-        run: npm run build
+      - name: Install Dependencies & build    # 의존 파일 설치
+        run: npm install && npm run build
+        working-directory: ./client
     
   
 
