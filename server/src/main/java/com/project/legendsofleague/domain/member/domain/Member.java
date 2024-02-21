@@ -46,9 +46,9 @@ public class Member {
 //    String role;
 
     /*
-    *연관관계 매핑할 것들, ORDER, CART
-    *
-    **/
+     *연관관계 매핑할 것들, ORDER, CART
+     *
+     **/
 
 
     public Member(Long id) {
@@ -60,11 +60,11 @@ public class Member {
         Member member = new Member();
         member.username = dto.getUsername();
         member.password = bCryptPasswordEncoder.encode(dto.getPassword());
-        member.role = dto.getRole();
+        member.role = ROLE.ROLE_USER;
         return member;
     }
 
-    public static Member create(String username, String email, String nickname){
+    public static Member create(String username, String email, String nickname) {
         Member member = new Member();
         member.username = username;
         member.email = email;

@@ -1,13 +1,16 @@
 package com.project.legendsofleague.domain.member.dto;
 
 import com.project.legendsofleague.domain.member.domain.Member;
-import java.util.ArrayList;
-import java.util.Collection;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 @RequiredArgsConstructor
+@Getter
 public class CustomMemberDetails implements UserDetails {
 
     private final Member member;
