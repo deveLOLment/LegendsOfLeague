@@ -1,7 +1,6 @@
 package com.project.legendsofleague.domain.member.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.legendsofleague.domain.member.domain.ROLE;
 import com.project.legendsofleague.domain.member.dto.CustomMemberDetails;
 import com.project.legendsofleague.domain.member.dto.LoginDto;
 import jakarta.servlet.FilterChain;
@@ -16,17 +15,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -34,6 +29,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
     private final JWTUtil jwtUtil;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -77,19 +73,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, 60*60*1000L);
+        String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000L);
 
         System.out.println("토큰 출력:" + token);
 
+        response.addHeader("Authorization", "Bearer " + token);
+
 //        response.addCookie(( createCookie("Authorization",  URLEncoder.encode("Bearer " + token), "UTF-8")));
-          response.addCookie(createCookie("Authorization", URLEncoder.encode("Bearer " + token, StandardCharsets.UTF_8)));
+//          response.addCookie(createCookie("Authorization", URLEncoder.encode("Bearer " + token, StandardCharsets.UTF_8)));
+        // 로그인 완료시 프론트서버의 홈으로 리다이렉트
+//          response.sendRedirect("http://localhost:3000");
     }
 
     // 쿠키 생성
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*1000);
+        cookie.setMaxAge(60 * 60 * 1000);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 

@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-//    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
 
@@ -62,7 +62,7 @@ public class SecurityConfig {
                 );
 
         httpSecurity
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil, memberRepository), LoginFilter.class);
 
         // 로그인 필터 설정
         httpSecurity
@@ -73,9 +73,10 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/login",
-                                "/registerProc", "/swagger-ui/**","/v3/api-docs/**").permitAll()
+                                "/register", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/").hasAnyRole("ADMIN", "USER")
                         .anyRequest().permitAll()
                 );
 
@@ -91,7 +92,6 @@ public class SecurityConfig {
 //    public CustomOAuth2MemberService customOAuth2UserService(){
 //        return new CustomOAuth2MemberService();
 //    }
-
 
 
 //    @Bean
@@ -132,7 +132,7 @@ public class SecurityConfig {
 //    }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
