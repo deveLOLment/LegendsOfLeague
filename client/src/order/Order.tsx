@@ -1,121 +1,124 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-export interface ItemCouponAppliedDto {
-  itemId: number;
-  itemName: String;
-  quantity: number;
-  memberCouponId: number | null;
-  price: number;
-}
-
-export interface PurchaseStartRequestDto {
-  orderId: number;
-  itemList: ItemCouponAppliedDto[];
-  purchaseTotalPrice: number;
-  provider: string;
-}
-
-export interface PurchaseStartResponseDto {
-  id: number;
-  amount: number;
-  providerName: string;
-  orderName: string;
-  orderCode: string;
-  memberNickname: string;
-}
+import ItemList from "./OrderTableComponent";
+import {
+  ItemCouponAppliedModel,
+  OrderItemModel,
+  OrderResponseDto,
+  PurchaseStartResponseModel,
+} from "./OrderModels";
+import { CouponResponseModel } from "../Coupon/CouponModel";
 
 const Order = () => {
   const navigate = useNavigate();
-  const orderId = 1;
-  const purchaseTotalPrice = 120000;
-  const provider: String = "KAKAO";
+  const exampleOrderId = 1;
 
-  const [purchaseId, setPurchaseId] = useState<Number>(-1);
+  const [selectedCoupons, setSelectedCoupons] = useState<
+    Record<number, CouponResponseModel>
+  >({});
+  const [finalPriceMap, setFinalPriceMap] = useState<Record<number, number>>(
+    {}
+  );
 
-  // ItemList 컴포넌트 정의
-  const ItemList: React.FC<{ itemList: ItemCouponAppliedDto[] }> = ({
-    itemList,
-  }) => {
-    return (
-      <div>
-        <h2>Item List</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Item ID</th>
-              <th>Item Name</th>
-              <th>Quantity</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* 사용자 정의 컴포넌트를 이용하여 itemList를 매핑 */}
-            {itemList.map((item) => (
-              <ItemTableRow key={item.itemId} item={item} />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
+  const [orderId, setOrderId] = useState<Number>(-1);
+  const [orderItemList, setOrderItemList] = useState<OrderItemModel[]>([]);
+  const [provider, setProvider] = useState<String>("");
+
+  const handleCouponChange = (itemId: number, coupon: CouponResponseModel) => {
+    setSelectedCoupons((prev) => ({ ...prev, [itemId]: coupon }));
   };
 
-  // ItemTableRow 컴포넌트 정의
-  const ItemTableRow: React.FC<{ item: ItemCouponAppliedDto }> = ({ item }) => {
-    return (
-      <tr>
-        <td>{item.itemId}</td>
-        <td>{item.itemName}</td>
-        <td>{item.quantity}</td>
-        <td>{item.price}</td>
-      </tr>
-    );
+  const initFinalTotalPrice = (orderItemList: OrderItemModel[]) => {
+    let sum = 0;
+    console.log(orderItemList);
+    orderItemList.forEach((item) => {
+      sum += item.price;
+    });
+    return sum;
   };
 
-  const examplItemList: ItemCouponAppliedDto[] = [
-    {
-      itemId: 1,
-      itemName: "item1",
-      quantity: 2,
-      memberCouponId: null,
-      price: 20000,
-    },
-    {
-      itemId: 2,
-      itemName: "item2",
-      quantity: 2,
-      memberCouponId: null,
-      price: 40000,
-    },
-    {
-      itemId: 3,
-      itemName: "item3",
-      quantity: 2,
-      memberCouponId: null,
-      price: 60000,
-    },
-  ];
+  const [finalTotalPrice, setFinalTotalPrice] = useState<number>(0);
+
+  const fetchOrderItemList = async () => {
+    const url = "http://localhost:8080/order/" + exampleOrderId;
+    try {
+      const response = await axios.get(url);
+      console.log(response);
+
+      const responseData: OrderResponseDto = response.data;
+      setOrderId(responseData.id);
+      setOrderItemList(responseData.orderItemList);
+      return responseData.orderItemList;
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    const fetchData = async (): Promise<void> => {
+      const orderItemList: OrderItemModel[] | undefined =
+        await fetchOrderItemList();
+
+      if (orderItemList) {
+        setFinalTotalPrice(initFinalTotalPrice(orderItemList));
+        orderItemList.forEach((item) => {
+          handleFinalPriceChange(item.id, item.price);
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleFinalPriceChange = (itemId: number, finalPrice: number) => {
+    setFinalPriceMap((prev) => ({ ...prev, [itemId]: finalPrice }));
+  };
+
+  useEffect(() => {
+    // Object.values를 사용하여 finalPriceMap의 값들을 배열로 얻음
+    const values = Object.values(finalPriceMap);
+
+    // reduce 함수를 사용하여 배열의 합을 계산
+    const total = values.reduce((acc, currentValue) => acc + currentValue, 0);
+
+    // total을 출력하거나 다른 작업 수행
+    setFinalTotalPrice(total);
+    console.log(finalPriceMap);
+  }, [finalPriceMap]);
+
+  const convertItemCouponAppliedModelList = (): ItemCouponAppliedModel[] => {
+    return orderItemList.map((orderItem) => ({
+      itemId: orderItem.id,
+      itemName: orderItem.name,
+      quantity: orderItem.count,
+      memberCouponId: selectedCoupons[orderItem.id]?.id,
+      price: finalPriceMap[orderItem.id],
+    }));
+  };
 
   const purchaseStart = async () => {
     const url = "http://localhost:8080/purchase/ready";
+
+    const itemList = convertItemCouponAppliedModelList();
+    let totalPrice = 0;
+    itemList.forEach((item) => {
+      totalPrice += item.price;
+    });
+    console.log();
     try {
       const response = await axios.post(url, {
-        orderId: orderId,
-        itemList: examplItemList,
-        purchaseTotalPrice: purchaseTotalPrice,
+        orderId: exampleOrderId,
+        itemList: itemList,
+        purchaseTotalPrice: totalPrice,
         provider: provider,
       });
-      setPurchaseId(response.data.id);
-      console.log(response.data.id);
 
-      const responseData: PurchaseStartResponseDto = response.data;
+      const responseData: PurchaseStartResponseModel = response.data;
 
-      if (provider == "KAKAO") {
+      if (provider === "KAKAO") {
         navigate("/purchase/kakaoPay/ready", {
           state: { id: response.data.id },
         });
-      } else if (provider == "TOSS") {
+      } else if (provider === "TOSS") {
         navigate("/purchase/tossPay", {
           state: { id: response.data.id, data: responseData },
         });
@@ -125,8 +128,32 @@ const Order = () => {
 
   return (
     <div>
-      <ItemList itemList={examplItemList} />
-      <button onClick={purchaseStart}>결제하기</button>
+      {!orderItemList || orderItemList.length === 0 ? (
+        <div>waiting</div>
+      ) : (
+        <>
+          <div>
+            <ItemList
+              itemList={orderItemList}
+              onCouponChange={handleCouponChange}
+              onFinalPriceChange={handleFinalPriceChange}
+              selectedCoupons={selectedCoupons}
+            />
+            <div>{}</div>
+            <div>
+              {" "}
+              결제수단<br></br>
+              <button onClick={() => setProvider("KAKAO")}>카카오 결제</button>
+              <button onClick={() => setProvider("TOSS")}>토스 결제</button>
+            </div>
+            최종 가격 : {finalTotalPrice}
+            <div>
+              <span>selected Provider = {provider}</span>
+            </div>
+            <button onClick={purchaseStart}>결제하기</button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 import { nanoid } from "nanoid";
 import { useLocation } from "react-router-dom";
-import { PurchaseStartResponseDto } from "../order/Order";
+import { PurchaseStartResponseModel } from "../order/OrderModels";
 
 const clientKey: string = process.env.REACT_APP_TOSS_CLIENT_KEY as string;
 
 export function TossPayReady() {
   const location = useLocation();
-  const purchaseInfo: PurchaseStartResponseDto = location.state.data;
+  const purchaseInfo: PurchaseStartResponseModel = location.state.data;
+
+  console.log(purchaseInfo);
 
   localStorage.setItem("purchaseId", purchaseInfo.id.toString());
   console.log(purchaseInfo);

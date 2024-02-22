@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.coupon.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.coupon.dto.CouponCreateDto;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.domain.ItemCategory;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Coupon {
+public class Coupon extends BaseEntity {
 
     @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
     private final List<MemberCoupon> memberCouponList = new ArrayList<>();
@@ -63,12 +64,22 @@ public class Coupon {
         coupon.stock = dto.getStock();
         coupon.validityStartDate = dto.getValidityStartDate();
         coupon.validityEndDate = dto.getValidityEndDate();
+        CouponType inputCouponType = CouponType.valueOf(dto.getCouponTypeName());
+        coupon.couponType = inputCouponType;
+        if (inputCouponType == CouponType.CATEGORY_PERCENT_DISCOUNT
+            || inputCouponType == CouponType.CATEGORY_AMOUNT_DISCOUNT) {
+            coupon.appliedCategory = ItemCategory.valueOf(dto.getAppliedCategoryName());
+        } else {
+            coupon.item = new Item(dto.getItemId());
+        }
         coupon.discountPrice = dto.getDiscountPrice();
         coupon.minPrice = dto.getMinPrice();
-        coupon.appliedCategory = ItemCategory.valueOf(dto.getAppliedCategoryName());
-        coupon.couponType = CouponType.valueOf(dto.getCouponTypeName());
-        coupon.item = new Item(dto.getItemId());
+        coupon.maxPrice = dto.getMaxPrice();
         coupon.code = UUID.randomUUID().toString().substring(0, 16);
         return coupon;
+    }
+
+    public void decreaseCouponStock() {
+        this.stock--;
     }
 }

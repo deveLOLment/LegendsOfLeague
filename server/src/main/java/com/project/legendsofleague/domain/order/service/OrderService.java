@@ -12,15 +12,14 @@ import com.project.legendsofleague.domain.order.domain.OrderItem;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
 import com.project.legendsofleague.domain.order.repository.OrderRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,7 +45,7 @@ public class OrderService {
     public Long createOrder(OrderRequestDto orderRequestDto, Long memberId) { //멤버는 id 생성자 사용
 
         Item item = itemRepository.findById(orderRequestDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
+            .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
 
         OrderItem orderItem = OrderItem.createOrderItem(item, orderRequestDto.getCount());
         Order order = Order.toEntity(new Member(memberId), orderItem);
@@ -66,7 +65,7 @@ public class OrderService {
 
         for (CartItemRequestDto cartItemRequestDto : cartItemRequestList) {
             Item item = itemRepository.findById(cartItemRequestDto.getItemId())
-                    .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
+                .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
             OrderItem orderItem = OrderItem.createOrderItem(item, cartItemRequestDto.getCount());
             orderItems.add(orderItem);
         }
@@ -92,18 +91,19 @@ public class OrderService {
             throw new NotFoundException("유효하지 않은 주문입니다.");
         }
 
-        //Order의 주인
-        Member member = orderItems.get(0).getOrder().getMember();
-
-        //Order의 주인과 현재 로그인한 유저가 같지 않을 때
-        if (!member.getId().equals(memberId)) {
-            throw new RuntimeException("허용되지 않은 접근입니다.");
-        }
+//        //Order의 주인
+//        Member member = orderItems.get(0).getOrder().getMember();
+//
+//        //Order의 주인과 현재 로그인한 유저가 같지 않을 때
+//        if (!member.getId().equals(memberId)) {
+//            throw new RuntimeException("허용되지 않은 접근입니다.");
+//        }
 
         List<Item> items = orderItems.stream()
-                .map((oi) -> oi.getItem()).toList();
+            .map((oi) -> oi.getItem()).toList();
 
-        return OrderResponseDto.toDto(orderItems, memberCouponService.getMemberCouponsByOrder(member.getId(), orderId, items));
+        return OrderResponseDto.toDto(orderItems,
+            memberCouponService.getMemberCouponsByOrder(memberId, orderId, items));
     }
 
 

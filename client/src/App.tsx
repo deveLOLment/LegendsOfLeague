@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Ex from "./Example/Ex";
 import KakaoPayReady from "./kakaopay/KakaoPayReady";
 import KakaoPayApprove from "./kakaopay/KakaoPayApprove";
 import KakaoPayStart from "./kakaopay/KakaoPayStart";
@@ -10,34 +9,28 @@ import TossPayReady from "./tosspay/TossPayReady";
 import TossPayApprove from "./tosspay/TossPayApprove";
 import Order from "./order/Order";
 import GoogleLoginReady from "./login/GoogleLoginReady";
+import LogOut from './login/LogOut';
+import Login from "./login/LogIn";
+import AdminPage from './admin/AdminPage';
+import LoginRoute from "./login/LoginRoute";
 
 
+import TossPayRoutes from "./tosspay/TossPayRoutes";
+import OrderRoutes from "./order/OrderRoutes";
+import CouponRoutes from "./Coupon/CouponRoutes";
 function App() {
-  return (
-    <Routes>
-      <Route path="/ex" element={<Ex />}></Route>
+    return (
+        <>
+            <TossPayRoutes />
+            <KakaoPayRoutes />
+            <OrderRoutes />
+            <CouponRoutes />
+            <LoginRoute/>
+        </>
 
-      <Route path="/order" element={<Order />}></Route>
-
-      <Route path="/purchase/kakaoPay" element={<KakaoPayStart />}></Route>
-      <Route
-        path="/purchase/kakaoPay/ready"
-        element={<KakaoPayReady />}
-      ></Route>
-      <Route
-        path="/purchase/kakaoPay/success"
-        element={<KakaoPayApprove />}
-      ></Route>
-      <Route path="purchase/success" element={<KakaoPaySuccess />}></Route>
-      <Route path="purchase/tossPay" element={<TossPayReady />}></Route>
-      <Route
-        path="purchase/tossPay/success"
-        element={<TossPayApprove />}
-      ></Route>
-
-      <Route path="login/google" element={<GoogleLoginReady/>}></Route>
-    </Routes>
-  );
+);
 }
+
+import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
 
 export default App;

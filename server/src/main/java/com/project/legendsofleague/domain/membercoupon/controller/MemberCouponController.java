@@ -1,7 +1,7 @@
 package com.project.legendsofleague.domain.membercoupon.controller;
 
-import com.project.legendsofleague.domain.coupon.dto.CouponResponseDto;
 import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponCreateDto;
+import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponResponseDto;
 import com.project.legendsofleague.domain.membercoupon.service.MemberCouponService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
@@ -33,13 +33,14 @@ public class MemberCouponController {
 
     @Operation(summary = "회원의 쿠폰 리스트 조회")
     @GetMapping("/")
-    public ResponseEntity<List<CouponResponseDto>> getMemberCoupons() {
+    public ResponseEntity<List<MemberCouponResponseDto>> getMemberCoupons() {
         //임시 코드
         Long memberId = 1L;
-        List<CouponResponseDto> couponResponseDtoList = memberCouponService.getMemberCoupons(
+        List<MemberCouponResponseDto> couponResponseDtoList = memberCouponService.getMemberCoupons(
             memberId);
-        return new ResponseEntity<List<CouponResponseDto>>(couponResponseDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<MemberCouponResponseDto>>(couponResponseDtoList,
+            HttpStatus.OK);
     }
 
-    
+
 }
