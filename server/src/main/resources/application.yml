@@ -18,9 +18,6 @@ spring:
         format_sql: true
 
 
-    generate-ddl: true
-
-
 #        provider:
 #          google:
 #            authorization-uri: https://accounts.google.com/o/oauth2/auth
