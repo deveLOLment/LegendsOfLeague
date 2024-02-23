@@ -1,16 +1,21 @@
 package com.project.legendsofleague.domain.reviewComment.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.db.game.domain.Game;
 import com.project.legendsofleague.domain.member.domain.Member;
+import com.project.legendsofleague.domain.reviewComment.dto.ReviewCommentRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
-public class ReviewComment {
+@NoArgsConstructor(access = PROTECTED)
+public class ReviewComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -18,6 +23,7 @@ public class ReviewComment {
     private Long id;
 
     private String comment;
+    private boolean isDelete;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -26,4 +32,16 @@ public class ReviewComment {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "game_id")
     private Game game;
+
+    public static ReviewComment toEntity(ReviewCommentRequest reviewCommentRequest) {
+        ReviewComment reviewComment = new ReviewComment();
+        reviewComment.comment = reviewCommentRequest.getComment();
+        return reviewComment;
+    }
+
+    public void setMemberAndGame(Member member, Game game) {
+        this.member = member;
+        this.game = game;
+    }
+
 }
