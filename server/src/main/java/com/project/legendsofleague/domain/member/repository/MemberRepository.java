@@ -10,4 +10,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // username으로 회원 조회
     Member findByUsername(String username);
+
+//    Member findByUsernameAndPassword(String username, String password);
 }
