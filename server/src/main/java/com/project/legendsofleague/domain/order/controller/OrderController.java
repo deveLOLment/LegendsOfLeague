@@ -4,6 +4,7 @@ package com.project.legendsofleague.domain.order.controller;
 import com.project.legendsofleague.domain.cartItem.dto.CartItemOrderRequestDto;
 import com.project.legendsofleague.domain.member.domain.CurrentMember;
 import com.project.legendsofleague.domain.member.domain.Member;
+import com.project.legendsofleague.domain.order.dto.OrderListResponseDto;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
 import com.project.legendsofleague.domain.order.service.OrderService;
@@ -32,8 +33,8 @@ public class OrderController {
      */
     @Operation(summary = "주문 목록을 보여주기 위한 컨트롤러입니다.")
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderResponseDto>> showOrderList(@CurrentMember Member member) {
-        List<OrderResponseDto> orderList = orderService.findOrderList(member.getId());
+    public ResponseEntity<List<OrderListResponseDto>> showOrderList(@CurrentMember Member member) {
+        List<OrderListResponseDto> orderList = orderService.findOrderList(member.getId());
         return ResponseEntity.ok(orderList);
     }
 

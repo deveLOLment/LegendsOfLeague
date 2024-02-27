@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 장바구니 or 상세 아이템에서 주문하기 버튼을 눌렀을 때, 주문하기 전 단계 (쿠폰 등 체크하는 페이지를 위한 dto)
+ */
 @Getter
 @Slf4j
 public class OrderResponseDto {
