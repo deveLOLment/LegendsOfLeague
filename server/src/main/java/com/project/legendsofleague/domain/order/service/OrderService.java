@@ -11,9 +11,11 @@ import com.project.legendsofleague.domain.membercoupon.service.MemberCouponServi
 import com.project.legendsofleague.domain.order.domain.Order;
 import com.project.legendsofleague.domain.order.domain.OrderItem;
 import com.project.legendsofleague.domain.order.domain.OrderStatus;
+import com.project.legendsofleague.domain.order.dto.OrderListResponseDto;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
 import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
+import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,15 +39,16 @@ public class OrderService {
     private final CartItemService cartItemService;
 
 
-    public List<Order> getOrderList(Long memberId) {
+    public List<Purchase> getOrderList(Long memberId) {
         return orderRepository.queryOrderByMember(memberId);
     }
 
-    public List<OrderResponseDto> findOrderList(Long memberId) {
-        List<Order> orders = getOrderList(memberId);
+    public List<OrderListResponseDto> findOrderList(Long memberId) {
+        List<Purchase> purchase = getOrderList(memberId);
 
-        return orders.stream()
-                .map(OrderResponseDto::toDto).toList();
+        return purchase.stream()
+                .map(OrderListResponseDto::toDto)
+                .toList();
     }
 
     /**
