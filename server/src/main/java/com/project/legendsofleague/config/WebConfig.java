@@ -18,14 +18,24 @@ public class WebConfig implements WebMvcConfigurer {
         return builder.build();
     }
 
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:3000")
+////                .allowedOrigins("*")
+//                .allowedHeaders("*")
+//                .exposedHeaders("Authorization")
+//                .allowedMethods("*");
+//    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-//                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("*")
-                .allowedHeaders("*")
-                .exposedHeaders("Authorization")
-                .allowedMethods("*");
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+//                .allowedHeaders("*")
+                .allowedHeaders("Content-Type", "Accept", "X-Requested-With", "Authorization")
+                .allowCredentials(true); // 이 부분이 중요합니다.
     }
 
     @Override

@@ -1,82 +1,72 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import './SignUp.css';
 
 function SignUp() {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [nickname, setNickname] = useState("");
 
-const navigate = useNavigate();
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // 정규식 검증
-        const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/; // 5~20자의 영문, 숫자와 _만 허용
-        const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,}$/; // 이메일 형식
-        const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/; // 최소 8자, 최소 하나의 대문자와 소문자, 최소 하나의 숫자
-
-        if (!usernameRegex.test(username)) {
-            alert('아이디는 5~20자의 영문, 숫자와 _만 사용할 수 있습니다.');
+        if (password !== confirmPassword) {
+            alert('입력한 비밀번호가 일치하지 않습니다.');
             return;
         }
 
-        if (!emailRegex.test(email)) {
-            alert('이메일 형식이 올바르지 않습니다.');
-            return;
+        try {
+            const response = await axios.post('http://localhost:8080/register', {
+                username,
+                email,
+                password,
+                nickname
+            });
+
+            console.log(response.data); // 회원가입 성공 시 응답 확인
+
+            // 회원가입 성공 후 다음 페이지로 이동
+            navigate("/login");
+        } catch (error) {
+            console.error('Error registering user:', error);
+            alert('회원가입에 실패했습니다.');
         }
-
-        if (!passwordRegex.test(password)) {
-            alert('비밀번호는 최소 8자, 최소 하나의 대문자와 소문자, 최소 하나의 숫자를 포함해야 합니다.');
-            return;
-        }
-
-        const response = await fetch('http://localhost:8080/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password, email, name }),
-        });
-
-        if (!response.ok) {
-            console.error('회원가입 실패');
-            return;
-        }
-
-        console.log('회원가입 성공');
-
-        navigate("/");
     };
 
     return (
-        <div>
-            <h2>회원가입</h2>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    아이디:
-                    <input type="text" value={username} 
-                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} required />
-                </label>
-                <label>
-                    비밀번호:
-                    <input type="password" value={password} 
-                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required />
-                </label>
-                <label>
-                    이메일:
-                    <input type="email" value={email} 
-                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} required />
-                </label>
-                <label>
-                    이름:
-                    <input type="text" value={name} 
-                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} required />
-                </label>
-                <input type="submit" value="회원가입" />
-            </form>
+        <div className="main-w3layouts wrapper">
+            <h1>Creative SignUp Form</h1>
+            <div className="main-agileinfo">
+                <div className="agileits-top">
+                    <form onSubmit={handleSubmit}>
+                        <input className="text" type="text" name="username" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                        <input className="text email" type="email" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        <input className="text" type="text" name="nickname" placeholder="Nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} required />
+                        <input className="text" type="password" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        <input className="text w3lpass" type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                        <div className="wthree-text">
+                            <label className="anim">
+                                <input type="checkbox" className="checkbox" required />
+                                <span>I Agree To The Terms & Conditions</span>
+                            </label>
+                            <div className="clear"> </div>
+                        </div>
+                        <input type="submit" value="SIGNUP" />
+                    </form>
+                </div>
+            </div>
+            <div className="colorlibcopy-agile">
+                <p>© 2023 Signup Form. All rights reserved | Design by <a href="https://colorlib.com/" target="_blank" rel="noopener noreferrer">Colorlib</a></p>
+            </div>
+            <ul className="colorlib-bubbles">
+                {Array.from({ length: 10 }, (_, index) => (
+                    <li key={index}></li>
+                ))}
+            </ul>
         </div>
     );
 }

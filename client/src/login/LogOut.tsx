@@ -1,32 +1,25 @@
-import React, { useEffect } from 'react'
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../common/AxiosInstance';
 
 const LogOut = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    // const logOut = () => {
-
-    //     window.location.href = "http://localhost:8080/logout"
-
-    // }
-
-    useEffect(() => {
-      // 컴포넌트가 마운트될 때 실행되며, access_token을 제거하고 메인 페이지로 이동합니다.
-      localStorage.removeItem('access_token');
-      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-      navigate("/");
-  }, []);
-
-    // 로컬스토리지에서 'access_token'을 제거 후 메인 페이지로 이동시킨다.
-    localStorage.removeItem('access_token');
-    navigate("/");
+  const logout = () => {
+    axiosInstance.post('/logout')
+      .then(() => {
+        alert("로그아웃 성공")
+        // 성공적으로 로그아웃 되었을 때 루트 페이지로 이동
+        navigate('/');
+      })
+      .catch(() => {
+        // 이 부분은 axiosInstance의 인터셉터에서 처리할 수 있으므로 비어있어도 됩니다.
+      });
+  };
 
   return (
-    <div>logOut
-        <button onClick={LogOut}>logOut</button>
-    </div>
-  )
-}
+    <button onClick={logout}>Logout</button>
+  );
+};
 
-export default LogOut
+export default LogOut;
