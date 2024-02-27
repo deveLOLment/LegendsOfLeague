@@ -27,14 +27,14 @@ public class CartItemController {
     @Operation(summary = "장바구니 목록을 보여주는 컨트롤러입니다.")
     @GetMapping("/carts")
     public ResponseEntity<List<CartItemResponseDto>> showCartItemList(@CurrentMember Member member) {
-        List<CartItemResponseDto> cart = cartItemService.findCartList(member.getId());
+        List<CartItemResponseDto> cart = cartItemService.findCartList(member);
         return ResponseEntity.ok(cart);
     }
 
     @Operation(summary = "장바구니 목록에서 특정 아이템 옵션(수량 등)을 수정하는 컨트롤러입니다.")
     @PostMapping("/cart/{cartItemId}/update")
     public ResponseEntity<List<CartItemResponseDto>> updateCartItem(@CurrentMember Member member, @PathVariable("cartItemId") Long cartItemId, @RequestBody CartItemUpdateRequestDto cartItemUpdateRequestDto) {
-        List<CartItemResponseDto> cartItemResponseDtoList = cartItemService.updateCartItem(member.getId(), cartItemUpdateRequestDto);
+        List<CartItemResponseDto> cartItemResponseDtoList = cartItemService.updateCartItem(member, cartItemUpdateRequestDto);
         return ResponseEntity.ok(cartItemResponseDtoList);
     }
 
@@ -47,14 +47,14 @@ public class CartItemController {
     @Operation(summary = "아이템을 장바구니에 추가하는 컨트롤러입니다.")
     @PostMapping("/cart/add")
     public ResponseEntity<Long> createCartItem(@CurrentMember Member member, @RequestBody CartItemAddRequestDto cartItemAddRequestDto) {
-        Long cartItemId = cartItemService.createCartItem(member.getId(), cartItemAddRequestDto);
+        Long cartItemId = cartItemService.createCartItem(member, cartItemAddRequestDto);
         return ResponseEntity.ok(cartItemId);
     }
 
     @Operation(summary = "장바구니에서 아이템을 삭제하는 컨트롤러입니다.")
     @PostMapping("/cart/delete")
     public ResponseEntity<Void> deleteCartItem(@CurrentMember Member member, @RequestBody List<CartItemDeleteRequestDto> cartItemDeleteRequestList) {
-        cartItemService.deleteCartItem(member.getId(), cartItemDeleteRequestList);
+        cartItemService.deleteCartItem(member, cartItemDeleteRequestList);
         return ResponseEntity.ok(null);
     }
 }

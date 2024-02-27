@@ -40,32 +40,32 @@ public class CartItemService {
     /**
      * 장바구니 목록을 보여주기 위한 메소드
      *
-     * @param memberId
+     * @param member
      * @return
      */
-    public List<CartItemResponseDto> findCartList(Long memberId) {
-        return cartItemRepository.queryCartItemByMember(memberId)
+    public List<CartItemResponseDto> findCartList(Member member) {
+        return cartItemRepository.queryCartItemByMember(member.getId())
                 .stream().map(CartItemResponseDto::toDto).toList();
     }
 
     /**
      * 장바구니에서 특정 아이템의 정보를 수정하기 위한 메소드
      *
-     * @param memberId
+     * @param member
      * @param cartItemUpdateRequestDto
      * @return
      */
     @Transactional
-    public List<CartItemResponseDto> updateCartItem(Long memberId, CartItemUpdateRequestDto cartItemUpdateRequestDto) {
+    public List<CartItemResponseDto> updateCartItem(Member member, CartItemUpdateRequestDto cartItemUpdateRequestDto) {
         CartItem cartItem = getCartItem(cartItemUpdateRequestDto.getCartItemId());
 
         //요청한 사용자와 장바구니의 주인이 같지 않다면
-        if (!cartItem.getMember().getId().equals(memberId)) {
+        if (!cartItem.getMember().equals(member)) {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
         cartItem.updateCartItem(cartItemUpdateRequestDto);
 
-        return cartItemRepository.queryCartItemByMember(memberId)
+        return cartItemRepository.queryCartItemByMember(member.getId())
                 .stream().map(CartItemResponseDto::toDto).toList();
     }
 
@@ -73,20 +73,20 @@ public class CartItemService {
      * 장바구니에 목록 추가, but 장바구니에 같은 상품이 있으면 예외를 날린다.
      * 쿼리 개수: 3 (아이템 검증, cartItem 검증, insert)
      *
-     * @param memberId
+     * @param member
      * @param cartItemAddRequestDto
      * @return
      */
     @Transactional
-    public Long createCartItem(Long memberId, CartItemAddRequestDto cartItemAddRequestDto) {
+    public Long createCartItem(Member member, CartItemAddRequestDto cartItemAddRequestDto) {
         Item item = itemRepository.findById(cartItemAddRequestDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("유효하지 않은 상품입니다."));
 
-        List<CartItem> cartItems = getCartItemList(memberId);
+        List<CartItem> cartItems = getCartItemList(member.getId());
 
         if (checkDuplicateCartItem(item, cartItems)) {
             //장바구니에 같은 아이템이 없다면
-            CartItem cartItem = CartItem.toEntity(new Member(memberId), item, cartItemAddRequestDto.getCount());
+            CartItem cartItem = CartItem.toEntity(member, item, cartItemAddRequestDto.getCount());
             cartItemRepository.save(cartItem);
             return cartItem.getId();
         } else {
@@ -97,14 +97,14 @@ public class CartItemService {
     /**
      * 장바구니 목록에서 사용자가 삭제를 원하는 아이템 목록을 삭제하기 위한 로직
      *
-     * @param memberId
+     * @param member
      * @param cartItemDeleteRequestList
      */
     @Transactional
-    public void deleteCartItem(Long memberId, List<CartItemDeleteRequestDto> cartItemDeleteRequestList) {
-        List<CartItem> cartItems = getCartItemList(memberId);
+    public void deleteCartItem(Member member, List<CartItemDeleteRequestDto> cartItemDeleteRequestList) {
+        List<CartItem> cartItems = getCartItemList(member.getId());
         List<Long> cartItemIds = cartItems.stream()
-                .map((ci) -> ci.getId()).toList();
+                .map(CartItem::getId).toList();
 
         //요청한 장바구니 삭제가 유효하다면 삭제 진행
         if (checkCart(cartItemIds, cartItemDeleteRequestList)) {
