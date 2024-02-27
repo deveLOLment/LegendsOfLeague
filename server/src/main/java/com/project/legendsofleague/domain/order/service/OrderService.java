@@ -82,10 +82,13 @@ public class OrderService {
         //요청의 cartItemId가 유효한(존재하는) id인지 검증
         validateCateList(cartItemIds, cartItemRequestList);
 
+
         for (CartItem cartItem : cartItems) {
-            Item item = cartItem.getItem();
-            OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
-            orderItems.add(orderItem);
+            if (cartItemRequestList.contains(cartItem.getId())) {
+                Item item = cartItem.getItem();
+                OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
+                orderItems.add(orderItem);
+            }
         }
 
         Order order = Order.toEntity(new Member(memberId), orderItems);
