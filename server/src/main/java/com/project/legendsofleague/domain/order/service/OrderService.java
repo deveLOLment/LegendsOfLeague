@@ -48,6 +48,7 @@ public class OrderService {
     public List<OrderListResponseDto> findOrderList(Member member) {
         List<Purchase> purchase = getOrderList(member);
 
+
         return purchase.stream()
                 .map(OrderListResponseDto::toDto)
                 .toList();
@@ -94,6 +95,7 @@ public class OrderService {
             Item item = cartItem.getItem();
             OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
             orderItems.add(orderItem);
+
         }
 
 
