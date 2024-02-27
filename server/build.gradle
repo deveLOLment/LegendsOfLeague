@@ -49,6 +49,11 @@ dependencies {
 
     //oAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // For chat(WebSocket, sockjs, stomp, gson)
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     //For Excel
     implementation 'org.apache.poi:poi:5.2.5'
