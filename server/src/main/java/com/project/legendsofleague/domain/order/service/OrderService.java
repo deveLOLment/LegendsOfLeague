@@ -11,18 +11,21 @@ import com.project.legendsofleague.domain.membercoupon.service.MemberCouponServi
 import com.project.legendsofleague.domain.order.domain.Order;
 import com.project.legendsofleague.domain.order.domain.OrderItem;
 import com.project.legendsofleague.domain.order.domain.OrderStatus;
+import com.project.legendsofleague.domain.order.dto.OrderListResponseDto;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
 import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
+import com.project.legendsofleague.domain.purchase.domain.Purchase;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,32 +40,31 @@ public class OrderService {
     private final CartItemService cartItemService;
 
 
-    public List<Order> getOrderList(Long memberId) {
-        return orderRepository.queryOrderByMember(memberId);
+    public List<Purchase> getOrderList(Member member) {
+        return orderRepository.queryOrderByMember(member.getId());
     }
 
-    public List<OrderResponseDto> findOrderList(Long memberId) {
-        List<Order> orders = getOrderList(memberId);
+    public List<OrderListResponseDto> findOrderList(Member member) {
+        List<Purchase> purchase = getOrderList(member);
 
-        return orders.stream()
-                .map(OrderResponseDto::toDto).toList();
+        return purchase.stream()
+            .map(OrderListResponseDto::toDto)
+            .toList();
     }
 
     /**
-     * 단일 주문에 대한 주문 객체 생성
-     *
      * @param orderRequestDto
-     * @param memberId
+     * @param member
      * @return
      */
     @Transactional
-    public Long createOrder(OrderRequestDto orderRequestDto, Long memberId) { //멤버는 id 생성자 사용
+    public Long createOrder(OrderRequestDto orderRequestDto, Member member) { //멤버는 id 생성자 사용
 
         Item item = itemRepository.findById(orderRequestDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
+            .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
 
         OrderItem orderItem = OrderItem.createOrderItem(item, orderRequestDto.getCount());
-        Order order = Order.toEntity(new Member(memberId), orderItem);
+        Order order = Order.toEntity(member, orderItem);
         orderRepository.save(order);
 
         return order.getId();
@@ -74,33 +76,40 @@ public class OrderService {
      * @return
      */
     @Transactional
-    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList, Long memberId) {
+    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList,
+        Member member) {
         List<OrderItem> orderItems = new ArrayList<>();
-        List<CartItem> cartItems = cartItemService.getCartItemList(memberId);
+        List<CartItem> cartItems = cartItemService.getCartItemList(member.getId());
         List<Long> cartItemIds = cartItems.stream().map(CartItem::getId).toList();
 
         //요청의 cartItemId가 유효한(존재하는) id인지 검증
-        validateCateList(cartItemIds, cartItemRequestList);
+        validateCartList(cartItemIds, cartItemRequestList);
 
-        for (CartItem cartItem : cartItems) {
+        Map<Long, CartItem> cartItemMap = cartItems.stream()
+            .collect(Collectors.toMap(CartItem::getId, c -> c));
+
+        for (CartItemOrderRequestDto cartItemOrderRequestDto : cartItemRequestList) {
+            CartItem cartItem = cartItemMap.get(cartItemOrderRequestDto.getCartItemId());
             Item item = cartItem.getItem();
             OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
             orderItems.add(orderItem);
+
         }
 
-        Order order = Order.toEntity(new Member(memberId), orderItems);
+        Order order = Order.toEntity(member, orderItems);
         orderRepository.save(order);
         return order.getId();
     }
 
     /**
-     * 장바구니를 통해 요청했는데, 장바구니에 item 목록이 없는 요청이 있는 지 확인
-     * ex) 장바구니를 통해 item2, item3에 대한 order를 만드려고 하는데, cart에 item2가 없는 지 확인
+     * 장바구니를 통해 요청했는데, 장바구니에 item 목록이 없는 요청이 있는 지 확인 ex) 장바구니를 통해 item2, item3에 대한 order를 만드려고 하는데,
+     * cart에 item2가 없는 지 확인
      *
      * @param cartItemIds
      * @param cartItemRequestList
      */
-    private void validateCateList(List<Long> cartItemIds, List<CartItemOrderRequestDto> cartItemRequestList) {
+    private void validateCartList(List<Long> cartItemIds,
+        List<CartItemOrderRequestDto> cartItemRequestList) {
         for (CartItemOrderRequestDto cartItemRequestDto : cartItemRequestList) {
             if (!cartItemIds.contains(cartItemRequestDto.getCartItemId())) {
                 throw new RuntimeException("옳지 않은 요청입니다.");
@@ -115,7 +124,7 @@ public class OrderService {
      * @param orderId
      * @return
      */
-    public OrderResponseDto detailOrderPage(Long memberId, Long orderId) {
+    public OrderResponseDto detailOrderPage(Member member, Long orderId) {
 
         List<OrderItem> orderItems = orderItemService.getOrderItemList(orderId);
 
@@ -125,24 +134,24 @@ public class OrderService {
         }
 
         //Order의 주인
-        Member member = orderItems.get(0).getOrder().getMember();
+        Member OrderMember = orderItems.get(0).getOrder().getMember();
 
         //Order의 주인과 현재 로그인한 유저가 같지 않을 때
-        if (!member.getId().equals(memberId)) {
+        if (!OrderMember.getId().equals(member.getId())) {
             throw new RuntimeException("허용되지 않은 접근입니다.");
         }
 
         List<Item> items = orderItems.stream()
-                .map((oi) -> oi.getItem()).toList();
+            .map(OrderItem::getItem).toList();
 
         return OrderResponseDto.toDto(orderItems,
-                memberCouponService.getMemberCouponsByOrder(memberId, orderId, items));
+            memberCouponService.getMemberCouponsByOrder(member.getId(), orderId, items));
     }
 
     /**
      * 결제가 성공이 된 주문에 한하여 환불 요청이 들어왔을 때 실행되는 메소드
      *
-     * @param orderId
+     * @param order
      */
     @Transactional
     public void refundOrder(Member member, Order order) {

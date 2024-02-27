@@ -2009,13 +2009,7 @@ a {
     font-size: 48px;
   }
 }
-/* .contact-banner-area {
-  height: 280px;
-  background: url("../../assets/images/contact-bg.png") center center no-repeat;
-  background-size: cover;
-  position: relative;
-  z-index: 1;
-} */
+
 @media (min-width: 991px) {
   .contact-banner-area {
     height: 450px;
@@ -2469,7 +2463,7 @@ a {
 }
 .confirmation-card {
   padding: 38px;
-  background: #f1f6f7;
+  background: #bbcccc;
 }
 .confirmation-card tr td:last-child {
   color: #222;

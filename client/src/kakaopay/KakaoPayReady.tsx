@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import AxiosInstance from "../common/AxiosInstance";
 
 export interface KakaoPayReadyResponseDto {
   tid: string;
@@ -19,7 +20,7 @@ const KakaoPayReady = () => {
         const url =
           "http://localhost:8080/purchase/kakao-pay/ready?purchaseId=" +
           purchaseId;
-        const response = await axios.get(url);
+        const response = await AxiosInstance.get(url);
         const paymentUrl = response.data.redirectUrl;
         const tid = response.data.tid;
         console.log(paymentUrl);

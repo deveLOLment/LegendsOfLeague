@@ -6,6 +6,8 @@ import com.project.legendsofleague.domain.item.dto.ItemListResponseDto;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
 import com.project.legendsofleague.domain.item.dto.ItemSelectResponseDto;
 import com.project.legendsofleague.domain.item.service.ItemService;
+import com.project.legendsofleague.domain.member.domain.CurrentMember;
+import com.project.legendsofleague.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/shop")
-    public ResponseEntity<Page<ItemListResponseDto>> showItemList(@PageableDefault(size = 15, direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<Page<ItemListResponseDto>> showItemList(@CurrentMember Member member,
+                                                                  @PageableDefault(size = 15, direction = Sort.Direction.DESC) Pageable pageable,
                                                                   @RequestParam(name = "keyword", required = false) String keyword,
                                                                   @RequestParam(name = "category", required = false) String category,
                                                                   @RequestParam(name = "sort", required = false) String sort,
@@ -44,19 +47,19 @@ public class ItemController {
     }
 
     @GetMapping("/items/categories")
-    public ResponseEntity<List<String>> getCategories() {
+    public ResponseEntity<List<String>> getCategories(@CurrentMember Member member) {
         List<String> categories = itemService.getCategories();
         return new ResponseEntity<List<String>>(categories, HttpStatus.OK);
     }
 
     @GetMapping("/items")
-    public ResponseEntity<List<ItemSelectResponseDto>> getItemSelectList() {
+    public ResponseEntity<List<ItemSelectResponseDto>> getItemSelectList(@CurrentMember Member member) {
         List<ItemSelectResponseDto> itemSelectList = itemService.getItemSelectList();
         return new ResponseEntity<List<ItemSelectResponseDto>>(itemSelectList, HttpStatus.OK);
     }
 
     @GetMapping("/item/{itemId}")
-    public ResponseEntity<ItemDetailResponseDto> getItemDetail(@PathVariable("itemId") Long itemId) {
+    public ResponseEntity<ItemDetailResponseDto> getItemDetail(@CurrentMember Member member, @PathVariable("itemId") Long itemId) {
         ItemDetailResponseDto itemDetail = itemService.getItemDetail(itemId);
 
         return ResponseEntity.ok(itemDetail);
