@@ -1,12 +1,12 @@
 package com.project.legendsofleague.domain.reviewComment.domain;
 
+import com.project.legendsofleague.db.game.domain.Game;
 import com.project.legendsofleague.domain.member.domain.Member;
-import com.project.legendsofleague.domain.rate.domain.Game;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter

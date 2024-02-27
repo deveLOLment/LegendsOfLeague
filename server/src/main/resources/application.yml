@@ -4,7 +4,28 @@ spring:
       env.yml
       ,s3.yml
       ,kakaoPay.yml
+      ,tossPay.yml
+      ,jwt.yml
+      ,excel.yml
 
-jpa:
-  hibernate:
-    ddl-auto: update
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+#        provider:
+#          google:
+#            authorization-uri: https://accounts.google.com/o/oauth2/auth
+#            token-uri: https://accounts.google.com/o/oauth2/token
+#            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+#            user-name-attribute: sub
+
+server:
+  servlet:
+    session:
+      timeout: 90m
