@@ -2,39 +2,36 @@ import { CouponResponseModel } from "../Coupon/CouponModel";
 import { ItemCouponAppliedModel, OrderItemModel } from "./OrderModels";
 import { useState, useEffect } from "react";
 
-const ItemList: React.FC<{
+const OrderItemList: React.FC<{
   itemList: OrderItemModel[];
   onCouponChange: (itemId: number, couponId: CouponResponseModel) => void;
   onFinalPriceChange: (itemId: number, finalPrice: number) => void;
   selectedCoupons: Record<number, CouponResponseModel>;
 }> = ({ itemList, onCouponChange, onFinalPriceChange, selectedCoupons }) => {
   return (
-    <div>
-      <h2>Item List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Item ID</th>
-            <th>상품 이름</th>
-            <th>수량</th>
-            <th>가격</th>
-            <th>쿠폰 목록</th>
-            <th>최종 가격</th>
-          </tr>
-        </thead>
-        <tbody>
-          {itemList.map((item) => (
-            <ItemTableRow
-              key={item.id}
-              item={item}
-              onCouponChange={onCouponChange}
-              onFinalPriceChange={onFinalPriceChange} // 추가
-              selectedCoupons={selectedCoupons}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <table className="table">
+      <thead>
+        <tr>
+          <th scope="col">Item ID</th>
+          <th scope="col">Product Name</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">가격</th>
+          <th scope="col">쿠폰 목록</th>
+          <th scope="col">최종 가격</th>
+        </tr>
+      </thead>
+      <tbody>
+        {itemList.map((item) => (
+          <ItemTableRow
+            key={item.id}
+            item={item}
+            onCouponChange={onCouponChange}
+            onFinalPriceChange={onFinalPriceChange} // 추가
+            selectedCoupons={selectedCoupons}
+          />
+        ))}
+      </tbody>
+    </table>
   );
 };
 
@@ -54,7 +51,7 @@ const ItemTableRow: React.FC<{
 
   const [selectedCouponId, setSelectedCouponId] = useState<number>();
 
-  const [finalPrice, setFinalPrice] = useState<number>(item.price);
+  const [finalPrice, setFinalPrice] = useState<number>(item.price * item.count);
 
   const convertCouponListToRecord = (
     couponList: CouponResponseModel[]
@@ -72,6 +69,7 @@ const ItemTableRow: React.FC<{
     item: OrderItemModel,
     coupon: CouponResponseModel
   ) => {
+    console.log("herer!!!!!");
     const couponType = coupon.couponType;
     if (
       couponType == "CATEGORY_AMOUNT_DISCOUNT" ||
@@ -99,6 +97,7 @@ const ItemTableRow: React.FC<{
     setSelectedCouponId(selectedCouponId);
     onCouponChange(itemId, coupon);
     onFinalPriceChange(itemId, calculatedPrice); // 추가
+    console.log("heere!!!!!");
   };
 
   return (
@@ -109,12 +108,11 @@ const ItemTableRow: React.FC<{
       <td>{item.price}</td>
       <td>
         <select
+          className="form-control"
           onChange={(event) => handleCouponChange(event, item.id)}
           value={selectedCouponId || ""}
         >
-          <option value="" disabled>
-            Select a Coupon
-          </option>
+          <option value="">Select a Coupon</option>
           {item.couponList
             .filter(
               (coupon) =>
@@ -134,4 +132,4 @@ const ItemTableRow: React.FC<{
   );
 };
 
-export default ItemList;
+export default OrderItemList;

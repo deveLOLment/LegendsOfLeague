@@ -16,6 +16,11 @@ import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
 import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,8 +54,8 @@ public class OrderService {
         List<Purchase> purchase = getOrderList(member);
 
         return purchase.stream()
-                .map(OrderListResponseDto::toDto)
-                .toList();
+            .map(OrderListResponseDto::toDto)
+            .toList();
     }
 
     /**
@@ -62,7 +67,7 @@ public class OrderService {
     public Long createOrder(OrderRequestDto orderRequestDto, Member member) { //멤버는 id 생성자 사용
 
         Item item = itemRepository.findById(orderRequestDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
+            .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
 
         OrderItem orderItem = OrderItem.createOrderItem(item, orderRequestDto.getCount());
         Order order = Order.toEntity(member, orderItem);
@@ -77,7 +82,8 @@ public class OrderService {
      * @return
      */
     @Transactional
-    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList, Member member) {
+    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList,
+        Member member) {
         List<OrderItem> orderItems = new ArrayList<>();
         List<CartItem> cartItems = cartItemService.getCartItemList(member.getId());
         List<Long> cartItemIds = cartItems.stream().map(CartItem::getId).toList();
@@ -85,17 +91,16 @@ public class OrderService {
         //요청의 cartItemId가 유효한(존재하는) id인지 검증
         validateCartList(cartItemIds, cartItemRequestList);
 
-
         Map<Long, CartItem> cartItemMap = cartItems.stream()
-                .collect(Collectors.toMap(CartItem::getId, c -> c));
+            .collect(Collectors.toMap(CartItem::getId, c -> c));
 
         for (CartItemOrderRequestDto cartItemOrderRequestDto : cartItemRequestList) {
             CartItem cartItem = cartItemMap.get(cartItemOrderRequestDto.getCartItemId());
             Item item = cartItem.getItem();
             OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
             orderItems.add(orderItem);
-        }
 
+        }
 
         Order order = Order.toEntity(member, orderItems);
         orderRepository.save(order);
@@ -109,7 +114,8 @@ public class OrderService {
      * @param cartItemIds
      * @param cartItemRequestList
      */
-    private void validateCartList(List<Long> cartItemIds, List<CartItemOrderRequestDto> cartItemRequestList) {
+    private void validateCartList(List<Long> cartItemIds,
+        List<CartItemOrderRequestDto> cartItemRequestList) {
         for (CartItemOrderRequestDto cartItemRequestDto : cartItemRequestList) {
             if (!cartItemIds.contains(cartItemRequestDto.getCartItemId())) {
                 throw new RuntimeException("옳지 않은 요청입니다.");
@@ -137,15 +143,15 @@ public class OrderService {
         Member OrderMember = orderItems.get(0).getOrder().getMember();
 
         //Order의 주인과 현재 로그인한 유저가 같지 않을 때
-        if (!OrderMember.equals(member)) {
+        if (!OrderMember.getId().equals(member.getId())) {
             throw new RuntimeException("허용되지 않은 접근입니다.");
         }
 
         List<Item> items = orderItems.stream()
-                .map(OrderItem::getItem).toList();
+            .map(OrderItem::getItem).toList();
 
         return OrderResponseDto.toDto(orderItems,
-                memberCouponService.getMemberCouponsByOrder(member.getId(), orderId, items));
+            memberCouponService.getMemberCouponsByOrder(member.getId(), orderId, items));
     }
 
     /**

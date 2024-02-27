@@ -4,6 +4,7 @@ package com.project.legendsofleague.domain.order.repository.order;
 import com.project.legendsofleague.domain.order.domain.OrderStatus;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
