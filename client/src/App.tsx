@@ -7,20 +7,22 @@ import OrderRoutes from "./order/OrderRoutes";
 import CouponRoutes from "./Coupon/CouponRoutes";
 import ItemRoutes from "./item/ItemRoutes";
 function App() {
-    return (
-        <>
-            <TossPayRoutes />
-            <KakaoPayRoutes />
-            <OrderRoutes />
-            <CouponRoutes />
-            <LoginRoute />
-            <CartRoutes />
-            <ItemRoutes />
-        </>
-    );
+  return (
+    <>
+      <TossPayRoutes />
+      <KakaoPayRoutes />
+      <OrderRoutes />
+      <CouponRoutes />
+      <LoginRoute />
+      <CartRoutes />
+      <ItemRoutes />
+      <ShopRoutes />
+    </>
+  );
 }
 
 import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
 import CartRoutes from "./cart/CartRoutes";
+import ShopRoutes from "./shop/ShopRoutes";
 
 export default App;
