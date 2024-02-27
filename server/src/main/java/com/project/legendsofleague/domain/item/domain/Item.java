@@ -24,31 +24,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends BaseEntity {
 
+    @OneToMany(mappedBy = "item")
+    private List<ItemImage> itemImageList = new ArrayList<>();
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<ItemReview> itemReviewList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
-
     private String name; //상품 이름
-
     private Integer price; //상품 가격
-
     private Integer stock; //상품 재고 (남은 수량)
-
     private String description; //상품 설명
-
     @Enumerated(EnumType.STRING)
     private ItemCategory category;
-
     private String thumbnailImage; //originalFileName은 필요가 없으니까 s3 url만 있으면 된다.
-
-    private final boolean isDeleted = false;
-
-    @OneToMany(mappedBy = "item")
-    private final List<ItemImage> itemImageList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private final List<ItemReview> itemReviewList = new ArrayList<>();
+    private boolean isDeleted = false;
 
     /**
      * 양방향 매핑서 쿼리 1개를 줄여준다.
