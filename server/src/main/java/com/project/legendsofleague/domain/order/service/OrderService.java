@@ -25,6 +25,8 @@ import org.webjars.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,12 +41,12 @@ public class OrderService {
     private final CartItemService cartItemService;
 
 
-    public List<Purchase> getOrderList(Long memberId) {
-        return orderRepository.queryOrderByMember(memberId);
+    public List<Purchase> getOrderList(Member member) {
+        return orderRepository.queryOrderByMember(member.getId());
     }
 
-    public List<OrderListResponseDto> findOrderList(Long memberId) {
-        List<Purchase> purchase = getOrderList(memberId);
+    public List<OrderListResponseDto> findOrderList(Member member) {
+        List<Purchase> purchase = getOrderList(member);
 
         return purchase.stream()
                 .map(OrderListResponseDto::toDto)
@@ -52,20 +54,18 @@ public class OrderService {
     }
 
     /**
-     * 단일 주문에 대한 주문 객체 생성
-     *
      * @param orderRequestDto
-     * @param memberId
+     * @param member
      * @return
      */
     @Transactional
-    public Long createOrder(OrderRequestDto orderRequestDto, Long memberId) { //멤버는 id 생성자 사용
+    public Long createOrder(OrderRequestDto orderRequestDto, Member member) { //멤버는 id 생성자 사용
 
         Item item = itemRepository.findById(orderRequestDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("유효하지 않은 아이템입니다."));
 
         OrderItem orderItem = OrderItem.createOrderItem(item, orderRequestDto.getCount());
-        Order order = Order.toEntity(new Member(memberId), orderItem);
+        Order order = Order.toEntity(member, orderItem);
         orderRepository.save(order);
 
         return order.getId();
@@ -77,24 +77,27 @@ public class OrderService {
      * @return
      */
     @Transactional
-    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList, Long memberId) {
+    public Long createOrderFromCart(List<CartItemOrderRequestDto> cartItemRequestList, Member member) {
         List<OrderItem> orderItems = new ArrayList<>();
-        List<CartItem> cartItems = cartItemService.getCartItemList(memberId);
+        List<CartItem> cartItems = cartItemService.getCartItemList(member.getId());
         List<Long> cartItemIds = cartItems.stream().map(CartItem::getId).toList();
 
         //요청의 cartItemId가 유효한(존재하는) id인지 검증
-        validateCateList(cartItemIds, cartItemRequestList);
+        validateCartList(cartItemIds, cartItemRequestList);
 
 
-        for (CartItem cartItem : cartItems) {
-            if (cartItemRequestList.contains(cartItem.getId())) {
-                Item item = cartItem.getItem();
-                OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
-                orderItems.add(orderItem);
-            }
+        Map<Long, CartItem> cartItemMap = cartItems.stream()
+                .collect(Collectors.toMap(CartItem::getId, c -> c));
+
+        for (CartItemOrderRequestDto cartItemOrderRequestDto : cartItemRequestList) {
+            CartItem cartItem = cartItemMap.get(cartItemOrderRequestDto.getCartItemId());
+            Item item = cartItem.getItem();
+            OrderItem orderItem = OrderItem.createOrderItem(item, cartItem.getCount());
+            orderItems.add(orderItem);
         }
 
-        Order order = Order.toEntity(new Member(memberId), orderItems);
+
+        Order order = Order.toEntity(member, orderItems);
         orderRepository.save(order);
         return order.getId();
     }
@@ -106,7 +109,7 @@ public class OrderService {
      * @param cartItemIds
      * @param cartItemRequestList
      */
-    private void validateCateList(List<Long> cartItemIds, List<CartItemOrderRequestDto> cartItemRequestList) {
+    private void validateCartList(List<Long> cartItemIds, List<CartItemOrderRequestDto> cartItemRequestList) {
         for (CartItemOrderRequestDto cartItemRequestDto : cartItemRequestList) {
             if (!cartItemIds.contains(cartItemRequestDto.getCartItemId())) {
                 throw new RuntimeException("옳지 않은 요청입니다.");
@@ -121,7 +124,7 @@ public class OrderService {
      * @param orderId
      * @return
      */
-    public OrderResponseDto detailOrderPage(Long memberId, Long orderId) {
+    public OrderResponseDto detailOrderPage(Member member, Long orderId) {
 
         List<OrderItem> orderItems = orderItemService.getOrderItemList(orderId);
 
@@ -131,24 +134,24 @@ public class OrderService {
         }
 
         //Order의 주인
-        Member member = orderItems.get(0).getOrder().getMember();
+        Member OrderMember = orderItems.get(0).getOrder().getMember();
 
         //Order의 주인과 현재 로그인한 유저가 같지 않을 때
-        if (!member.getId().equals(memberId)) {
+        if (!OrderMember.equals(member)) {
             throw new RuntimeException("허용되지 않은 접근입니다.");
         }
 
         List<Item> items = orderItems.stream()
-                .map((oi) -> oi.getItem()).toList();
+                .map(OrderItem::getItem).toList();
 
         return OrderResponseDto.toDto(orderItems,
-                memberCouponService.getMemberCouponsByOrder(memberId, orderId, items));
+                memberCouponService.getMemberCouponsByOrder(member.getId(), orderId, items));
     }
 
     /**
      * 결제가 성공이 된 주문에 한하여 환불 요청이 들어왔을 때 실행되는 메소드
      *
-     * @param orderId
+     * @param order
      */
     @Transactional
     public void refundOrder(Member member, Order order) {
