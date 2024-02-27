@@ -61,7 +61,6 @@ public class CouponService {
             .collect(Collectors.toList());
     }
 
-
     /**
      * 입력받은 아이템, 쿠폰, 가격 정보를 보고 올바르게 쿠폰이 적용되고 가격이 계산되엇는지 체크하는 로직
      *
@@ -80,7 +79,7 @@ public class CouponService {
             Item item = itemMap.get(dto.getItemId());
 
             //쿠폰을 적용하지 않은 경우
-            if (memberCoupon.getCoupon() == null) {
+            if (memberCoupon == null) {
                 if (!checkPriceWithoutCoupon(item, price, quantity)) {
                     return false;
                 }
@@ -95,6 +94,7 @@ public class CouponService {
                 price, quantity)) {
                 return false;
             }
+
         }
         return true;
     }

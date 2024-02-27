@@ -12,8 +12,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -38,12 +39,18 @@ public class Purchase extends BaseEntity {
      TOSS : paymentKey
      */
     private String code;
+
     private Integer totalPrice;
+
+    private LocalDateTime purchaseDate;
+
     @Enumerated(value = EnumType.STRING)
     private PurchaseStatus purchaseStatus;
+
     @Enumerated(value = EnumType.STRING)
     private PurchaseType purchaseType;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -61,6 +68,7 @@ public class Purchase extends BaseEntity {
         purchase.purchaseType = purchaseType;
         purchase.purchaseStatus = PurchaseStatus.PENDING;
         purchase.order = order;
+        purchase.purchaseDate = LocalDateTime.now();
         return purchase;
     }
 
@@ -69,6 +77,7 @@ public class Purchase extends BaseEntity {
         this.code = code;
         if (this.purchaseStatus == PurchaseStatus.PENDING) {
             this.purchaseStatus = PurchaseStatus.SUCCESS;
+            this.purchaseDate = LocalDateTime.now();
         }
     }
 
