@@ -5,6 +5,7 @@ import com.project.legendsofleague.domain.member.dto.CustomMemberDetails;
 import com.project.legendsofleague.domain.member.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,42 +27,56 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 쿠키에서 토큰 정보를 가져온다.
-//        Cookie[] cookies = request.getCookies();
-//        String token = null;
-//
-//        if(cookies != null) {
-//            for (Cookie cookie : cookies) {
-//                if(cookie.getName().equals("Authorization")) {
-//                    token = cookie.getValue();
-//                    break;
-//                }
-//            }
-//        }
+        Cookie[] cookies = request.getCookies();
+        String token = null;
 
-        // request에서 Authorization 헤더를 찾는다.
-        String autorization = request.getHeader("Authorization");
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
 
-
-        // 헤더 검증
-        if (autorization == null || !autorization.startsWith("Bearer ")) {
+        // 토큰 검증
+        if (token == null) {
             System.out.println("토큰이 비어있습니다.");
             filterChain.doFilter(request, response);
-
-            // 메서드 종료
             return;
         }
 
-        // 토큰에서 Bearer 부분을 제거
-        String token = autorization.split(" ")[1];
+        // request에서 Authorization 헤더를 찾는다.
+//        String autorization = request.getHeader("Authorization");
+
+
+        // 헤더 검증
+//        if (autorization == null || !autorization.startsWith("Bearer ")) {
+//            System.out.println("토큰이 비어있습니다.");
+//            filterChain.doFilter(request, response);
+//
+//            // 메서드 종료
+//            return;
+//        }
+//
+//        // 토큰에서 Bearer 부분을 제거
+//        String token = autorization.split(" ")[1];
 
         // 토큰 소멸 시간  검증
         if (jwtUtil.isExpired(token)) {
             System.out.println("token expired");
-            filterChain.doFilter(request, response);
+//            filterChain.doFilter(request, response);
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+//            throw new UnavailableException("접근권한없음");
 
+            // 로그인 페이지로 리다이렉트
+//            return;
             // 조건에 해당되면 메소드 종료
-            return;
+//            return;
         }
+
+//        String requestURI = request.getRequestURI();
 
 
         String username = jwtUtil.getUserName(token);
@@ -79,5 +94,14 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
+    }
+
+    // 특정 URL 제외
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String excludePath = "/register";
+        String path = request.getRequestURI();
+        return path.startsWith(excludePath);
     }
 }

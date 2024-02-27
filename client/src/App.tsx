@@ -1,36 +1,26 @@
 import React from "react";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
-import KakaoPayReady from "./kakaopay/KakaoPayReady";
-import KakaoPayApprove from "./kakaopay/KakaoPayApprove";
-import KakaoPayStart from "./kakaopay/KakaoPayStart";
-import KakaoPaySuccess from "./kakaopay/KakaoPaySuccess";
-import TossPayReady from "./tosspay/TossPayReady";
-import TossPayApprove from "./tosspay/TossPayApprove";
-import Order from "./order/Order";
-import GoogleLoginReady from "./login/GoogleLoginReady";
-import LogOut from './login/LogOut';
-import Login from "./login/LogIn";
-import AdminPage from './admin/AdminPage';
 import LoginRoute from "./login/LoginRoute";
-
 
 import TossPayRoutes from "./tosspay/TossPayRoutes";
 import OrderRoutes from "./order/OrderRoutes";
 import CouponRoutes from "./Coupon/CouponRoutes";
+import ItemRoutes from "./item/ItemRoutes";
 function App() {
-    return (
-        <>
-            <TossPayRoutes />
-            <KakaoPayRoutes />
-            <OrderRoutes />
-            <CouponRoutes />
-            <LoginRoute/>
-        </>
-
-);
+  return (
+    <>
+      <TossPayRoutes />
+      <KakaoPayRoutes />
+      <OrderRoutes />
+      <CouponRoutes />
+      <LoginRoute />
+      <CartRoutes />
+      <ItemRoutes />
+    </>
+  );
 }
 
 import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
+import CartRoutes from "./cart/CartRoutes";
 
 export default App;

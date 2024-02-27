@@ -19,6 +19,12 @@ public class CustomCartItemRepositoryImpl implements CustomCartItemRepository {
     private final JPAQueryFactory queryFactory;
 
 
+    /**
+     * cartItem 리스트를 가져오되, 연관된 멤버, 아이템까지 fetch join을 통해 함께 가져온다.
+     *
+     * @param memberId
+     * @return
+     */
     @Override
     public List<CartItem> queryCartItemByMember(Long memberId) {
         return queryFactory
@@ -27,5 +33,15 @@ public class CustomCartItemRepositoryImpl implements CustomCartItemRepository {
                 .leftJoin(cartItem.item, item).fetchJoin()
                 .where(cartItem.member.id.eq(memberId))
                 .fetch();
+    }
+
+    @Override
+    public CartItem queryCartItem(Long cartItemId) {
+        return queryFactory
+                .selectFrom(cartItem)
+                .leftJoin(cartItem.member, member).fetchJoin()
+                .leftJoin(cartItem.item, item).fetchJoin()
+                .where(cartItem.id.eq(cartItemId))
+                .fetchOne();
     }
 }
