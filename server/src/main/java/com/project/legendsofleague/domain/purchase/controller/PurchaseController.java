@@ -1,8 +1,11 @@
 package com.project.legendsofleague.domain.purchase.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.project.legendsofleague.domain.member.domain.CurrentMember;
+import com.project.legendsofleague.domain.member.domain.Member;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
+import com.project.legendsofleague.domain.purchase.dto.PurchaseSuccessResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoReadyResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossPayApproveRequestDto;
 import com.project.legendsofleague.domain.purchase.service.BeforePurchaseService;
@@ -28,13 +31,23 @@ public class PurchaseController {
     private final KakaoService kakaoService;
     private final TossService tossService;
 
+    @Operation(summary = "결제 정보 조회 API")
+    @GetMapping("/purchases/{purchaseId}")
+    public ResponseEntity<PurchaseSuccessResponseDto> queryPurchaseInfo(
+        @PathVariable("purchaseId") Long purchaseId) {
+        PurchaseSuccessResponseDto dto = beforePurchaseService.queryPurchaseInfo(
+            purchaseId);
+
+        return new ResponseEntity<PurchaseSuccessResponseDto>(dto, HttpStatus.OK);
+    }
+
     @Operation(summary = "결제 시작 API")
     @PostMapping("/purchase/ready")
     public ResponseEntity<PurchaseResponseDto> startPurchase(
-        @RequestBody PurchaseStartRequestDto purchaseStartRequestDto) {
-        //임시 코드
-        Long memberId = 1L;
-        PurchaseResponseDto purchaseResponseDto = beforePurchaseService.startPurchase(memberId,
+        @RequestBody PurchaseStartRequestDto purchaseStartRequestDto,
+        @CurrentMember Member member) {
+
+        PurchaseResponseDto purchaseResponseDto = beforePurchaseService.startPurchase(member,
             purchaseStartRequestDto);
 
         return new ResponseEntity<PurchaseResponseDto>(purchaseResponseDto, HttpStatus.OK);
@@ -43,8 +56,9 @@ public class PurchaseController {
     @Operation(summary = "kakaoPay Ready API.")
     @GetMapping("/purchase/kakao-pay/ready")
     public ResponseEntity<KakaoReadyResponseDto> kakaoPay(
-        @RequestParam(value = "purchaseId") Long purchaseId) {
-        KakaoReadyResponseDto dto = kakaoService.kakaoPay(purchaseId);
+        @RequestParam(value = "purchaseId") Long purchaseId,
+        @CurrentMember Member member) {
+        KakaoReadyResponseDto dto = kakaoService.kakaoPay(member.getId(), purchaseId);
         return new ResponseEntity<KakaoReadyResponseDto>(dto, HttpStatus.OK);
     }
 
@@ -52,33 +66,35 @@ public class PurchaseController {
     @GetMapping("/purchase/approve")
     public ResponseEntity<Void> success(@RequestParam("pg_token") String pgToken,
         @RequestParam(value = "tid", required = false) String tid,
-        @RequestParam(value = "purchaseId") Long purchaseId) throws JsonProcessingException {
+        @RequestParam(value = "purchaseId") Long purchaseId,
+        @CurrentMember Member member
+    ) throws JsonProcessingException {
 
         if (!kakaoService.kakaoPaySuccess(purchaseId, pgToken, tid)) {
-            purchaseCancel(purchaseId);
+            purchaseCancel(member, purchaseId);
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @Operation(summary = "주문 취소 API.")
-    @GetMapping("/purchase/{purchaseId}/cancel")
-    public ResponseEntity<Void> purchaseCancel(@PathVariable("purchaseId") Long purchaseId)
+    @GetMapping("/purchase/cancel")
+    public ResponseEntity<Void> purchaseCancel(@CurrentMember Member member,
+        @RequestParam("orderId") Long orderId)
         throws JsonProcessingException {
 
-        //임시 코드
-        Long memberId = 1L;
-        beforePurchaseService.cancelPurchase(memberId, purchaseId);
+        beforePurchaseService.cancelPurchase(member, orderId);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @Operation(summary = "tossPay Approve API")
     @PostMapping("/purchase/toss-pay/approve")
     public ResponseEntity<Void> tossPaySuccess(@RequestBody TossPayApproveRequestDto requestDto,
-        @RequestParam(value = "purchaseId") Long purchaseId)
+        @RequestParam(value = "purchaseId") Long purchaseId,
+        @CurrentMember Member member)
         throws UnsupportedEncodingException, JsonProcessingException {
 
         if (!tossService.tossPaySuccess(purchaseId, requestDto)) {
-            purchaseCancel(purchaseId);
+            purchaseCancel(member, purchaseId);
         }
 
         return new ResponseEntity<Void>(HttpStatus.OK);

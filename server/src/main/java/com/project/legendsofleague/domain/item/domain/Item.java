@@ -3,13 +3,21 @@ package com.project.legendsofleague.domain.item.domain;
 
 import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
-import jakarta.persistence.*;
+import com.project.legendsofleague.domain.itemreview.domain.ItemReview;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -34,10 +42,13 @@ public class Item extends BaseEntity {
 
     private String thumbnailImage; //originalFileName은 필요가 없으니까 s3 url만 있으면 된다.
 
-    private boolean isDeleted = false;
+    private final boolean isDeleted = false;
 
     @OneToMany(mappedBy = "item")
-    private List<ItemImage> itemImageList = new ArrayList<>();
+    private final List<ItemImage> itemImageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private final List<ItemReview> itemReviewList = new ArrayList<>();
 
     /**
      * 양방향 매핑서 쿼리 1개를 줄여준다.
