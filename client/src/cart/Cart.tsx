@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect, MouseEvent, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { TypePredicateKind } from "typescript";
+import AxiosInstance from "../common/AxiosInstance";
 
 const Cart = () => {
   const modalBackground = useRef();
@@ -38,7 +39,7 @@ const Cart = () => {
   const fetchCartItemList = async () => {
     const url = "http://localhost:8080/carts";
     try {
-      const response = await axios.get(url);
+      const response = await AxiosInstance.get(url);
       setCartItemList(response.data);
     } catch (error) {
       console.error("Error fetching cart items: ", error);
@@ -54,7 +55,7 @@ const Cart = () => {
 
     try {
       // 예시로 서버에 업데이트 요청을 보내는 코드
-      const response = await axios.post(url, {
+      const response = await AxiosInstance.post(url, {
         cartItemId: cartItemId,
         count: updatedCount,
       });
@@ -86,7 +87,7 @@ const Cart = () => {
     console.log(cartItemDeleteRequestList);
 
     try {
-      await axios.post(url, cartItemDeleteRequestList, {
+      await AxiosInstance.post(url, cartItemDeleteRequestList, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -123,7 +124,7 @@ const Cart = () => {
     // 서버로 선택된 아이템들의 정보를 보내는 요청을 보냄
 
     try {
-      const response = await axios.post(url, cartItemOrderRequestList, {
+      const response = await AxiosInstance.post(url, cartItemOrderRequestList, {
         headers: {
           "Content-Type": "application/json",
         },
