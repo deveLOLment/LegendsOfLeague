@@ -26,10 +26,8 @@ public class CartItemController {
 
     @Operation(summary = "장바구니 목록을 보여주는 컨트롤러입니다.")
     @GetMapping("/carts")
-    public ResponseEntity<List<CartItemResponseDto>> showCartItemList() {
-        Long memberId = 1L;
-        List<CartItemResponseDto> cart = cartItemService.findCartList(memberId);
-
+    public ResponseEntity<List<CartItemResponseDto>> showCartItemList(@CurrentMember Member member) {
+        List<CartItemResponseDto> cart = cartItemService.findCartList(member.getId());
         return ResponseEntity.ok(cart);
     }
 
