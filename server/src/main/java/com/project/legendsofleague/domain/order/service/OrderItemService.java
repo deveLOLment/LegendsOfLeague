@@ -1,7 +1,7 @@
 package com.project.legendsofleague.domain.order.service;
 
 import com.project.legendsofleague.domain.order.domain.OrderItem;
-import com.project.legendsofleague.domain.order.repository.OrderItemRepository;
+import com.project.legendsofleague.domain.order.repository.orderItem.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
