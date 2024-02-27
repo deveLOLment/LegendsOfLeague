@@ -105,11 +105,31 @@ public class CartItemService {
         List<CartItem> cartItems = getCartItemList(memberId);
         List<Long> cartItemIds = cartItems.stream()
                 .map((ci) -> ci.getId()).toList();
-        for (CartItemDeleteRequestDto cartItemDeleteRequestDto : cartItemDeleteRequestList) {
-            if (cartItemIds.contains(cartItemDeleteRequestDto.getCartItemId())) {
+
+        //요청한 장바구니 삭제가 유효하다면 삭제 진행
+        if (checkCart(cartItemIds, cartItemDeleteRequestList)) {
+            for (CartItemDeleteRequestDto cartItemDeleteRequestDto : cartItemDeleteRequestList) {
                 cartItemRepository.deleteById(cartItemDeleteRequestDto.getCartItemId());
             }
+        } else {
+            //장바구니에 없는 목록을 삭제 시도함
+            throw new RuntimeException("유효하지 않은 요청입니다.");
         }
+    }
+
+
+    /**
+     * 사용자가 장바구니에 없는 목록을 삭제 시도하는 지 체크하기 위한 메소드
+     *
+     * @return
+     */
+    private boolean checkCart(List<Long> cartItemIds, List<CartItemDeleteRequestDto> cartItemDeleteRequestList) {
+        for (CartItemDeleteRequestDto cartItemDeleteRequestDto : cartItemDeleteRequestList) {
+            if (!cartItemIds.contains(cartItemDeleteRequestDto.getCartItemId())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

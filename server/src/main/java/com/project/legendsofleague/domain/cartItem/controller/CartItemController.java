@@ -6,12 +6,10 @@ import com.project.legendsofleague.domain.cartItem.dto.CartItemDeleteRequestDto;
 import com.project.legendsofleague.domain.cartItem.dto.CartItemResponseDto;
 import com.project.legendsofleague.domain.cartItem.dto.CartItemUpdateRequestDto;
 import com.project.legendsofleague.domain.cartItem.service.CartItemService;
-import com.project.legendsofleague.domain.member.dto.CustomMemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +24,8 @@ public class CartItemController {
 
     @Operation(summary = "장바구니 목록을 보여주는 컨트롤러입니다.")
     @GetMapping("/carts")
-    public ResponseEntity<List<CartItemResponseDto>> showCartItemList(@AuthenticationPrincipal(errorOnInvalidType = true) CustomMemberDetails customMemberDetails) {
-        Long memberId = customMemberDetails.getMember().getId();
+    public ResponseEntity<List<CartItemResponseDto>> showCartItemList() {
+        Long memberId = 1L;
         List<CartItemResponseDto> cart = cartItemService.findCartList(memberId);
 
         return ResponseEntity.ok(cart);
@@ -35,9 +33,8 @@ public class CartItemController {
 
     @Operation(summary = "장바구니 목록에서 특정 아이템 옵션(수량 등)을 수정하는 컨트롤러입니다.")
     @PostMapping("/cart/{cartItemId}/update")
-    public ResponseEntity<List<CartItemResponseDto>> updateCartItem(@AuthenticationPrincipal(errorOnInvalidType = true) CustomMemberDetails customMemberDetails,
-                                                                    @PathVariable("cartItemId") Long cartItemId, @RequestBody CartItemUpdateRequestDto cartItemUpdateRequestDto) {
-        Long memberId = customMemberDetails.getMember().getId();
+    public ResponseEntity<List<CartItemResponseDto>> updateCartItem(@PathVariable("cartItemId") Long cartItemId, @RequestBody CartItemUpdateRequestDto cartItemUpdateRequestDto) {
+        Long memberId = 1L;
 
         List<CartItemResponseDto> cartItemResponseDtoList = cartItemService.updateCartItem(memberId, cartItemUpdateRequestDto);
 

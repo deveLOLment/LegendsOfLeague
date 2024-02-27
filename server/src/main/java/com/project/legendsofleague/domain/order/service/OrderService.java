@@ -145,20 +145,20 @@ public class OrderService {
      * @param orderId
      */
     @Transactional
-    public void refundOrder(Long orderId) {
-        List<OrderItem> orderItems = orderItemService.getOrderItemList(orderId);
+    public void refundOrder(Member member, Order order) {
 
         //유효하지 않은 order를 요청한 거였다면 (이미 삭제된 order라면)
-        if (orderItems.isEmpty()) {
+        if (order.getOrderItemList().isEmpty()) {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
-        Order order = orderItems.get(0).getOrder();
+
+        if (!order.getMember().equals(member)) {
+            throw new RuntimeException("유효하지 않은 요청입니다.");
+        }
 
         if (order.getOrderStatus() != OrderStatus.SUCCESS) {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
-
-        order.refundOrder();
     }
 
 

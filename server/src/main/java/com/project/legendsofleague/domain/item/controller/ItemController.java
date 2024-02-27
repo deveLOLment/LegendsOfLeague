@@ -1,6 +1,7 @@
 package com.project.legendsofleague.domain.item.controller;
 
 
+import com.project.legendsofleague.domain.item.dto.ItemDetailResponseDto;
 import com.project.legendsofleague.domain.item.dto.ItemListResponseDto;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
 import com.project.legendsofleague.domain.item.dto.ItemSelectResponseDto;
@@ -34,7 +35,7 @@ public class ItemController {
         return null;
     }
 
-    
+
     @PostMapping("/item/test")
     public String itemTest(@RequestBody ItemRequestDto itemRequestDto) throws IOException {
         itemService.saveItem(itemRequestDto);
@@ -52,5 +53,12 @@ public class ItemController {
     public ResponseEntity<List<ItemSelectResponseDto>> getItemSelectList() {
         List<ItemSelectResponseDto> itemSelectList = itemService.getItemSelectList();
         return new ResponseEntity<List<ItemSelectResponseDto>>(itemSelectList, HttpStatus.OK);
+    }
+
+    @GetMapping("/item/{itemId}")
+    public ResponseEntity<ItemDetailResponseDto> getItemDetail(@PathVariable("itemId") Long itemId) {
+        ItemDetailResponseDto itemDetail = itemService.getItemDetail(itemId);
+
+        return ResponseEntity.ok(itemDetail);
     }
 }
