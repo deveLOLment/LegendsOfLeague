@@ -27,6 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -102,8 +108,8 @@ public class OrderService {
     }
 
     /**
-     * 장바구니를 통해 요청했는데, 장바구니에 item 목록이 없는 요청이 있는 지 확인 ex) 장바구니를 통해 item2, item3에 대한 order를 만드려고 하는데,
-     * cart에 item2가 없는 지 확인
+     * 장바구니를 통해 요청했는데, 장바구니에 item 목록이 없는 요청이 있는 지 확인
+     * ex) 장바구니를 통해 item2, item3에 대한 order를 만드려고 하는데, cart에 item2가 없는 지 확인
      *
      * @param cartItemIds
      * @param cartItemRequestList

@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 const ItemRoutes = () => {
   return (
     <Routes>
-      <Route path="/item" element={<Item />} />
+      <Route path={`/item/:itemId`} element={<Item />} />
     </Routes>
   );
 };

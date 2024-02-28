@@ -13,13 +13,15 @@ import java.util.List;
 @Getter
 public class ItemDetailResponseDto {
 
-    private Long id;
+    private Long itemId;
 
     private String name;
 
     private Integer price;
 
     private String description;
+
+    private Integer stock;
 
     private String category;
 
@@ -29,14 +31,15 @@ public class ItemDetailResponseDto {
 
     public static ItemDetailResponseDto toDto(Item item) {
         ItemDetailResponseDto itemDetailResponseDto = new ItemDetailResponseDto();
-        itemDetailResponseDto.id = item.getId();
+        itemDetailResponseDto.itemId = item.getId();
         itemDetailResponseDto.name = item.getName();
         itemDetailResponseDto.price = item.getPrice();
         itemDetailResponseDto.description = item.getDescription();
+        itemDetailResponseDto.stock = item.getStock();
         itemDetailResponseDto.category = item.getCategory().getDisplayName();
         itemDetailResponseDto.thumbnailImage = item.getThumbnailImage();
         itemDetailResponseDto.itemImageList = item.getItemImageList()
-                .stream().map((im) -> ItemImageReponseDto.toDto(im)).toList();
+                .stream().map(ItemImageReponseDto::toDto).toList();
 
         return itemDetailResponseDto;
     }
