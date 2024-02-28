@@ -1,0 +1,115 @@
+.chat-container {
+  width: 800px;
+  margin: auto;
+  position: relative;
+  height: calc(100vh - 60px); /* 화면 높이에서 form 높이를 뺀 값으로 설정 */
+  box-sizing: border-box;
+  padding-bottom: 50px;
+  background-color: aliceblue;
+  overflow-y: auto; /*내용이 chat-container 높이 초과 시 스크롤 생성*/
+}
+
+/*** 채팅 입력칸 CSS ***/
+.form-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  margin: auto;
+  width: 800px; /* 위의 chat-container와 동일하게 */
+  background-color: white;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+input.chat-input { 
+  margin-right: 10px; 
+  flex: 1;
+  width: 85%; 
+  padding: 10px; 
+  border-radius: 5px;
+  border: 1px solid #ddd; 
+  font-size: 16px; 
+  color: black;
+}
+
+form button {
+  width: 8%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/*** 채팅 말풍선 CSS ***/
+.my-chat-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.others-chat-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.chat-message {
+  max-width: 70%;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-message {
+  align-self: flex-end;
+  background-color: yellow;
+}
+
+.others-message {
+  align-self: flex-start;
+  background-color: #f0f0f0;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #888;
+  position: relative;
+  margin-top: 5px;
+}
+
+.my-time {
+  align-self: flex-end;
+}
+
+.others-time {
+  align-self: flex-start;
+}
+
+.chat-sender {
+  font-size: 18px;
+  color: black;
+  position: relative;
+  margin-top: 5px;
+}
+
+.my-sender {
+  align-self: flex-end;
+}
+
+.others-sender {
+  align-self: flex-start;
+}

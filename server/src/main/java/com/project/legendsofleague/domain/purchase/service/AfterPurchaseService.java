@@ -57,6 +57,7 @@ public class AfterPurchaseService {
         purchase.getMemberCouponList().forEach(MemberCoupon::revertUsedHistory);
 
         //orderId를 넘기면 해당 order를 REFUND로 바꾸는 로직 수행
+        purchase.getOrder().refundOrder();
 
     }
 

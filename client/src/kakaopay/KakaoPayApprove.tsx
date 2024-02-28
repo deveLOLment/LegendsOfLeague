@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import AxiosInstance from "../common/AxiosInstance";
 
 const KakaoPayApprove = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const pgToken = searchParams.get("pg_token");
 
-  console.log(pgToken);
   useEffect(() => {
     const fetchPayUrl = async () => {
       try {
@@ -22,10 +22,7 @@ const KakaoPayApprove = () => {
           tid +
           "&purchaseId=" +
           purchaseId;
-        console.log(url);
-        const response = await axios.get(url);
-        localStorage.removeItem("tid");
-        localStorage.removeItem("purchaseId");
+        const response = await AxiosInstance.get(url);
 
         navigate("/purchase/success");
       } catch (error) {}

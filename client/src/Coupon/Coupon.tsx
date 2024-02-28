@@ -1,16 +1,8 @@
 import React from "react";
 import { CouponResponseModel, CouponTypeRecord } from "./CouponModel";
-import {
-  BottomWrapper,
-  CommonCouponWrapper,
-  CouponLabel,
-  CouponTitle,
-  DiscountInformationWrapper,
-  DiscountWrapper,
-  InformationWrapper,
-  PeriodWrapper,
-} from "./CouponStyled";
+
 import axios from "axios";
+import "./Coupon.css";
 
 const Coupon = ({
   coupon,
@@ -46,34 +38,38 @@ const Coupon = ({
   };
 
   return (
-    <CommonCouponWrapper>
-      <InformationWrapper>
-        <CouponLabel>{CouponTypeRecord[coupon.couponType]}</CouponLabel>
-        <CouponTitle>{coupon.name}</CouponTitle>
-      </InformationWrapper>
-      <PeriodWrapper>
-        {coupon.validityStartDate + " ~ " + coupon.validityEndDate}
-      </PeriodWrapper>
+    <dl className="PCommonCoupon">
+      <dt className="PCommonCoupon__title">{coupon.name}</dt>
+      <dd className="PCommonCoupon__information">
+        <div className="PCommonCoupon__period">
+          <span>
+            {coupon.validityStartDate.toString()} -{" "}
+            {coupon.validityEndDate.toString()}
+          </span>
+        </div>
 
-      <BottomWrapper>
-        <DiscountWrapper>
-          {isAmountDiscountedCoupon() === false ? (
-            <div className="DiscountWrapper__rate">
-              {coupon.discountPrice} % 할인
-            </div>
-          ) : (
-            <div className="DiscountWrapper__amount">
-              {coupon.discountPrice}원 할인
-            </div>
-          )}
-
-          <DiscountInformationWrapper>
-            {/* Add other discount information */}
-          </DiscountInformationWrapper>
-        </DiscountWrapper>
-        <button onClick={registerCoupon}>등록</button>
-      </BottomWrapper>
-    </CommonCouponWrapper>
+        <div className="PCommonCoupon__bottom">
+          <div className="PCommonCoupon__discount">
+            {isAmountDiscountedCoupon() ? (
+              <strong className="PCommonCoupon__discount__rate">
+                {coupon.discountPrice}원
+              </strong>
+            ) : (
+              <span className="PCommonCoupon__discount__rate">
+                {coupon.discountPrice}%
+              </span>
+            )}
+            <div className="PCommonCoupon__discount__information"></div>
+          </div>
+          <div className="PCommonCoupon__buttons">
+            <span className="PCommonCoupon__button">적용상품</span>
+            <span className="PCommonCoupon__button PCommonCoupon__button--download">
+              쿠폰받기 <a onClick={registerCoupon}></a>
+            </span>
+          </div>
+        </div>
+      </dd>
+    </dl>
   );
 };
 

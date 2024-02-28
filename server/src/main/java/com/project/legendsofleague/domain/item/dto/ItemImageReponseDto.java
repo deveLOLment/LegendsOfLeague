@@ -6,13 +6,14 @@ import lombok.Getter;
 @Getter
 public class ItemImageReponseDto {
 
-    private Long id;
+    private Long itemImageId;
 
     private String imageUrl;
 
 
     public static ItemImageReponseDto toDto(ItemImage itemImage) {
         ItemImageReponseDto itemImageReponseDto = new ItemImageReponseDto();
+        itemImageReponseDto.itemImageId = itemImage.getId();
         itemImageReponseDto.imageUrl = itemImage.getImageUrl();
 
         return itemImageReponseDto;

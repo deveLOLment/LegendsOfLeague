@@ -73,23 +73,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000L);
+//        String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000L);
 
+        String token = jwtUtil.createJwt(username, role, 30000 * 10000L);
         System.out.println("토큰 출력:" + token);
 
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addCookie(createCookie("Authorization", token));
+
+//        response.addHeader("Authorization", "Bearer " + token);
 
 //        response.addCookie(( createCookie("Authorization",  URLEncoder.encode("Bearer " + token), "UTF-8")));
 //          response.addCookie(createCookie("Authorization", URLEncoder.encode("Bearer " + token, StandardCharsets.UTF_8)));
         // 로그인 완료시 프론트서버의 홈으로 리다이렉트
-//          response.sendRedirect("http://localhost:3000");
+//        response.sendRedirect("http://localhost:3000");
     }
 
     // 쿠키 생성
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 1000);
+        cookie.setMaxAge(30 * 10000);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
@@ -100,4 +103,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401);
     }
+
 }

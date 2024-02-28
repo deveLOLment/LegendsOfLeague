@@ -1,6 +1,7 @@
 package com.project.legendsofleague.config;
 
 import com.project.legendsofleague.domain.member.jwt.CustomSuccessHandler;
+import com.project.legendsofleague.domain.member.jwt.InternalFilterExceptionHandler;
 import com.project.legendsofleague.domain.member.jwt.JWTFilter;
 import com.project.legendsofleague.domain.member.jwt.JWTUtil;
 import com.project.legendsofleague.domain.member.jwt.LoginFilter;
@@ -25,6 +26,8 @@ public class SecurityConfig {
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final MemberRepository memberRepository;
+
+    private final InternalFilterExceptionHandler internalFilterExceptionHandler;
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
 
@@ -64,10 +67,22 @@ public class SecurityConfig {
         httpSecurity
                 .addFilterBefore(new JWTFilter(jwtUtil, memberRepository), LoginFilter.class);
 
+        httpSecurity
+                .addFilterBefore(internalFilterExceptionHandler, JWTFilter.class);
+
         // 로그인 필터 설정
         httpSecurity
                 .addFilterAt(new LoginFilter(authenticationManager(configuration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(new ExceptionHandlerFilter(), JWTFilter.class);
 
+        // 로그아웃 설정
+        httpSecurity
+                .logout()
+                .logoutUrl("/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .deleteCookies("Authorization")
+                .permitAll();
 
         // 경로별 인가 작업
         httpSecurity
@@ -77,13 +92,15 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/").hasAnyRole("ADMIN", "USER")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
 
         // 세션 설정 off
         httpSecurity
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+//        httpSecurity.cor <- 여기서부터 다시
 
         return httpSecurity.build();
     }

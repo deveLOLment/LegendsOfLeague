@@ -46,7 +46,7 @@ public class KakaoService {
     private String secretKey;
 
     @Transactional
-    public KakaoReadyResponseDto kakaoPay(Long purchaseId) {
+    public KakaoReadyResponseDto kakaoPay(Long memberId, Long purchaseId) {
 
         final Integer tax_free_amount = 0;
 
@@ -139,9 +139,6 @@ public class KakaoService {
                 throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
-
-        Integer cancel_amount = Integer.parseInt(
-            objectMapper.readTree(body).get("approved_cancel_amount").get("total").toString());
 
         afterPurchaseService.cancelPurchase(purchase);
     }

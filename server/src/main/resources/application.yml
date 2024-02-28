@@ -9,13 +9,15 @@ spring:
       ,excel.yml
 
   jpa:
-    generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+    generate-ddl: true
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+        default_batch_fetch_size: 1000
+
 
 #        provider:
 #          google:

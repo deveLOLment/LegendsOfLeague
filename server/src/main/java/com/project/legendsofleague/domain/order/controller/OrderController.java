@@ -1,7 +1,10 @@
 package com.project.legendsofleague.domain.order.controller;
 
 
-import com.project.legendsofleague.domain.cartItem.dto.CartItemRequestDto;
+import com.project.legendsofleague.domain.cartItem.dto.CartItemOrderRequestDto;
+import com.project.legendsofleague.domain.member.domain.CurrentMember;
+import com.project.legendsofleague.domain.member.domain.Member;
+import com.project.legendsofleague.domain.order.dto.OrderListResponseDto;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
 import com.project.legendsofleague.domain.order.service.OrderService;
@@ -26,6 +29,17 @@ public class OrderController {
 
 
     /**
+     * 주문 목록을 보여주는 컨트롤러입니다.
+     */
+    @Operation(summary = "주문 목록을 보여주기 위한 컨트롤러입니다.")
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderListResponseDto>> showOrderList(@CurrentMember Member member) {
+        List<OrderListResponseDto> orderList = orderService.findOrderList(member);
+        return ResponseEntity.ok(orderList);
+    }
+
+
+    /**
      * 상세 아이템에서 주문 버튼을 눌렀을 때 요청되는 url이다.
      *
      * @param orderRequestDto
@@ -33,10 +47,8 @@ public class OrderController {
      */
     @Operation(summary = "주문 관련 컨트롤러입니다.(상세 아이템 창에서 주문하기 버튼을 누르면 실행됩니다.)")
     @PostMapping("/order/single")
-    public ResponseEntity<Long> orderSingleItem(@RequestBody OrderRequestDto orderRequestDto) {
-        Long memberId = 1L; //임의의 멤버 생성
-        Long orderId = orderService.createOrder(orderRequestDto, memberId);
-
+    public ResponseEntity<Long> orderSingleItem(@CurrentMember Member member, @RequestBody OrderRequestDto orderRequestDto) {
+        Long orderId = orderService.createOrder(orderRequestDto, member);
         return ResponseEntity.ok(orderId);
     }
 
@@ -48,19 +60,15 @@ public class OrderController {
      */
     @Operation(summary = "주문 관련 컨트롤러입니다.(장바구니 창에서 주문하기 버튼을 누르면 실행됩니다.)")
     @PostMapping("/order/cart")
-    public ResponseEntity<Long> orderCartItems(@RequestBody List<CartItemRequestDto> cartItemRequestList) {
-        Long memberId = 1L;
-        Long orderId = orderService.createOrderFromCart(cartItemRequestList, memberId);
-
+    public ResponseEntity<Long> orderCartItems(@CurrentMember Member member, @RequestBody List<CartItemOrderRequestDto> cartItemRequestList) {
+        Long orderId = orderService.createOrderFromCart(cartItemRequestList, member);
         return ResponseEntity.ok(orderId);
     }
 
     @Operation(summary = "주문 페이지 관련 컨트롤러입니다.")
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<OrderResponseDto> orderPage(@PathVariable("orderId") Long orderId) {
-        Long memberId = 1L;
-        OrderResponseDto orderResponseDto = orderService.detailOrderPage(memberId, orderId);
-
+    public ResponseEntity<OrderResponseDto> orderPage(@CurrentMember Member member, @PathVariable("orderId") Long orderId) {
+        OrderResponseDto orderResponseDto = orderService.detailOrderPage(member, orderId);
         return ResponseEntity.ok(orderResponseDto);
     }
 }

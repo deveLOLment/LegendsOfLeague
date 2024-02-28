@@ -3,14 +3,15 @@ import { CouponResponseModel } from "./CouponModel";
 import axios from "axios";
 import Coupon from "./Coupon";
 import { CouponContainer, CouponWrapper, ListWrapper } from "./CouponStyled";
+import axiosInstance from "../common/AxiosInstance";
 
 const CouponList = () => {
   const [couponList, setCouponList] = useState<CouponResponseModel[]>([]);
 
-  const url = "http://localhost:8080/coupons";
+  const url = "/coupons";
   const fetchCouponList = async () => {
     try {
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
       //TODO : 로그인한 쿠키값이 존재하면 넘기기
 
       const responseData: CouponResponseModel[] = response.data;
@@ -42,7 +43,7 @@ const CouponList = () => {
         ))}
       </CouponWrapper>
     </CouponContainer>
-  );
+);
 };
 
 export default CouponList;

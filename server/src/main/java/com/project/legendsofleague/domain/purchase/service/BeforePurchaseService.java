@@ -7,16 +7,19 @@ import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.coupon.service.CouponService;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
+import com.project.legendsofleague.domain.member.domain.Member;
 import com.project.legendsofleague.domain.member.repository.MemberRepository;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
 import com.project.legendsofleague.domain.order.domain.Order;
-import com.project.legendsofleague.domain.order.repository.OrderRepository;
+import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
+import com.project.legendsofleague.domain.order.service.OrderService;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.domain.PurchaseType;
 import com.project.legendsofleague.domain.purchase.dto.ItemCouponAppliedDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
+import com.project.legendsofleague.domain.purchase.dto.PurchaseSuccessResponseDto;
 import com.project.legendsofleague.domain.purchase.exception.InvalidMemberCouponException;
 import com.project.legendsofleague.domain.purchase.exception.NotEnoughStockException;
 import com.project.legendsofleague.domain.purchase.exception.WrongPriceException;
@@ -40,6 +43,8 @@ public class BeforePurchaseService {
     private final MemberCouponRepository memberCouponRepository;
     private final OrderRepository orderRepository;
 
+    private final OrderService orderService;
+
     private final KakaoService kakaoService;
     private final TossService tossService;
 
@@ -53,10 +58,8 @@ public class BeforePurchaseService {
 
 
     @Transactional
-    public PurchaseResponseDto startPurchase(Long memberId,
+    public PurchaseResponseDto startPurchase(Member member,
         PurchaseStartRequestDto purchaseStartRequestDto) {
-        //임시 코드
-        String nickname = "test nickname";
 
         //실제 코드
         Long orderId = purchaseStartRequestDto.getOrderId();
@@ -77,7 +80,7 @@ public class BeforePurchaseService {
             .collect(Collectors.toMap(Item::getId, item -> item));
 
         //쿠폰 사용 여부, 유효성 검증
-        Map<Long, MemberCoupon> memberCouponMap = getMemberCouponMap(memberId, itemList);
+        Map<Long, MemberCoupon> memberCouponMap = getMemberCouponMap(member.getId(), itemList);
 
         //쿠폰의 유효성, 적용 여부, 적용 가격 검증
         if (!couponService.checkValidity(memberCouponMap, itemList, itemMap)) {
@@ -112,23 +115,26 @@ public class BeforePurchaseService {
         }
 
         return new PurchaseResponseDto(createdPurchase.getId(),
-            purchaseTotalPrice, purchaseType.name(), orderName, orderCode, nickname);
+            purchaseTotalPrice, purchaseType.name(), orderName, orderCode, member.getNickname());
     }
 
 
     /**
      * 주문을 취소하는 로직.
      *
-     * @param memberId
-     * @param purchaseId
+     * @param orderId
      * @throws JsonProcessingException
+     * @Param member
      */
-    public void cancelPurchase(Long memberId, Long purchaseId) throws JsonProcessingException {
-        //orderService에서 memberId, orderId를 넘기면 -> 검증 로직 진행
+    public void cancelPurchase(Member member, Long orderId) throws JsonProcessingException {
 
-        Purchase purchase = purchaseRepository.findById(purchaseId)
+        Purchase purchase = purchaseRepository.queryPurchaseByOrderId(orderId)
             .orElseThrow(
                 () -> GlobalExceptionFactory.getInstance(NotFoundInputValueException.class));
+
+        Order order = purchase.getOrder();
+
+        orderService.refundOrder(member, order);
 
         PurchaseType purchaseType = purchase.getPurchaseType();
         if (purchaseType == PurchaseType.KAKAO) {
@@ -218,5 +224,14 @@ public class BeforePurchaseService {
 
             return exampleItemName + " 외 " + quantity + "건";
         }
+    }
+
+    @Transactional(readOnly = true)
+    public PurchaseSuccessResponseDto queryPurchaseInfo(Long purchaseId) {
+        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
+        });
+
+        return PurchaseSuccessResponseDto.from(purchase);
     }
 }

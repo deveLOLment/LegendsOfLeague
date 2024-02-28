@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import AxiosInstance from "../common/AxiosInstance";
 
 const TossPayApprove = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ const TossPayApprove = () => {
           "http://localhost:8080/purchase/toss-pay/approve" +
           "?purchaseId=" +
           purchaseId;
-        const response = await axios.post(url, {
+        const response = await AxiosInstance.post(url, {
           orderId: orderId,
           paymentKey: paymentKey,
           amount: amount,

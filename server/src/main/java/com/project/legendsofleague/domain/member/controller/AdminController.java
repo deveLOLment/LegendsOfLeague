@@ -11,6 +11,7 @@ public class AdminController {
     @GetMapping("/admin")
     public String getAdmin(@CurrentMember Member member) {
         return "Admin Controller";
+
     }
 }
 
