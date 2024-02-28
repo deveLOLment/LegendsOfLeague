@@ -102,7 +102,7 @@ const Header: React.FC = () => {
                 </span>
               </button>
             </div>
-            <Link to="#" className="meta_profile__2eIqF">
+            <Link to="/login" className="meta_profile__2eIqF">
               <span className="meta_label__1Kbvf">프로필</span>
             </Link>
           </div>
