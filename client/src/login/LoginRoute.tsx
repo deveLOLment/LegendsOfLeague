@@ -7,6 +7,7 @@ import LoginPage from './LoginPage'
 import AdminPage from '../admin/AdminPage'
 import SignUp from './SignUp'
 import ExLogin from './ExLogin'
+import LoginPage2 from './LogIn'
 
 
 export const LoginRoute = () => (
@@ -15,7 +16,6 @@ export const LoginRoute = () => (
     <Route path="logout" element={<LogOut />}></Route>
     <Route path="login" element={<LoginPage />}></Route>
     <Route path="admin" element={<AdminPage />}></Route>
-
     <Route path="signup" element={<SignUp/>}></Route>
     <Route path="ex" element={<ExLogin/>}></Route>
 </Routes>
