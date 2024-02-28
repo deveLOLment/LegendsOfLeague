@@ -75,8 +75,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 //        String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000L);
 
-        String token = jwtUtil.createJwt(username, role, 30000 * 10000L);
+//        String token = jwtUtil.createJwt(username, role, 30 * 10000L);
+        String token = jwtUtil.createJwt(username, role, 30 * 60 * 1000L);
+
         System.out.println("토큰 출력:" + token);
+
 
         response.addCookie(createCookie("Authorization", token));
 
@@ -92,7 +95,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(30 * 10000);
+        cookie.setMaxAge(30 * 60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
@@ -103,5 +106,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401);
     }
-
 }
+

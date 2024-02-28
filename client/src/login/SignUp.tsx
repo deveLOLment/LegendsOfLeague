@@ -2,13 +2,13 @@ import React, { FormEvent, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function SignUp() {
+function Register() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [nickname, setNickname] = useState("");
+    const [nickname, setNickname] = useState(""); // 닉네임 추가
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -23,7 +23,7 @@ function SignUp() {
                 username,
                 email,
                 password,
-                nickname
+                nickname // 닉네임도 함께 전송
             });
 
             console.log(response.data); // 회원가입 성공 시 응답 확인
@@ -37,37 +37,47 @@ function SignUp() {
     };
 
     return (
-        <div className="main-w3layouts wrapper">
-            <h1>Creative SignUp Form</h1>
-            <div className="main-agileinfo">
-                <div className="agileits-top">
-                    <form onSubmit={handleSubmit}>
-                        <input className="text" type="text" name="username" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        <input className="text email" type="email" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                        <input className="text" type="text" name="nickname" placeholder="Nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} required />
-                        <input className="text" type="password" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                        <input className="text w3lpass" type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                        <div className="wthree-text">
-                            <label className="anim">
-                                <input type="checkbox" className="checkbox" required />
-                                <span>I Agree To The Terms & Conditions</span>
-                            </label>
-                            <div className="clear"> </div>
+        <div className="login_box_area section-margin">
+            <div className="container">
+                <div className="row">
+                    <div className="col-lg-6">
+                        <div className="login_form_inner register_form_inner">
+                            <h3>Create an account</h3>
+                            <form className="row login_form" onSubmit={handleSubmit}>
+                                <div className="col-md-12 form-group">
+                                    <input type="text" className="form-control" id="username" name="username" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                                </div>
+                                <div className="col-md-12 form-group">
+                                    <input type="email" className="form-control" id="email" name="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                                </div>
+                                <div className="col-md-12 form-group">
+                                    <input type="text" className="form-control" id="nickname" name="nickname" placeholder="Nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+                                </div>
+                                <div className="col-md-12 form-group">
+                                    <input type="password" className="form-control" id="password" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                </div>
+                                <div className="col-md-12 form-group">
+                                    <input type="password" className="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                                </div>
+                                <div className="col-md-12 form-group">
+                                    <button type="submit" className="button button-register w-100">Register</button>
+                                </div>
+                            </form>
                         </div>
-                        <input type="submit" value="SIGNUP" />
-                    </form>
+                    </div>
+                    <div className="col-lg-6">
+                        <div className="login_box_img">
+                            <div className="hover">
+                                <h4>Already have an account?</h4>
+                                <p>There are advances being made in science and technology everyday, and a good example of this is the</p>
+                                <a className="button button-account" href="/login">Login Now</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className="colorlibcopy-agile">
-                <p>© 2023 Signup Form. All rights reserved | Design by <a href="https://colorlib.com/" target="_blank" rel="noopener noreferrer">Colorlib</a></p>
-            </div>
-            <ul className="colorlib-bubbles">
-                {Array.from({ length: 10 }, (_, index) => (
-                    <li key={index}></li>
-                ))}
-            </ul>
         </div>
     );
 }
 
-export default SignUp;
+export default Register;
