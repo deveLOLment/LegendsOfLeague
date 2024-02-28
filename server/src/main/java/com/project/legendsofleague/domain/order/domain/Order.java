@@ -67,7 +67,7 @@ public class Order extends BaseEntity {
     public static Order toEntity(Member member, OrderItem orderItem) {
         List<OrderItem> orderItems = new ArrayList<>();
         orderItems.add(orderItem);
-        return toEntity(member, orderItem);
+        return toEntity(member, orderItems);
     }
 
 

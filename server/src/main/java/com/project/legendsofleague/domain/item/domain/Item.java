@@ -3,31 +3,19 @@ package com.project.legendsofleague.domain.item.domain;
 
 import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
-import com.project.legendsofleague.domain.itemreview.domain.ItemReview;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends BaseEntity {
 
-    @OneToMany(mappedBy = "item")
-    private List<ItemImage> itemImageList = new ArrayList<>();
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private List<ItemReview> itemReviewList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
@@ -40,6 +28,9 @@ public class Item extends BaseEntity {
     private ItemCategory category;
     private String thumbnailImage; //originalFileName은 필요가 없으니까 s3 url만 있으면 된다.
     private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemImage> itemImageList = new ArrayList<>();
 
     /**
      * 양방향 매핑서 쿼리 1개를 줄여준다.
