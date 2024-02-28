@@ -92,7 +92,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/").hasAnyRole("ADMIN", "USER")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
 
         // 세션 설정 off
