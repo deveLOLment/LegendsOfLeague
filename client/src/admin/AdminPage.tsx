@@ -26,3 +26,4 @@ export const AdminPage = () => {
 };
 
 export default AdminPage;
+
