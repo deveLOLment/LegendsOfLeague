@@ -1,39 +1,40 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from 'react';
-import SockJS from 'sockjs-client';
-import * as WebStomp from 'webstomp-client';
+import React, { useEffect, useState, useRef } from "react";
+import SockJS from "sockjs-client";
+import * as WebStomp from "webstomp-client";
 import Chat from "./Chat";
-import { Message } from './ChatModel';
+import { Message } from "./ChatModel";
 import axiosInstance from "../common/AxiosInstance";
 
 const ChatMain = () => {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [user, setUser] = useState('');
+  const [input, setInput] = useState("");
+  const [user, setUser] = useState("");
 
   const stompClientRef = useRef<WebStomp.Client | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null); //채팅 컨테이너 참조
 
   useEffect(() => {
-    initializeChat ();
+    initializeChat();
     connectSocket();
   }, []);
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   }, [messages]); // messages가 변경될 때마다 스크롤 위치를 가장 아래로 이동
 
   const connectSocket = async () => {
-    const socket = new SockJS('http://localhost:8080/ws-stomp');
+    const socket = new SockJS("http://localhost:8080/ws-stomp");
     const stompClient = WebStomp.over(socket);
 
     stompClient.connect({}, () => {
-      stompClient.subscribe('/sub/chat', (messageOutput) => {
+      stompClient.subscribe("/sub/chat", (messageOutput) => {
         const message = JSON.parse(messageOutput.body);
-        setMessages(prev => [...prev, message]);
+        setMessages((prev) => [...prev, message]);
       });
     });
 
@@ -43,7 +44,7 @@ const ChatMain = () => {
   const initializeChat = async () => {
     const url = "http://localhost:8080/chat/enterUser";
     const response = await axiosInstance.get(url);
-    
+
     setMessages(response.data.previousChat);
     setUser(response.data.username);
     setLoading(false);
@@ -51,31 +52,38 @@ const ChatMain = () => {
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const message = { 
+    const message = {
       content: input,
-      type: 'TALK' ,
-      sender: user
+      type: "TALK",
+      sender: user,
     };
     if (stompClientRef.current) {
-      stompClientRef.current.send('/pub/chat/sendMessage', JSON.stringify(message));
+      stompClientRef.current.send(
+        "/pub/chat/sendMessage",
+        JSON.stringify(message)
+      );
     }
-    setInput('');
+    setInput("");
   };
 
   return (
-    <div className="chat-container" ref={chatContainerRef} style={{ display: 'flex', flexDirection: 'column' }}>
+    <div
+      className="chat-container"
+      ref={chatContainerRef}
+      style={{ display: "flex", flexDirection: "column" }}
+    >
       {loading ? (
         <p>Loading...</p>
       ) : (
         messages.map((message, index) => (
-            <Chat 
-              key={index} 
-              content={message.content} 
-              type={message.type}
-              time={message.time} 
-              sender={message.sender}
-              isMe={user === message.sender}
-            />
+          <Chat
+            key={index}
+            content={message.content}
+            type={message.type}
+            time={message.time}
+            sender={message.sender}
+            isMe={user === message.sender}
+          />
         ))
       )}
       <form className="form-container" onSubmit={submitHandler}>
