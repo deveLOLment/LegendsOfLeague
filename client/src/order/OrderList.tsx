@@ -37,12 +37,12 @@ const OrderList = () => {
   const fetchData = async () => {
     const url = "http://localhost:8080/orders";
 
-    try {
-      const response = await AxiosInstance.get(url);
-      const responseData: OrderListModel[] = response.data;
+    const response = await AxiosInstance.get(url);
+    const responseData: OrderListModel[] = response.data;
 
-      setOrderList(responseData);
-    } catch (e) {}
+    setOrderList(responseData);
+
+    console.log("q2312341245123");
   };
 
   useEffect(() => {

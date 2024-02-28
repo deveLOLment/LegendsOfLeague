@@ -1,25 +1,33 @@
 import React from "react";
 import "./App.css";
 import LoginRoute from "./login/LoginRoute";
-import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
-import CommonLayout from "./layout/CommonLayout";
+
 import TossPayRoutes from "./tosspay/TossPayRoutes";
 import OrderRoutes from "./order/OrderRoutes";
 import CouponRoutes from "./Coupon/CouponRoutes";
-const App: React.FC = () => {
+import ItemRoutes from "./item/ItemRoutes";
+function App() {
   return (
     <CommonLayout>
       <>
-        <KakaoPayRoutes />
         <TossPayRoutes />
-        <LoginRoute />
+        <KakaoPayRoutes />
         <OrderRoutes />
         <CouponRoutes />
+        <LoginRoute />
+        <CartRoutes />
+        <ItemRoutes />
         <ChatRouter />
+        <ShopRoutes />
       </>
     </CommonLayout>
   );
-};
+}
+
+import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
+import CartRoutes from "./cart/CartRoutes";
 import ChatRouter from "./chat/ChatRouter";
+import ShopRoutes from "./shop/ShopRoutes";
+import CommonLayout from "./layout/CommonLayout";
 
 export default App;

@@ -3,6 +3,7 @@ import { CouponResponseModel, CouponTypeRecord } from "./CouponModel";
 
 import axios from "axios";
 import "./Coupon.css";
+import AxiosInstance from "../common/AxiosInstance";
 
 const Coupon = ({
   coupon,
@@ -28,7 +29,7 @@ const Coupon = ({
 
     try {
       //TODO : 로그인한 쿠키값이 존재하면 넘기기
-      const response = await axios.post(url, {
+      const response = await AxiosInstance.post(url, {
         couponId: coupon.id,
       });
 

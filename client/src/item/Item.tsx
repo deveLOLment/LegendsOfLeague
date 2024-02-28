@@ -284,6 +284,7 @@ import React, { useState, useEffect, MouseEvent, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosInstance from "../common/AxiosInstance";
 import { count } from "console";
+import ItemInfo from "../iteminfo/ItemInfo";
 
 interface ItemImageReponseDto {
   itemImageId: number;
@@ -394,7 +395,18 @@ const Item = () => {
         <div className="row s_product_inner">
           <div className="col-lg-6">
             <div className="owl-carousel owl-theme s_Product_carousel owl-loaded owl-drag">
-              <img src={itemDetail?.thumbnailImage} alt="" />
+              <div className="owl-stage-outer">
+                <div className="owl-stage">
+                  <div className="owl-item active">
+                    <div className="item-single-prd">
+                      <img
+                        className="item-image"
+                        src={itemDetail?.thumbnailImage}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="col-lg-5 offset-lg-1">
@@ -442,120 +454,7 @@ const Item = () => {
           </div>
         </div>
       </div>
-      <section className="product_description_area">
-        <div className="container">
-          <ul className="nav nav-tabs" id="myTab" role="tablist">
-            <li className="nav-item">
-              <a
-                className="nav-link active show"
-                id="home-tab"
-                data-toggle="tab"
-                href="#home"
-                role="tab"
-                aria-controls="home"
-                aria-selected="true"
-              >
-                Description
-              </a>
-            </li>
-            <li className="nav-item">
-              <a
-                className="nav-link"
-                id="profile-tab"
-                data-toggle="tab"
-                href="#profile"
-                role="tab"
-                aria-controls="profile"
-                aria-selected="false"
-              >
-                Specification
-              </a>
-            </li>
-            <li className="nav-item">
-              <a
-                className="nav-link"
-                id="contact-tab"
-                data-toggle="tab"
-                href="#contact"
-                role="tab"
-                aria-controls="contact"
-                aria-selected="false"
-              >
-                Comments
-              </a>
-            </li>
-            <li className="nav-item">
-              <a
-                className="nav-link"
-                id="review-tab"
-                data-toggle="tab"
-                href="#review"
-                role="tab"
-                aria-controls="review"
-                aria-selected="false"
-              >
-                Reviews
-              </a>
-            </li>
-          </ul>
-          <div className="tab-content" id="myTabContent">
-            <div
-              className="tab-pane fade active show"
-              id="home"
-              role="tabpanel"
-              aria-labelledby="home-tab"
-            >
-              <div className="owl-carousel owl-theme s_Product_carousel owl-loaded owl-drag">
-                {itemDetail?.itemImageList.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image.imageUrl}
-                    alt={`Item Image ${index}`}
-                  />
-                ))}
-              </div>
-            </div>
-            <div
-              className="tab-pane fade"
-              id="profile"
-              role="tabpanel"
-              aria-labelledby="profile-tab"
-            >
-              <div className="table-responsive">
-                <table className="table">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <h5>Width</h5>
-                      </td>
-                      <td>
-                        <h5>128mm</h5>
-                      </td>
-                    </tr>
-                    {/* 나머지 specification 데이터 */}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div
-              className="tab-pane fade"
-              id="contact"
-              role="tabpanel"
-              aria-labelledby="contact-tab"
-            >
-              {/* Comments 내용 */}
-            </div>
-            <div
-              className="tab-pane fade"
-              id="review"
-              role="tabpanel"
-              aria-labelledby="review-tab"
-            >
-              {/* Reviews 내용 */}
-            </div>
-          </div>
-        </div>
-      </section>
+      <ItemInfo itemId={parseInt(itemId!)} />
     </div>
   );
 };
