@@ -88,44 +88,44 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
                     <h3>Based on {itemReviewInfo.reviewList.length} Reviews</h3>
                     <ul className="list">
                       <li>
-                        <h6>
-                          {"5 Star"}
-                          <span className="review-sum">
-                            ({itemReviewInfo.reviewArr.at(4)})
-                          </span>
-                        </h6>
+                        <a>
+                          {Array.from({ length: 5 }).map((_, index) => (
+                            <i key={index} className="fa fa-star"></i>
+                          ))}
+                        </a>
+                        <span>({itemReviewInfo.reviewArr.at(4)})</span>
                       </li>
                       <li>
-                        <h6>
-                          {"4 Star"}
-                          <span className="review-sum">
-                            ({itemReviewInfo.reviewArr.at(3)})
-                          </span>
-                        </h6>
+                        <a>
+                          {Array.from({ length: 4 }).map((_, index) => (
+                            <i key={index} className="fa fa-star"></i>
+                          ))}
+                        </a>
+                        <span>({itemReviewInfo.reviewArr.at(3)})</span>
                       </li>
                       <li>
-                        <h6>
-                          {"3 Star"}
-                          <span className="review-sum">
-                            ({itemReviewInfo.reviewArr.at(2)})
-                          </span>
-                        </h6>
+                        <a>
+                          {Array.from({ length: 3 }).map((_, index) => (
+                            <i key={index} className="fa fa-star"></i>
+                          ))}
+                        </a>
+                        <span>({itemReviewInfo.reviewArr.at(2)})</span>
                       </li>
                       <li>
-                        <h6>
-                          {"2 Star"}
-                          <span className="review-sum">
-                            ({itemReviewInfo.reviewArr.at(1)})
-                          </span>
-                        </h6>
+                        <a>
+                          {Array.from({ length: 2 }).map((_, index) => (
+                            <i key={index} className="fa fa-star"></i>
+                          ))}
+                        </a>
+                        <span>({itemReviewInfo.reviewArr.at(1)})</span>
                       </li>
                       <li>
-                        <h6>
-                          {"1 Star"}
-                          <span className="review-sum">
-                            ({itemReviewInfo.reviewArr.at(0)})
-                          </span>
-                        </h6>
+                        <a>
+                          {Array.from({ length: 1 }).map((_, index) => (
+                            <i key={index} className="fa fa-star"></i>
+                          ))}
+                        </a>
+                        <span>({itemReviewInfo.reviewArr.at(0)})</span>
                       </li>
                     </ul>
                   </div>
@@ -143,7 +143,7 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
                 <p>Your Rating:</p>
                 <ul className="list">
                   <li>
-                    <a href="#">
+                    <a>
                       <i className="fa fa-star"></i>
                     </a>
                   </li>
@@ -226,12 +226,12 @@ const ItemReviewRow: React.FC<{ itemReview: ItemReviewModel }> = ({
       <div className="media">
         <div className="media-body">
           <h4>{itemReview.nickname}</h4>
-          <i className="fa fa-star"></i>
-          <i className="fa fa-star"></i>
-          <i className="fa fa-star"></i>
-          <i className="fa fa-star"></i>
-          <i className="fa fa-star"></i>
-          {itemReview.score}
+
+          <a>
+            {Array.from({ length: itemReview.score }).map((_, index) => (
+              <i key={index} className="fa fa-star"></i>
+            ))}
+          </a>
         </div>
       </div>
       <p>{itemReview.content}</p>

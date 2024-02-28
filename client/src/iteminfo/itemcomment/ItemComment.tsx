@@ -187,7 +187,7 @@ const ItemCommentParentRow: React.FC<{
           </div>
         </div>
       </div>
-      <p>{parentItemComment.content}</p>
+      <p className="item-comment">{parentItemComment.content}</p>
       {parentItemComment.childCommentList.map((childItemComment) => (
         <ItemCommentChildRow
           key={childItemComment.id}
@@ -207,12 +207,9 @@ const ItemCommentChildRow: React.FC<{
         <div className="media-body">
           <h4>{childItemComment.nickname}</h4>
           <h5>{childItemComment.createdDate.toString()}</h5>
-          <a className="reply_btn" href="#">
-            Reply
-          </a>
         </div>
       </div>
-      <p>{childItemComment.content}</p>
+      <p className="item-comment">{childItemComment.content}</p>
     </div>
   );
 };
