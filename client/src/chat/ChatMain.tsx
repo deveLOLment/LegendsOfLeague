@@ -16,8 +16,7 @@ const ChatMain = () => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null); //채팅 컨테이너 참조
 
   useEffect(() => {
-    loadUser();
-    loadPreviousChat();
+    initializeChat ();
     connectSocket();
   }, []);
 
@@ -41,21 +40,15 @@ const ChatMain = () => {
     stompClientRef.current = stompClient;
   };
 
-  const loadPreviousChat = async () => {
-    const url = "http://localhost:8080/chat/previousChat";
+  const initializeChat = async () => {
+    const url = "http://localhost:8080/chat/enterUser";
     const response = await axiosInstance.get(url);
-    console.log('previousChat', response);
-    setMessages(response.data);
+    
+    setMessages(response.data.previousChat);
+    setUser(response.data.username);
     setLoading(false);
   };
 
-  const loadUser = async () => {
-    const url = "http://localhost:8080/chat/getUser";
-    const response = await axiosInstance.get(url);
-    console.log('getUser', response);
-    setUser(response.data.username);
-  }
-  
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const message = { 

@@ -51,6 +51,18 @@ form button:hover {
 }
 
 /*** 채팅 말풍선 CSS ***/
+.my-chat-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.others-chat-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
 .chat-message {
   max-width: 70%;
   margin: 10px;
@@ -58,7 +70,8 @@ form button:hover {
   border: 1px solid #ddd;
   border-radius: 10px;
   position: relative;
-  display: inline-block; 
+  display: flex;
+  flex-direction: column;
 }
 
 .my-message {
@@ -76,12 +89,27 @@ form button:hover {
   color: #888;
   position: relative;
   margin-top: 5px;
-  }
-  
-  .my-message-time {
+}
+
+.my-time {
   align-self: flex-end;
-  }
-  
-  .others-message-time {
+}
+
+.others-time {
   align-self: flex-start;
-  }
+}
+
+.chat-sender {
+  font-size: 18px;
+  color: black;
+  position: relative;
+  margin-top: 5px;
+}
+
+.my-sender {
+  align-self: flex-end;
+}
+
+.others-sender {
+  align-self: flex-start;
+}
