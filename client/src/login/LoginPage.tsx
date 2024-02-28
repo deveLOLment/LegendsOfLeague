@@ -42,18 +42,18 @@ const LoginPage: React.FC = () => {
         {/* Header content */}
       </header>
 
-      {/* Banner */}
+      {/* Banner
       <section className="blog-banner-area" id="category">
         {/* Banner content */}
-      </section>
+      {/* </section> */} 
 
       {/* Login Box */}
       <section className="login_box_area section-margin">
         <div className="container">
           <div className="row">
-            <div className="col-lg-6">
-              <div className="login_box_img">
-                <div className="hover">
+          <div className="col-lg-6">
+              <div className="image-with-text" style={{ backgroundImage: `url('/login/soulreaver.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', height: '550px', width: '570px' }}>
+                <div className="text-overlay" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', color: '#fff' }}>
                   <h4>New to our website?</h4>
                   <p>There are advances being made in science and technology everyday, and a good example of this is the</p>
                   <a className="button button-account" href="/signup">Create an Account</a>
@@ -77,10 +77,12 @@ const LoginPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="col-md-12 form-group">
-                    <button type="button" onClick={handleLogin} className="button button-login w-100">Log In</button>
+                  <button type="button" style={{ height: '50px', width: '10px' }} onClick={handleLogin} className="button button-login w-100">
+                   Log In
+                  </button>
                     {/* Added margin bottom style */}
                     {/* <br style={{ marginBottom: '10px' }}></br> */}
-                    <img src="/login/googleLogin.png" alt="Google Login" onClick={handleGoogleLogin} style={{ width: '250px' }} />
+                    <img src="/login/googleLogin.png" alt="Google Login" onClick={handleGoogleLogin} style={{ width: '350px', height: '60px', marginTop:'20px' }} />
                     {/* Changed Forgot Password to Google Login */}
                   </div>
                 </form>
