@@ -16,6 +16,7 @@ function App() {
       <LoginRoute />
       <CartRoutes />
       <ItemRoutes />
+      <ChatRouter />
       <ShopRoutes />
     </>
   );
@@ -23,6 +24,7 @@ function App() {
 
 import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
 import CartRoutes from "./cart/CartRoutes";
+import ChatRouter from "./chat/ChatRouter";
 import ShopRoutes from "./shop/ShopRoutes";
 
 export default App;
