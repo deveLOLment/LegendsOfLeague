@@ -31,8 +31,8 @@ public class JWTUtil {
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
         } catch (ExpiredJwtException e) {
 //            System.out.println("잡음");
-//            return true;
-            throw e;
+            return true;
+//            throw e;
         }
     }
 
