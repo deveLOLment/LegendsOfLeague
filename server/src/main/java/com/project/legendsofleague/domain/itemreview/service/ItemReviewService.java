@@ -29,6 +29,7 @@ public class ItemReviewService {
         Integer sum = 0;
         for (ItemReview itemReview : itemReviewList) {
             Integer score = itemReview.getScore();
+            if(score <= 0 || score > 5) continue;
             sum += score;
             reviewArr[score - 1]++;
             itemReviewResponseDtoList.add(new ItemReviewResponseDto(itemReview));

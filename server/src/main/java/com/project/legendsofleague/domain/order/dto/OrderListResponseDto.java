@@ -2,9 +2,8 @@ package com.project.legendsofleague.domain.order.dto;
 
 import com.project.legendsofleague.domain.order.domain.Order;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 @Getter
 public class OrderListResponseDto {
@@ -22,7 +21,7 @@ public class OrderListResponseDto {
         dto.orderId = order.getId();
         dto.orderCode = order.getOrderCode();
         dto.purchaseName = purchase.getName();
-        dto.orderDate = LocalDateTime.parse(order.getCreatedTime());
+        dto.orderDate = order.getOrderDate();
         dto.totalPrice = order.getTotalOrderPrice();
         dto.orderStatus = order.getOrderStatus().getDisplayName();
         return dto;
