@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../common/AxiosInstance";
 import { useNavigate } from "react-router-dom";
+import AxiosInstance from "../common/AxiosInstance";
 
 interface PurchaseSuccessModel {
   id: number;
@@ -29,7 +30,7 @@ const PurchaseSuccess = () => {
       const url = "/purchases/" + purchaseId;
 
       try {
-        const response = await axiosInstance.get(url);
+        const response = await AxiosInstance.get(url);
         const responseData: PurchaseSuccessModel = response.data;
         setPurchaseModel(responseData);
       } catch (e) {}

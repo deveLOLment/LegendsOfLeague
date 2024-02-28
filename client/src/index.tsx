@@ -8,6 +8,7 @@ import "./aroma-master/css/main.css";
 import "./aroma-master/css/style.css";
 import "./aroma-master/vendors/bootstrap/bootstrap.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./aroma-master/vendors/fontawesome/css/all.min.css";
 import "./cart/cart.css";
 import "./item/item.css";
 import "./shop/shop.css";
