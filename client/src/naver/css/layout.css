@@ -1544,8 +1544,15 @@ button:disabled {
 .sub_menu_wrap__3Je_v .sub_menu_item__Q2d1m .sub_menu_link__3BySZ {
   position: relative;
   display: block;
+  color: rgba(160, 165, 182, 0.7);
   padding: 14px 8px;
 }
+
+.sub_menu_link__3BySZ.active {
+  color: #fff; /* 활성화된 글씨색 */
+  font-weight: bold; /* 글씨 진하게 */
+}
+
 @media (min-width: 768px) {
   .sub_menu_wrap__3Je_v .sub_menu_item__Q2d1m .sub_menu_link__3BySZ {
     padding: 16px 16px 15px;
@@ -1562,6 +1569,12 @@ button:disabled {
   color: rgba(160, 165, 182, 0.7);
   white-space: nowrap;
 }
+
+.sub_menu_link__3BySZ.active .sub_menu_label__1q_VA {
+  color: #fff; /* 활성화된 글씨색 */
+  font-weight: bold; /* 글씨 진하게 */
+}
+
 @media (min-width: 768px) {
   .sub_menu_wrap__3Je_v
     .sub_menu_item__Q2d1m
@@ -1582,6 +1595,17 @@ button:disabled {
   .sub_menu_label__1q_VA {
   color: #fff;
 }
+.sub_menu_wrap__3Je_v
+  .sub_menu_item__Q2d1m
+  .sub_menu_link__3BySZ[aria-current="page"]
+  .sub_menu_label__1q_VA {
+  color: #fff;
+}
+
+.sub_menu_right {
+  margin-left: auto;
+}
+
 .sub_menu_wrap__3Je_v
   .sub_menu_item__Q2d1m
   .sub_menu_link__3BySZ[data-new="true"]
@@ -1711,14 +1735,12 @@ button:disabled {
   vertical-align: top;
 }
 .header_naver__5F-Cm {
-  width: 28px;
+  width: 50px;
   height: 28px;
-  background-image: url(https://ssl.pstatic.net/static/nng/esports/8219ef84db2174ce0b401dc3c5fcd9bbe3e224d3/_next/static/media/gnb-naver-m.32a68db63c78a253880cf515e2e8590b.png);
 }
 @media (min-width: 1024px) {
   .header_naver__5F-Cm {
-    width: 59px;
-    background-image: url(https://ssl.pstatic.net/static/nng/esports/8219ef84db2174ce0b401dc3c5fcd9bbe3e224d3/_next/static/media/gnb-naver.2b1e53161084ec80321df63107ba3975.png);
+    width: 80px;
   }
 }
 .header_esports__1m-Zr {
