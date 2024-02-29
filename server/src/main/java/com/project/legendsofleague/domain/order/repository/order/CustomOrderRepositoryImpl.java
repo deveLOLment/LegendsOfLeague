@@ -9,6 +9,7 @@ import com.project.legendsofleague.domain.order.domain.OrderStatus;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,11 +24,23 @@ public class CustomOrderRepositoryImpl implements CustomOrderRepository {
         return queryFactory.selectFrom(purchase).distinct()
                 .leftJoin(purchase.order, order).fetchJoin()
                 .leftJoin(order.orderItemList).fetchJoin()
-//                .leftJoin(orderItem.item, item).fetchJoin()
                 .leftJoin(order.member, member).fetchJoin()
                 .where(order.member.id.eq(memberId)
                         .and(order.orderStatus.eq(OrderStatus.SUCCESS)
                                 .or(order.orderStatus.eq(OrderStatus.REFUND))))
                 .fetch();
+    }
+
+    @Override
+    public Optional<Purchase> queryOrderByOrderId(Long orderId) {
+        Purchase findPurchase = queryFactory.selectFrom(purchase).distinct()
+            .leftJoin(purchase.order, order).fetchJoin()
+            .leftJoin(order.orderItemList).fetchJoin()
+            .leftJoin(order.member, member).fetchJoin()
+            .where(order.id.eq(orderId)
+                .and(order.orderStatus.eq(OrderStatus.SUCCESS)
+                    .or(order.orderStatus.eq(OrderStatus.REFUND))))
+            .fetchOne();
+        return Optional.ofNullable(findPurchase);
     }
 }

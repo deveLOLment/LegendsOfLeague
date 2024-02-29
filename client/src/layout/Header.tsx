@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
+const menuItems = [
+  { name: "쇼핑몰", url: "/shop" },
+  { name: "LOL", url: "/lol" },
+  { name: "관리자", url: "/admin" },
+];
+
 const Header: React.FC = () => {
+  const [selectedItem, setSelectedItem] = useState<String | null>(null);
+
+  const handleClick = (item: string) => {
+    setSelectedItem(item);
+  };
+
   return (
     <header
       className="header_container__2I4IR"
@@ -24,62 +36,29 @@ const Header: React.FC = () => {
             data-fixed="false"
             data-app-status="false"
           >
-            <li
-              className="menu_item__3PJvA"
-              data-selected="true"
-              data-app-status="false"
-            >
-              <Link className="menu_link__ia8Ru" data-active="false" to="#">
-                <span className="blind">선택됨</span>
-                <span className="menu_label__RP_su">
-                  쇼핑몰
-                  <em className="menu_badge__2x7xG">
-                    <span className="blind">LIVE</span>
-                  </em>
-                </span>
-              </Link>
-            </li>
-            <li
-              className="menu_item__3PJvA"
-              data-selected="false"
-              data-app-status="false"
-            >
-              <Link className="menu_link__ia8Ru" data-active="false" to="#">
-                <span className="menu_label__RP_su">
-                  PUBG
-                  <em className="menu_badge__2x7xG">
-                    <span className="blind">LIVE</span>
-                  </em>
-                </span>
-              </Link>
-            </li>
-            <li
-              className="menu_item__3PJvA"
-              data-selected="false"
-              data-app-status="false"
-            >
-              <Link
-                className="menu_link__ia8Ru"
-                data-active="false"
-                to="/esports/Valorant/home"
+            {menuItems.map((item) => (
+              <li
+                key={item.name}
+                className="menu_item__3PJvA"
+                data-selected={selectedItem === item.name}
+                data-app-status="false"
               >
-                <span className="menu_label__RP_su">
-                  발로란트
-                  <em className="menu_badge__2x7xG">
-                    <span className="blind">LIVE</span>
-                  </em>
-                </span>
-              </Link>
-            </li>
-            <li
-              className="menu_item__3PJvA"
-              data-selected="false"
-              data-app-status="false"
-            >
-              <Link className="menu_link__ia8Ru" data-active="false" to="#">
-                <span className="menu_label__RP_su">일반</span>
-              </Link>
-            </li>
+                <Link
+                  className="menu_link__ia8Ru"
+                  data-active="false"
+                  to={item.url}
+                  onClick={() => handleClick(item.name)}
+                >
+                  <span className="blind">선택됨</span>
+                  <span className="menu_label__RP_su">
+                    {item.name}
+                    <em className="menu_badge__2x7xG">
+                      <span className="blind">LIVE</span>
+                    </em>
+                  </span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="header_button__3XaEu">
@@ -112,8 +91,8 @@ const Header: React.FC = () => {
         </div>
       </div>
       <div className="header_menu__23d4_ ">
-        <div className="col-md-4"></div>
-        <div className="col-md-3">
+        <div className="col-md-2"></div>
+        <div className="col-md-5">
           <ul className="sub_menu_wrap__3Je_v">
             <li className="sub_menu_item__Q2d1m">
               <NavLink
@@ -121,7 +100,7 @@ const Header: React.FC = () => {
                 className={"sub_menu_link__3BySZ"}
                 data-new="false"
               >
-                <span className="sub_menu_label__1q_VA">상품목록</span>
+                <span className="sub_menu_label__1q_VA">홈</span>
               </NavLink>
             </li>
             <li className="sub_menu_item__Q2d1m">
@@ -130,13 +109,31 @@ const Header: React.FC = () => {
                 className={"sub_menu_link__3BySZ"}
                 data-new="false"
               >
-                <span className="sub_menu_label__1q_VA">아무거나</span>
+                <span className="sub_menu_label__1q_VA">상세 아이템</span>
+              </NavLink>
+            </li>
+            <li className="sub_menu_item__Q2d1m">
+              <NavLink
+                to="/coupon/register"
+                className={"sub_menu_link__3BySZ"}
+                data-new="false"
+              >
+                <span className="sub_menu_label__1q_VA">쿠폰 등록</span>
+              </NavLink>
+            </li>
+            <li className="sub_menu_item__Q2d1m">
+              <NavLink
+                to="/order-list"
+                className={"sub_menu_link__3BySZ"}
+                data-new="false"
+              >
+                <span className="sub_menu_label__1q_VA">주문 내역 조회</span>
               </NavLink>
             </li>
           </ul>
         </div>
 
-        <div className="col-md-3"></div>
+        <div className="col-md-2"></div>
         <ul className="sub_menu_wrap__3Je_v">
           <li className="sub_menu_item__Q2d1m">
             <NavLink
@@ -145,6 +142,15 @@ const Header: React.FC = () => {
               data-new="false"
             >
               <span className="sub_menu_label__1q_VA">장바구니</span>
+            </NavLink>
+          </li>
+          <li className="sub_menu_item__Q2d1m">
+            <NavLink
+              to="/coupon/list"
+              className={"sub_menu_link__3BySZ"}
+              data-new="false"
+            >
+              <span className="sub_menu_label__1q_VA">쿠폰함</span>
             </NavLink>
           </li>
         </ul>
