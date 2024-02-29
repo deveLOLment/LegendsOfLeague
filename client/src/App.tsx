@@ -27,5 +27,7 @@ function App() {
 import KakaoPayRoutes from "./kakaopay/KakaoPayRoutes";
 import ChatRouter from "./chat/ChatRouter";
 import CommonLayout from "./layout/CommonLayout";
+import CartRoutes from "./cart/CartRoutes";
+import ShopRoutes from "./shop/ShopRoutes";
 
 export default App;

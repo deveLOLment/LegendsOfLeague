@@ -117,20 +117,20 @@ const Header: React.FC = () => {
           <ul className="sub_menu_wrap__3Je_v">
             <li className="sub_menu_item__Q2d1m">
               <NavLink
-                to="/item/list"
+                to="/shop"
                 className={"sub_menu_link__3BySZ"}
                 data-new="false"
               >
-                <span className="sub_menu_label__1q_VA">홈</span>
+                <span className="sub_menu_label__1q_VA">상품목록</span>
               </NavLink>
             </li>
             <li className="sub_menu_item__Q2d1m">
               <NavLink
-                to="/item/l"
+                to="/item/1"
                 className={"sub_menu_link__3BySZ"}
                 data-new="false"
               >
-                <span className="sub_menu_label__1q_VA">커뮤니티</span>
+                <span className="sub_menu_label__1q_VA">아무거나</span>
               </NavLink>
             </li>
           </ul>

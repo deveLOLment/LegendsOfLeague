@@ -4,7 +4,8 @@ package com.project.legendsofleague.domain.item.controller;
 import com.project.legendsofleague.domain.item.dto.ItemDetailResponseDto;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
 import com.project.legendsofleague.domain.item.dto.ItemSelectResponseDto;
-import com.project.legendsofleague.domain.item.dto.PageResponse;
+import com.project.legendsofleague.domain.item.dto.page.PageRequestDto;
+import com.project.legendsofleague.domain.item.dto.page.PageResponseDto;
 import com.project.legendsofleague.domain.item.service.ItemService;
 import com.project.legendsofleague.domain.member.domain.CurrentMember;
 import com.project.legendsofleague.domain.member.domain.Member;
@@ -24,14 +25,34 @@ public class ItemController {
 
     private final ItemService itemService;
 
+//    @GetMapping("/shop")
+//    public ResponseEntity<PageResponseDto> showItemList(@RequestParam PageRequestDto pageRequestDto) {
+//        PageResponseDto allPage = itemService.getAllPage(pageRequestDto);
+//
+//
+//        return ResponseEntity.ok(allPage);
+//    }
+
+
     @GetMapping("/shop")
-    public ResponseEntity<PageResponse> showItemList(
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "3", required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "createdTime", required = false) String sortBy
-    ) {
-        log.info("Read Paging All");
-        return ResponseEntity.ok(itemService.searchPaging(pageNo, pageSize, sortBy));
+    public ResponseEntity<PageResponseDto> showItemList(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                        @RequestParam(name = "sort", defaultValue = "createdTime", required = false) String sort,
+                                                        @RequestParam(name = "category", required = false) String category,
+                                                        @RequestParam(name = "keyword", required = false) String keyword,
+                                                        @RequestParam(name = "order", defaultValue = "desc", required = false) String order) {
+        PageRequestDto pageRequestDto = new PageRequestDto(page, sort, category, keyword, order);
+        PageResponseDto allPage = itemService.getAllPage(pageRequestDto);
+
+        log.info("=====================================================");
+        log.info("page={}", page);
+        log.info("sort={}", sort);
+        log.info("category={}", category);
+        log.info("keyword={}", keyword);
+        log.info("order={}", order);
+        log.info("=====================================================");
+
+
+        return ResponseEntity.ok(allPage);
     }
 
 

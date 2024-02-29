@@ -3,12 +3,19 @@ package com.project.legendsofleague.domain.item.service;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.domain.ItemCategory;
 import com.project.legendsofleague.domain.item.domain.ItemImage;
-import com.project.legendsofleague.domain.item.dto.*;
+import com.project.legendsofleague.domain.item.domain.QItem;
+import com.project.legendsofleague.domain.item.dto.ItemDetailResponseDto;
+import com.project.legendsofleague.domain.item.dto.ItemListResponseDto;
+import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
+import com.project.legendsofleague.domain.item.dto.ItemSelectResponseDto;
+import com.project.legendsofleague.domain.item.dto.page.PageRequestDto;
+import com.project.legendsofleague.domain.item.dto.page.PageResponseDto;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
 import com.project.legendsofleague.util.S3Util;
+import com.querydsl.core.BooleanBuilder;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -32,22 +39,48 @@ public class ItemService {
         return itemRepository.queryItemById(itemId);
     }
 
-    public PageResponse searchPaging(int pageNo, int pageSize, String sortBy) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
-        Page<Item> itemPage = itemRepository.findAll(pageable);
+    public PageResponseDto getAllPage(PageRequestDto pageRequestDto) {
+        Pageable pageable = pageRequestDto.getPageable(Sort.by(pageRequestDto.getSort()));
+        BooleanBuilder booleanBuilder = getSearch(pageRequestDto);
 
-        //페이징에서 아이템 값만 가져오기
-        List<ItemListResponseDto> content = itemPage.getContent().stream()
-                .map(ItemListResponseDto::toDto).toList();
+        Page<ItemListResponseDto> itemInfoPage = itemRepository.findAll(booleanBuilder, pageable)
+                .map(ItemListResponseDto::toDto);
 
-        return PageResponse.builder()
-                .content(content)
-                .pageNo(pageNo)
-                .pageSize(pageSize)
-                .totalElements(itemPage.getTotalElements())
-                .totalPages(itemPage.getTotalPages())
-                .last(itemPage.isLast())
-                .build();
+        return new PageResponseDto(pageable, itemInfoPage);
+    }
+
+    private BooleanBuilder getSearch(PageRequestDto pageRequestDto) {
+        String category = pageRequestDto.getCategory();
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QItem qItem = QItem.item;
+        String keyword = pageRequestDto.getKeyword();
+
+        // 검색어가 없는 경우
+        if (StringUtils.isEmpty(keyword)) {
+            // 카테고리가 전체인 경우는 추가적인 조건 없이 반환
+            if (StringUtils.isEmpty(category)) {
+                return booleanBuilder;
+            }
+        }
+
+        // 검색 조건이 있는 경우
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        // 카테고리 조건 추가
+        if (!StringUtils.isEmpty(category)) {
+            conditionBuilder.and(qItem.category.eq(ItemCategory.valueOf(category)));
+        }
+
+        // 키워드 조건 추가
+        if (!StringUtils.isEmpty(keyword)) {
+            conditionBuilder.and(qItem.name.contains(keyword)
+                    .or(qItem.description.contains(keyword)));
+        }
+
+        // 모든 조건 통합
+        booleanBuilder.and(conditionBuilder);
+
+        return booleanBuilder;
     }
 
     @Transactional
