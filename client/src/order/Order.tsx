@@ -9,7 +9,6 @@ import {
   PurchaseStartResponseModel,
 } from "./OrderModels";
 import { CouponResponseModel } from "../Coupon/CouponModel";
-import axiosInstance from "../common/AxiosInstance";
 import AxiosInstance from "../common/AxiosInstance";
 
 const Order = () => {

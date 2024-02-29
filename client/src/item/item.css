@@ -1,0 +1,17 @@
+.item-image {
+  max-width: 60%;
+  height: auto;
+}
+
+.item-single-prd {
+  position: relative;
+  text-align: center;
+}
+
+.review-sum {
+  margin-left: 40px;
+}
+
+.item-comment {
+  margin-bottom: 400px;
+}
