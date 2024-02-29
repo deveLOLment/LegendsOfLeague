@@ -34,7 +34,7 @@ public class MemberCouponController {
     }
 
     @Operation(summary = "회원의 쿠폰 리스트 조회")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<MemberCouponResponseDto>> getMemberCoupons(
         @CurrentMember Member member) {
 
