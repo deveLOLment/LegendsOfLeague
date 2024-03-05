@@ -41,7 +41,7 @@ public class CustomPurchaseRepositoryImpl implements CustomPurchaseRepository {
             .leftJoin(purchase.order, order).fetchJoin()
             .leftJoin(order.orderItemList).fetchJoin()
             .leftJoin(order.member, member).fetchJoin()
-            .where(purchase.id.eq(orderId))
+            .where(purchase.order.id.eq(orderId))
             .fetchOne();
 
         return Optional.ofNullable(findPurchase);

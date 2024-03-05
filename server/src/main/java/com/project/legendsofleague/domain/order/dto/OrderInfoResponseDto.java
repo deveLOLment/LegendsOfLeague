@@ -19,6 +19,7 @@ public class OrderInfoResponseDto {
     private LocalDateTime orderDate;
     private Integer totalPrice;
     private String purchaseProvider;
+    private String orderStatus;
     private List<OrderItemInfoQueryDto> orderItemList = new ArrayList<>();
 
     public static OrderInfoResponseDto from(Purchase purchase){
@@ -29,6 +30,7 @@ public class OrderInfoResponseDto {
         dto.id = order.getId();
         dto.orderCode = order.getOrderCode();
         dto.orderDate = order.getOrderDate();
+        dto.orderStatus = order.getOrderStatus().name();
 
         dto.totalPrice = order.getTotalOrderPrice();
         dto.purchaseProvider = purchase.getPurchaseType().name();

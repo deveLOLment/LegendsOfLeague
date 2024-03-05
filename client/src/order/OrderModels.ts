@@ -36,6 +36,7 @@ export interface OrderInfoQueryModel {
   orderCode: string;
   orderDate: Date;
   totalPrice: number;
+  orderStatus: string;
   purchaseProvider: string;
   orderItemList: OrderItemQueryModel[];
 }

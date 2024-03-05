@@ -11,13 +11,16 @@ const OrderInfo = () => {
   console.log(orderId);
 
   const refundOrder = async () => {
-    const url = "/purcahse/cancel?orderId=" + orderId;
+    const url = "/purchase/cancel?orderId=" + orderId;
 
     try {
       const response = await AxiosInstance.get(url);
+      alert("환불 완료!!");
 
-      navigate("/order-info/" + orderId);
-    } catch (e) {}
+      fetchData();
+    } catch (e) {
+      alert("환불에 실패했습니다. 다시 진행해주세요.");
+    }
   };
 
   const fetchData = async () => {
@@ -63,6 +66,10 @@ const OrderInfo = () => {
                     <tr>
                       <td>Provider</td>
                       <td>: {orderInfo.purchaseProvider}</td>
+                    </tr>
+                    <tr>
+                      <td>Status</td>
+                      <td>: {orderInfo.orderStatus}</td>
                     </tr>
                   </tbody>
                 </table>
