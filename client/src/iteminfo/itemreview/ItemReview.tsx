@@ -55,7 +55,9 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
       const response = await AxiosInstance.post(url, itemReviewCreateForm);
       console.log(response.data);
       fetchData();
-    } catch (error) {}
+    } catch (error) {
+      alert("리뷰 작성에 실패했습니다!");
+    }
   };
 
   return (
