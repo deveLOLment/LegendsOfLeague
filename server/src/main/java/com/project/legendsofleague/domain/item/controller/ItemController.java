@@ -1,6 +1,7 @@
 package com.project.legendsofleague.domain.item.controller;
 
 
+import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.dto.ItemDetailResponseDto;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
 import com.project.legendsofleague.domain.item.dto.ItemSelectResponseDto;
@@ -25,15 +26,6 @@ public class ItemController {
 
     private final ItemService itemService;
 
-//    @GetMapping("/shop")
-//    public ResponseEntity<PageResponseDto> showItemList(@RequestParam PageRequestDto pageRequestDto) {
-//        PageResponseDto allPage = itemService.getAllPage(pageRequestDto);
-//
-//
-//        return ResponseEntity.ok(allPage);
-//    }
-
-
     @GetMapping("/shop")
     public ResponseEntity<PageResponseDto> showItemList(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                         @RequestParam(name = "sort", defaultValue = "createdTime", required = false) String sort,
@@ -55,14 +47,6 @@ public class ItemController {
         return ResponseEntity.ok(allPage);
     }
 
-
-    @PostMapping("/item/test")
-    public String itemTest(@RequestBody ItemRequestDto itemRequestDto) throws IOException {
-        itemService.saveItem(itemRequestDto);
-
-        return "hello";
-    }
-
     @GetMapping("/items/categories")
     public ResponseEntity<List<String>> getCategories(@CurrentMember Member member) {
         List<String> categories = itemService.getCategories();
@@ -80,5 +64,29 @@ public class ItemController {
         ItemDetailResponseDto itemDetail = itemService.getItemDetail(itemId);
 
         return ResponseEntity.ok(itemDetail);
+    }
+
+    @PostMapping("/item/test")
+    public String itemTest(@RequestBody ItemRequestDto itemRequestDto) throws IOException {
+        itemService.saveItem(itemRequestDto);
+
+        return "hello";
+    }
+
+
+    /**
+     * 관리자 계정으로 로그인 했을 때 아이템을 생성할 수 있다.
+     *
+     * @return
+     */
+    @PostMapping("/admin/item/add")
+    public ResponseEntity<Long> addItem(@RequestBody ItemRequestDto itemRequestDto) {
+        Long itemId = itemService.saveItem(itemRequestDto);
+        log.info("==========================================");
+        Item item = itemService.getItem(itemId);
+        log.info("name={}", item.getName());
+        log.info("==========================================");
+
+        return ResponseEntity.ok(itemId);
     }
 }

@@ -60,7 +60,7 @@ public class CartItemService {
         CartItem cartItem = getCartItem(cartItemUpdateRequestDto.getCartItemId());
 
         //요청한 사용자와 장바구니의 주인이 같지 않다면
-        if (!cartItem.getMember().equals(member)) {
+        if (!cartItem.getMember().getId().equals(member.getId())) {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
         cartItem.updateCartItem(cartItemUpdateRequestDto);
