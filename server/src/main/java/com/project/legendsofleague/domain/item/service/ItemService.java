@@ -84,7 +84,7 @@ public class ItemService {
     }
 
     @Transactional
-    public void saveItem(ItemRequestDto itemRequestDto) {
+    public Long saveItem(ItemRequestDto itemRequestDto) {
         ItemImage tempThumbnailImage = s3Util.saveFile(itemRequestDto.getThumbnailImage());
         String thumbnailImage = tempThumbnailImage.getImageUrl();
         List<ItemImage> itemImages = s3Util.saveFiles(itemRequestDto.getItemImages());
@@ -92,6 +92,8 @@ public class ItemService {
 
         itemRepository.save(item);
         itemImageService.saveItemImage(itemImages, item);
+
+        return item.getId();
     }
 
     public List<String> getCategories() {

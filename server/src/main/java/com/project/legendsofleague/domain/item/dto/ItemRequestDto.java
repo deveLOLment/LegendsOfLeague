@@ -1,7 +1,6 @@
 package com.project.legendsofleague.domain.item.dto;
 
 
-import com.project.legendsofleague.domain.item.domain.ItemCategory;
 import lombok.Getter;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class ItemRequestDto {
 
     private String description; //상품 설명
 
-    private ItemCategory category;
+    private String category;
 
     /**
      * 이미지 파일이 base64 인코딩 된 문자열로 요청을 보낸다.

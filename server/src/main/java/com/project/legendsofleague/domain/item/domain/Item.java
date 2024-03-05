@@ -62,7 +62,7 @@ public class Item extends BaseEntity {
         item.price = itemRequestDto.getPrice();
         item.stock = itemRequestDto.getStock();
         item.description = itemRequestDto.getDescription();
-        item.category = itemRequestDto.getCategory();
+        item.category = ItemCategory.valueOf(itemRequestDto.getCategory());
         item.thumbnailImage = thumbnailImage;
 
         return item;
