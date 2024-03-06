@@ -1,4 +1,4 @@
-import { CouponResponseModel } from "../Coupon/CouponModel";
+import { CouponResponseModel } from "../coupon/CouponModel";
 import { ItemCouponAppliedModel, OrderItemModel } from "./OrderModels";
 import { useState, useEffect } from "react";
 
