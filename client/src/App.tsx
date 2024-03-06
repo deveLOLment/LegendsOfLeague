@@ -4,7 +4,7 @@ import LoginRoute from "./login/LoginRoute";
 
 import TossPayRoutes from "./tosspay/TossPayRoutes";
 import OrderRoutes from "./order/OrderRoutes";
-import CouponRoutes from "./Coupon/CouponRoutes";
+import CouponRoutes from "./coupon/CouponRoutes";
 import ItemRoutes from "./item/ItemRoutes";
 function App() {
   return (

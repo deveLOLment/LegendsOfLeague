@@ -8,7 +8,7 @@ import {
   OrderResponseDto,
   PurchaseStartResponseModel,
 } from "./OrderModels";
-import { CouponResponseModel } from "../Coupon/CouponModel";
+import { CouponResponseModel } from "../coupon/CouponModel";
 import AxiosInstance from "../common/AxiosInstance";
 
 const Order = () => {
