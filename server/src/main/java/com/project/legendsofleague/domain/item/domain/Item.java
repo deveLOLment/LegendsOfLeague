@@ -20,20 +20,13 @@ public class Item extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
-
     private String name; //상품 이름
-
     private Integer price; //상품 가격
-
     private Integer stock; //상품 재고 (남은 수량)
-
     private String description; //상품 설명
-
     @Enumerated(EnumType.STRING)
     private ItemCategory category;
-
     private String thumbnailImage; //originalFileName은 필요가 없으니까 s3 url만 있으면 된다.
-
     private boolean isDeleted = false;
 
     @OneToMany(mappedBy = "item")
@@ -69,7 +62,7 @@ public class Item extends BaseEntity {
         item.price = itemRequestDto.getPrice();
         item.stock = itemRequestDto.getStock();
         item.description = itemRequestDto.getDescription();
-        item.category = itemRequestDto.getCategory();
+        item.category = ItemCategory.valueOf(itemRequestDto.getCategory());
         item.thumbnailImage = thumbnailImage;
 
         return item;

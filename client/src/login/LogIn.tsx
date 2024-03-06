@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+// import './LoginPage.css';
 
-function LoginPage() {
+function LoginPage2() {
 const navigate = useNavigate();
 const [username, setUsername] = useState('');
 const [password, setPassword] = useState('');
@@ -18,7 +18,7 @@ const handleLogin = async () => {
         },{
           withCredentials:true
         });
-        
+
         console.log("응답결과:" + response);
 
         // const token = response.headers.authorization;
@@ -29,18 +29,18 @@ const handleLogin = async () => {
 
         // localStorage.setItem("access_token", token);
 
-        // // 토큰 만료 시간 설정 
+        // // 토큰 만료 시간 설정
         // const expirationTime = Date.now() + 3600 * 1000; // 현재 시간에 1시간을 더함
 
         // // 토큰 만료 시간 저장
         // localStorage.setItem('tokenExpiration', expirationTime.toString());
 
-        
-        
+
+
         // if(response.status === 401){
         //     alert("로그인 실패 401");
         // }
-        
+
 
 
         navigate("/");
@@ -69,11 +69,11 @@ return (
                 <span></span>
                 <span></span>
                 <span></span>
-                Submit 
+                Submit
             </a>
         </form>
     </div>
 );
 }
 
-export default LoginPage;
+export default LoginPage2;

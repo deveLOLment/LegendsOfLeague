@@ -2,19 +2,22 @@ package com.project.legendsofleague.scheduler;
 
 import com.project.legendsofleague.domain.order.domain.OrderStatus;
 import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
+import com.project.legendsofleague.domain.purchase.domain.PurchaseStatus;
+import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class OrderCleanupScheduler {
+
+    private final PurchaseRepository purchaseRepository;
 
     private final OrderRepository orderRepository;
 
@@ -28,9 +31,14 @@ public class OrderCleanupScheduler {
         log.info("=========================");
         LocalDateTime currentTime = LocalDateTime.now();
 
-        LocalDateTime oneHourAgo = currentTime.minus(1, ChronoUnit.HOURS);
+        LocalDateTime oneHourAgo = currentTime.minusHours(1);
+        //결제도 pending이거나 cancel놈들 다 지우고
+        purchaseRepository.deleteAllByPurchaseDateBeforeAndPurchaseStatusIn(oneHourAgo,
+            List.of(PurchaseStatus.PENDING));
+
         // 현재 시간으로부터 1시간이 넘은 주문을 삭제하는 로직을 구현
-        orderRepository.deleteByOrderDateBeforeAndOrderStatusEquals(oneHourAgo, OrderStatus.PENDING);
+        orderRepository.deleteByOrderDateBeforeAndOrderStatusEquals(oneHourAgo,
+            OrderStatus.PENDING);
         log.info("=========================");
         log.info("finish cleanup order");
     }

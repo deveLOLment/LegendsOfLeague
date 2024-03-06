@@ -15,6 +15,7 @@ public class ItemListResponseDto {
 
     private String category;
     private String thumbnailImage;
+    private Integer price;
 
 
     public static ItemListResponseDto toDto(Item item) {
@@ -23,6 +24,7 @@ public class ItemListResponseDto {
         itemListResponseDto.name = item.getName();
         itemListResponseDto.category = item.getCategory().getDisplayName();
         itemListResponseDto.thumbnailImage = item.getThumbnailImage();
+        itemListResponseDto.price = item.getPrice();
 
         return itemListResponseDto;
     }

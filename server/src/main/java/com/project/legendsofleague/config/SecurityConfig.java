@@ -1,6 +1,8 @@
 package com.project.legendsofleague.config;
 
+import com.project.legendsofleague.domain.member.jwt.CustomAccessDeniedHandler;
 import com.project.legendsofleague.domain.member.jwt.CustomSuccessHandler;
+import com.project.legendsofleague.domain.member.jwt.CustomUnsuccessHandler;
 import com.project.legendsofleague.domain.member.jwt.InternalFilterExceptionHandler;
 import com.project.legendsofleague.domain.member.jwt.JWTFilter;
 import com.project.legendsofleague.domain.member.jwt.JWTUtil;
@@ -35,6 +37,10 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration configuration;
 
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    private final CustomUnsuccessHandler customUnsuccessHandler;
+
     private final JWTUtil jwtUtil;
 
     @Bean
@@ -67,13 +73,33 @@ public class SecurityConfig {
         httpSecurity
                 .addFilterBefore(new JWTFilter(jwtUtil, memberRepository), LoginFilter.class);
 
-        httpSecurity
-                .addFilterBefore(internalFilterExceptionHandler, JWTFilter.class);
+//        httpSecurity
+//                .addFilterBefore(internalFilterExceptionHandler, JWTFilter.class);
+
 
         // 로그인 필터 설정
         httpSecurity
                 .addFilterAt(new LoginFilter(authenticationManager(configuration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        // 인증, 인가 오류 발생 시 처리
+        httpSecurity
+                .exceptionHandling((auth) -> {
+                    auth.authenticationEntryPoint(customUnsuccessHandler)
+                            .accessDeniedHandler(customAccessDeniedHandler);
+                })
+//                .accessDeniedHandler(customAccessDeniedHandler)
+//                .authenticationEntryPoint(customHttp403ForbiddenHandler)
+//                .authenticationEntryPoint(customUnsuccessHandler
+//                )
+        ;
+//                .and()
+//                .exceptionHandling()
+//                .authenticationEntryPoint(customUnsuccessHandler);
+
+//                .authenticationEntryPoint(new CustomUnsuccessHandler());
+//                .exceptionHandling((auth) -> auth.authenticationEntryPoint(new CustomUnsuccessHandler()));
 //                .addFilterBefore(new ExceptionHandlerFilter(), JWTFilter.class);
+
 
         // 로그아웃 설정
         httpSecurity
@@ -90,10 +116,17 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login",
                                 "/register", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/my/**", "/ex").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/").hasAnyRole("ADMIN", "USER")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
+
+        // 접근 거부됐을 경우 redirect될 페이지
+//        httpSecurity
+//                .exceptionHandling()
+//                .authenticationEntryPoint((request, response, authException) -> {// 프론트엔드 로그인 페이지 URL로 리디렉션
+//                    response.sendRedirect("http://localhost:3000/login");
+//                });
 
         // 세션 설정 off
         httpSecurity
@@ -104,49 +137,6 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
-
-//    @Bean
-//    public CustomOAuth2MemberService customOAuth2UserService(){
-//        return new CustomOAuth2MemberService();
-//    }
-
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/", "/login",
-//                                "/registerProc", "/swagger-ui/**","/v3/api-docs/**").permitAll()
-//                        .requestMatchers("/admin").hasRole("ADMIN")
-//                        .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
-//                        .anyRequest().permitAll()
-//                );
-//
-//        http
-//                .formLogin((auth) -> auth.loginPage("/login")
-//                        .loginProcessingUrl("/loginProc")
-//                        .permitAll()
-//                );
-//
-//        http
-//                .csrf((auth) -> auth.disable());
-//
-//        http
-//                .sessionManagement((auth) -> auth
-//                        .maximumSessions(1)
-//                        .maxSessionsPreventsLogin(true));
-//
-//        http
-//                .sessionManagement((auth) -> auth
-//                        .sessionFixation().changeSessionId());
-//
-//        http
-//                .logout((auth) -> auth.logoutUrl("/logout")
-//                        .logoutSuccessUrl("/"));
-//
-//        return http.build();
-//
-//    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

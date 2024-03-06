@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.order.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ import static com.project.legendsofleague.domain.order.domain.OrderStatus.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,7 +67,7 @@ public class Order {
     public static Order toEntity(Member member, OrderItem orderItem) {
         List<OrderItem> orderItems = new ArrayList<>();
         orderItems.add(orderItem);
-        return toEntity(member, orderItem);
+        return toEntity(member, orderItems);
     }
 
 

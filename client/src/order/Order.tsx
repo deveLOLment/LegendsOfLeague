@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import ItemList from "./OrderTableComponent";
+import { useLocation, useNavigate } from "react-router-dom";
+import OrderItemList from "./OrderTableComponent";
 import {
   ItemCouponAppliedModel,
   OrderItemModel,
@@ -9,10 +9,14 @@ import {
   PurchaseStartResponseModel,
 } from "./OrderModels";
 import { CouponResponseModel } from "../Coupon/CouponModel";
+import AxiosInstance from "../common/AxiosInstance";
 
 const Order = () => {
   const navigate = useNavigate();
-  const exampleOrderId = 1;
+  const location = useLocation();
+  // const exampleOrderId = 1;
+  const initialOrderId = location.state.orderId;
+  console.log(initialOrderId);
 
   const [selectedCoupons, setSelectedCoupons] = useState<
     Record<number, CouponResponseModel>
@@ -21,7 +25,8 @@ const Order = () => {
     {}
   );
 
-  const [orderId, setOrderId] = useState<Number>(-1);
+  const [totalPrice, setTotalPrice] = useState<number>(-1);
+  const [orderId, setOrderId] = useState<number>(initialOrderId);
   const [orderItemList, setOrderItemList] = useState<OrderItemModel[]>([]);
   const [provider, setProvider] = useState<String>("");
 
@@ -33,22 +38,32 @@ const Order = () => {
     let sum = 0;
     console.log(orderItemList);
     orderItemList.forEach((item) => {
-      sum += item.price;
+      sum += item.price * item.count;
     });
     return sum;
   };
 
+  const initFinalPriceMap = (orderResponseDto: OrderResponseDto) => {
+    const newFinalPriceMap: Record<number, number> = {};
+    for (const item of orderResponseDto.orderItemList) {
+      console.log(item);
+      newFinalPriceMap[item.id] = item.price * item.count;
+    }
+    setFinalPriceMap(newFinalPriceMap);
+  };
   const [finalTotalPrice, setFinalTotalPrice] = useState<number>(0);
 
   const fetchOrderItemList = async () => {
-    const url = "http://localhost:8080/order/" + exampleOrderId;
+    const url = "http://localhost:8080/order/" + initialOrderId;
     try {
-      const response = await axios.get(url);
+      const response = await AxiosInstance.get(url);
       console.log(response);
 
       const responseData: OrderResponseDto = response.data;
       setOrderId(responseData.id);
       setOrderItemList(responseData.orderItemList);
+      setTotalPrice(responseData.totalPrice);
+      // initFinalPriceMap(responseData);
       return responseData.orderItemList;
     } catch (e) {}
   };
@@ -59,9 +74,11 @@ const Order = () => {
         await fetchOrderItemList();
 
       if (orderItemList) {
-        setFinalTotalPrice(initFinalTotalPrice(orderItemList));
+        const sum = initFinalTotalPrice(orderItemList);
+        setFinalTotalPrice(sum);
+        setTotalPrice(sum);
         orderItemList.forEach((item) => {
-          handleFinalPriceChange(item.id, item.price);
+          handleFinalPriceChange(item.id, item.price * item.count);
         });
       }
     };
@@ -74,14 +91,13 @@ const Order = () => {
   };
 
   useEffect(() => {
-    // Object.values를 사용하여 finalPriceMap의 값들을 배열로 얻음
     const values = Object.values(finalPriceMap);
 
-    // reduce 함수를 사용하여 배열의 합을 계산
     const total = values.reduce((acc, currentValue) => acc + currentValue, 0);
 
-    // total을 출력하거나 다른 작업 수행
     setFinalTotalPrice(total);
+    console.log(total);
+
     console.log(finalPriceMap);
   }, [finalPriceMap]);
 
@@ -105,14 +121,15 @@ const Order = () => {
     });
     console.log();
     try {
-      const response = await axios.post(url, {
-        orderId: exampleOrderId,
+      const response = await AxiosInstance.post(url, {
+        orderId: orderId,
         itemList: itemList,
         purchaseTotalPrice: totalPrice,
         provider: provider,
       });
 
       const responseData: PurchaseStartResponseModel = response.data;
+      console.log(responseData);
 
       if (provider === "KAKAO") {
         navigate("/purchase/kakaoPay/ready", {
@@ -127,34 +144,92 @@ const Order = () => {
   };
 
   return (
-    <div>
+    <>
       {!orderItemList || orderItemList.length === 0 ? (
         <div>waiting</div>
       ) : (
-        <>
-          <div>
-            <ItemList
-              itemList={orderItemList}
-              onCouponChange={handleCouponChange}
-              onFinalPriceChange={handleFinalPriceChange}
-              selectedCoupons={selectedCoupons}
-            />
-            <div>{}</div>
-            <div>
-              {" "}
-              결제수단<br></br>
-              <button onClick={() => setProvider("KAKAO")}>카카오 결제</button>
-              <button onClick={() => setProvider("TOSS")}>토스 결제</button>
+        <section className="cart_area">
+          <div className="container">
+            <div className="cart_inner">
+              <div>
+                <table className="table">
+                  <OrderItemList
+                    itemList={orderItemList}
+                    onCouponChange={handleCouponChange}
+                    onFinalPriceChange={handleFinalPriceChange}
+                    selectedCoupons={selectedCoupons}
+                  />
+                </table>
+                <div className="billing_details">
+                  <div className="row">
+                    <div className="col-lg-8">
+                      <div></div>
+                    </div>
+                    <div className="col-lg-4">
+                      <div className="order_box">
+                        <h2>Order</h2>
+                        <ul className="list list_2">
+                          <li>
+                            <a>
+                              {"기존 가격  "}
+                              <span>{totalPrice}</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a>
+                              {"할인 가격  "}
+                              <span>{totalPrice - finalTotalPrice}</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a>
+                              {"Total  "} <span>{finalTotalPrice}</span>
+                            </a>
+                          </li>
+                        </ul>
+                        <div className="payment_item">
+                          <div className="radion_btn">
+                            <input
+                              type="radio"
+                              id="kakaoRadio"
+                              name="selector"
+                              onChange={() => setProvider("KAKAO")}
+                              checked={provider === "KAKAO"}
+                            />
+                            <label htmlFor="kakaoRadio">카카오 결제</label>
+                            <div className="check"></div>
+                          </div>
+                          <div className="radion_btn">
+                            <input
+                              type="radio"
+                              id="tossRadio"
+                              name="selector"
+                              onChange={() => setProvider("TOSS")}
+                              checked={provider === "TOSS"}
+                            />
+                            <label htmlFor="tossRadio">토스 결제</label>
+
+                            <div className="check"></div>
+                          </div>
+                          <div className="text-center">
+                            <a
+                              className="button button-paypal"
+                              onClick={purchaseStart}
+                            >
+                              구매
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            최종 가격 : {finalTotalPrice}
-            <div>
-              <span>selected Provider = {provider}</span>
-            </div>
-            <button onClick={purchaseStart}>결제하기</button>
           </div>
-        </>
+        </section>
       )}
-    </div>
+    </>
   );
 };
 

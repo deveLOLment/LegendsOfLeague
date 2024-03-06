@@ -2009,13 +2009,7 @@ a {
     font-size: 48px;
   }
 }
-/* .contact-banner-area {
-  height: 280px;
-  background: url("../../assets/images/contact-bg.png") center center no-repeat;
-  background-size: cover;
-  position: relative;
-  z-index: 1;
-} */
+
 @media (min-width: 991px) {
   .contact-banner-area {
     height: 450px;
@@ -2469,7 +2463,7 @@ a {
 }
 .confirmation-card {
   padding: 38px;
-  background: #f1f6f7;
+  background: #bbcccc;
 }
 .confirmation-card tr td:last-child {
   color: #222;
@@ -3894,10 +3888,10 @@ a {
   border-top: 0px;
 }
 .review_item {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .review_item:last-child {
-  margin-bottom: 0px;
+  margin-bottom: 40px;
 }
 .review_item .media {
   position: relative;
@@ -3945,6 +3939,7 @@ a {
   margin-bottom: 0px;
 }
 .review_item.reply {
+  margin-top: 20px;
   padding-left: 28px;
 }
 .review_box h4 {

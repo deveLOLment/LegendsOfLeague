@@ -30,3 +30,29 @@ export interface PurchaseStartResponseModel {
   orderCode: string;
   memberNickname: string;
 }
+
+export interface OrderInfoQueryModel {
+  id: number;
+  orderCode: string;
+  orderDate: Date;
+  totalPrice: number;
+  orderStatus: string;
+  purchaseProvider: string;
+  orderItemList: OrderItemQueryModel[];
+}
+
+export interface OrderItemQueryModel {
+  itemId: number;
+  itemName: string;
+  quantity: number;
+  discountedPrice: number; // 해당 아이템을 구매하는데 결제한 총 금액
+}
+
+export interface OrderListModel {
+  orderId: number;
+  orderCode: string;
+  purchaseName: string;
+  orderDate: Date;
+  totalPrice: number;
+  orderStatus: string;
+}
