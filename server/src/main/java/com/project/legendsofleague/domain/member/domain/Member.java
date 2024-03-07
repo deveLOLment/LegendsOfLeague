@@ -69,6 +69,7 @@ public class Member extends BaseEntity {
         Member member = new Member();
         member.username = username;
         member.email = email;
+        member.nickname = nickname;
         member.role = ROLE.ROLE_USER;
         return member;
     }
