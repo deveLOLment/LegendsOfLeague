@@ -1,4 +1,4 @@
-import { CouponResponseModel } from "../Coupon/CouponModel";
+import { CouponResponseModel } from "../coupon/CouponModel";
 
 export interface OrderResponseDto {
   id: number;
@@ -32,20 +32,19 @@ export interface PurchaseStartResponseModel {
 }
 
 export interface OrderInfoQueryModel {
-  orderCode: number;
+  id: number;
+  orderCode: string;
   orderDate: Date;
-  originalTotalPrice: number; // 구매한 모든 item의 실제 가격
-  discountedTotalPrice: number; // 해당 주문에서 실제로 결제한 금액
+  totalPrice: number;
+  orderStatus: string;
   purchaseProvider: string;
   orderItemList: OrderItemQueryModel[];
 }
 
 export interface OrderItemQueryModel {
   itemId: number;
-  itmeName: string;
+  itemName: string;
   quantity: number;
-  originalPrice: number; //실제 itemPrice * quantity의 가격
-  appliedCouponName: string;
   discountedPrice: number; // 해당 아이템을 구매하는데 결제한 총 금액
 }
 

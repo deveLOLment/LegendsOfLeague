@@ -1,49 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { CouponResponseModel } from "./CouponModel";
-import axios from "axios";
+import { CouponContainer, CouponWrapper } from "./CouponStyled";
 import Coupon from "./Coupon";
-import { CouponContainer, CouponWrapper, ListWrapper } from "./CouponStyled";
-import axiosInstance from "../common/AxiosInstance";
+import { CouponResponseModel } from "./CouponModel";
+import AxiosInstance from "../common/AxiosInstance";
 
-const CouponList = () => {
-  const [couponList, setCouponList] = useState<CouponResponseModel[]>([]);
+type CouponListProps = {
+  couponList: CouponResponseModel[];
+};
 
-  const url = "/coupons";
-  const fetchCouponList = async () => {
-    try {
-      const response = await axiosInstance.get(url);
-      //TODO : 로그인한 쿠키값이 존재하면 넘기기
-
-      const responseData: CouponResponseModel[] = response.data;
-
-      console.log(responseData);
-      setCouponList(responseData);
-    } catch (e) {}
-  };
-
-  useEffect(() => {
-    fetchCouponList();
-  }, []);
-
-  const handleCouponRegistered = () => {
-    // 쿠폰 등록 후 쿠폰 리스트를 다시 가져옴
-    fetchCouponList();
-  };
-
+const CouponList: React.FC<CouponListProps> = ({ couponList }) => {
   return (
-    <CouponContainer>
-      쿠폰 등록 페이지
-      <CouponWrapper>
-        {couponList.map((coupon) => (
-          <Coupon
-            key={coupon.id}
-            coupon={coupon}
-            onCouponRegistered={handleCouponRegistered}
-          />
-        ))}
-      </CouponWrapper>
-    </CouponContainer>
-);
+    <div className="PCommonCouponList">
+      {couponList.map((coupon) => (
+        <Coupon key={coupon.id} coupon={coupon} />
+      ))}
+    </div>
+  );
 };
 
 export default CouponList;

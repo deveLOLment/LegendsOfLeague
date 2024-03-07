@@ -1,5 +1,6 @@
 package com.project.legendsofleague.domain.member.domain;
 
+import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.member.dto.RegisterDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
 
     // 회원 아이디
     @Id
@@ -68,6 +69,7 @@ public class Member {
         Member member = new Member();
         member.username = username;
         member.email = email;
+        member.nickname = nickname;
         member.role = ROLE.ROLE_USER;
         return member;
     }

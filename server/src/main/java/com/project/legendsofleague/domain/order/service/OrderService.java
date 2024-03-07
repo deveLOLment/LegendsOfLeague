@@ -1,6 +1,9 @@
 package com.project.legendsofleague.domain.order.service;
 
 
+import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
+import com.project.legendsofleague.common.exception.NotFoundInputValueException;
+import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.cartItem.domain.CartItem;
 import com.project.legendsofleague.domain.cartItem.dto.CartItemOrderRequestDto;
 import com.project.legendsofleague.domain.cartItem.service.CartItemService;
@@ -11,6 +14,7 @@ import com.project.legendsofleague.domain.membercoupon.service.MemberCouponServi
 import com.project.legendsofleague.domain.order.domain.Order;
 import com.project.legendsofleague.domain.order.domain.OrderItem;
 import com.project.legendsofleague.domain.order.domain.OrderStatus;
+import com.project.legendsofleague.domain.order.dto.OrderInfoResponseDto;
 import com.project.legendsofleague.domain.order.dto.OrderListResponseDto;
 import com.project.legendsofleague.domain.order.dto.OrderRequestDto;
 import com.project.legendsofleague.domain.order.dto.OrderResponseDto;
@@ -26,12 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -167,7 +165,7 @@ public class OrderService {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
 
-        if (!order.getMember().equals(member)) {
+        if (!order.getMember().getId().equals(member.getId())) {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
 
@@ -233,5 +231,19 @@ public class OrderService {
             Integer count = orderItem.getCount();
             item.removeStock(count);
         }
+    }
+
+    public OrderInfoResponseDto getOrderInfoPage(Member member, Long orderId) {
+
+        Purchase purchase = orderRepository.queryOrderByOrderId(orderId).orElseThrow(() -> {
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
+        });
+
+        Order order = purchase.getOrder();
+        if(order.getMember().getId() != member.getId()){
+            throw GlobalExceptionFactory.getInstance(WrongInputException.class);
+        }
+
+        return OrderInfoResponseDto.from(purchase);
     }
 }

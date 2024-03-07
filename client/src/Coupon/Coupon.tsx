@@ -3,13 +3,14 @@ import { CouponResponseModel, CouponTypeRecord } from "./CouponModel";
 
 import axios from "axios";
 import "./Coupon.css";
+import AxiosInstance from "../common/AxiosInstance";
 
 const Coupon = ({
   coupon,
   onCouponRegistered,
 }: {
   coupon: CouponResponseModel;
-  onCouponRegistered: () => void;
+  onCouponRegistered?: () => void;
 }) => {
   const isAmountDiscountedCoupon = () => {
     const couponType = coupon.couponType;
@@ -28,12 +29,14 @@ const Coupon = ({
 
     try {
       //TODO : 로그인한 쿠키값이 존재하면 넘기기
-      const response = await axios.post(url, {
+      const response = await AxiosInstance.post(url, {
         couponId: coupon.id,
       });
 
       alert("쿠폰이 등록되었습니다!");
-      onCouponRegistered();
+      if (onCouponRegistered) {
+        onCouponRegistered();
+      }
     } catch (e) {}
   };
 
@@ -62,10 +65,11 @@ const Coupon = ({
             <div className="PCommonCoupon__discount__information"></div>
           </div>
           <div className="PCommonCoupon__buttons">
-            <span className="PCommonCoupon__button">적용상품</span>
-            <span className="PCommonCoupon__button PCommonCoupon__button--download">
-              쿠폰받기 <a onClick={registerCoupon}></a>
-            </span>
+            {onCouponRegistered && (
+              <span className="PCommonCoupon__button PCommonCoupon__button--download">
+                쿠폰받기 <a onClick={registerCoupon}></a>
+              </span>
+            )}
           </div>
         </div>
       </dd>

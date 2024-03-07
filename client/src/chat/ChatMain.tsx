@@ -16,8 +16,11 @@ const ChatMain = () => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null); //채팅 컨테이너 참조
 
   useEffect(() => {
-    initializeChat();
-    connectSocket();
+    const initialize = async () => {
+      await initializeChat();
+      await connectSocket();
+    };
+    initialize();
   }, []);
 
   useEffect(() => {
@@ -43,11 +46,16 @@ const ChatMain = () => {
 
   const initializeChat = async () => {
     const url = "http://localhost:8080/chat/enterUser";
-    const response = await axiosInstance.get(url);
-
-    setMessages(response.data.previousChat);
-    setUser(response.data.username);
-    setLoading(false);
+    const response = await axiosInstance
+      .get(url)
+      .then(function (response) {
+        setMessages(response.data.previousChat);
+        setUser(response.data.username);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {

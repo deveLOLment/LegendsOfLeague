@@ -27,6 +27,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 쿠키에서 토큰 정보를 가져온다.
+
         Cookie[] cookies = request.getCookies();
         String token = null;
 
@@ -65,9 +66,13 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰 소멸 시간  검증
         if (jwtUtil.isExpired(token)) {
             System.out.println("token expired");
+            Cookie cookie = new Cookie("Authorization", null); // 쿠키 이름을 지정합니다.
+            cookie.setMaxAge(0); // 쿠키의 만료 시간을 0으로 설정하여 즉시 만료시킵니다.
+            cookie.setPath("/"); // 쿠키의 경로를 설정합니다.
+            response.addCookie(cookie); // 쿠키를 응답에 추가합니다.
 //            filterChain.doFilter(request, response);
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
 //            throw new UnavailableException("접근권한없음");
 
             // 로그인 페이지로 리다이렉트
@@ -77,21 +82,20 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
 //        String requestURI = request.getRequestURI();
-
-
-        String username = jwtUtil.getUserName(token);
-        String role = jwtUtil.getRole(token);
-
+        else {
+            String username = jwtUtil.getUserName(token);
+            String role = jwtUtil.getRole(token);
 
 //        Member member = Member.with(username,"1234", role);
 
-        Member member = memberRepository.findByUsername(username);
+            Member member = memberRepository.findByUsername(username);
 
-        CustomMemberDetails customMemberDetails = new CustomMemberDetails(member);
+            CustomMemberDetails customMemberDetails = new CustomMemberDetails(member);
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customMemberDetails, null, customMemberDetails.getAuthorities());
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customMemberDetails, null, customMemberDetails.getAuthorities());
 
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
 
         filterChain.doFilter(request, response);
     }
