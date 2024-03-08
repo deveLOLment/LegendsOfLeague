@@ -1,4 +1,4 @@
-import { CouponResponseModel } from "../Coupon/CouponModel";
+import { CouponResponseModel } from "../coupon/CouponModel";
 
 export interface OrderResponseDto {
   id: number;

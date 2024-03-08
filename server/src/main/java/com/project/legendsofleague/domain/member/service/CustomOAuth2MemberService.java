@@ -6,7 +6,6 @@ import com.project.legendsofleague.domain.member.dto.GoogleResponse;
 import com.project.legendsofleague.domain.member.dto.MemberDto;
 import com.project.legendsofleague.domain.member.dto.OAuth2Response;
 import com.project.legendsofleague.domain.member.repository.MemberRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -23,7 +22,6 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-
         String registrationId =
                 userRequest
                         .getClientRegistration()
@@ -33,7 +31,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
         // 구글과 네이버에서 오는 데이터가 양식이 서로 다르기 때문에 받는 방식을 구분한다.
 
-        if (registrationId.equals("google")){
+        if (registrationId.equals("google")) {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         }
 
@@ -50,7 +48,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
             return new CustomOAuth2Member(memberDto);
         } else {
-//            existMember의 이메일과 닉네임을 변경해줘야한다?
+
             memberRepository.save(existMember);
 
             MemberDto memberDto = MemberDto.of(username, oAuth2Response.getName());

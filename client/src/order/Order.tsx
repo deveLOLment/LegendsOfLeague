@@ -8,8 +8,9 @@ import {
   OrderResponseDto,
   PurchaseStartResponseModel,
 } from "./OrderModels";
-import { CouponResponseModel } from "../Coupon/CouponModel";
+import { CouponResponseModel } from "../coupon/CouponModel";
 import AxiosInstance from "../common/AxiosInstance";
+import BlogBanner from "../layout/BlogBanner";
 
 const Order = () => {
   const navigate = useNavigate();
@@ -145,6 +146,7 @@ const Order = () => {
 
   return (
     <>
+      <BlogBanner title="Purchase"></BlogBanner>
       {!orderItemList || orderItemList.length === 0 ? (
         <div>waiting</div>
       ) : (

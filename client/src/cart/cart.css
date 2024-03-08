@@ -9,10 +9,8 @@
   margin-top: 5rem;
 }
 
-.modal-open-button,
-.modal-close-btn {
-  cursor: pointer;
-  margin-left: auto;
+.modal-open-btn-box {
+  margin: 10px;
 }
 
 .modal-container {
@@ -25,11 +23,21 @@
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.modal-content {
+  text-align: center;
 }
 
 .modal-content {
   background-color: #ffffff;
-  width: 250px;
-  height: 150px;
+  width: 300px;
+  height: 220px;
   padding: 15px;
+}
+
+.qty-box {
+  font-size: 16px;
+  margin: 10px;
 }
