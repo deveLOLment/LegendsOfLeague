@@ -64,35 +64,24 @@ const Header: React.FC = () => {
         <div className="header_button__3XaEu">
           <div className="meta_container__35H5h">
             <div className="ticket_container__2iJfs">
-              <button type="button" className="ticket_container-ticket__3wtdH">
-                <span className="ticket_container-ticket__label__9E6b1">
-                  라운지 티켓
-                </span>
-              </button>
-            </div>
-            <div className="notification_container__1Nvbl">
-              <button
-                className="notification_container-noti__3rvM8"
-                type="button"
-                data-not-read="true"
+              <Link
+                to="/coupon/total"
+                className="ticket_container-ticket__3wtdH"
               >
-                <span className="notification_container-noti__label__3ra5g">
-                  수신함
+                <span className="ticket_container-ticket__label__9E6b1">
+                  쿠폰
                 </span>
-              </button>
+              </Link>
             </div>
             <Link to="/login" className="meta_profile__2eIqF">
               <span className="meta_label__1Kbvf">프로필</span>
             </Link>
           </div>
-          <button type="button" className="header_sports__g6e74">
-            <span className="header_label__2fkL-">스포츠</span>
-          </button>
         </div>
       </div>
       <div className="header_menu__23d4_ ">
         <div className="col-md-2"></div>
-        <div className="col-md-5">
+        <div className="col-md-6">
           <ul className="sub_menu_wrap__3Je_v">
             <li className="sub_menu_item__Q2d1m">
               <NavLink
@@ -114,15 +103,6 @@ const Header: React.FC = () => {
             </li>
             <li className="sub_menu_item__Q2d1m">
               <NavLink
-                to="/coupon/register"
-                className={"sub_menu_link__3BySZ"}
-                data-new="false"
-              >
-                <span className="sub_menu_label__1q_VA">쿠폰 등록</span>
-              </NavLink>
-            </li>
-            <li className="sub_menu_item__Q2d1m">
-              <NavLink
                 to="/order-list"
                 className={"sub_menu_link__3BySZ"}
                 data-new="false"
@@ -130,10 +110,18 @@ const Header: React.FC = () => {
                 <span className="sub_menu_label__1q_VA">주문 내역 조회</span>
               </NavLink>
             </li>
+            <li className="sub_menu_item__Q2d1m">
+              <NavLink
+                to="/chat"
+                className={"sub_menu_link__3BySZ"}
+                data-new="false"
+              >
+                <span className="sub_menu_label__1q_VA">채팅</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
-
-        <div className="col-md-2"></div>
+        \<div className="col-md-1"></div>
         <ul className="sub_menu_wrap__3Je_v">
           <li className="sub_menu_item__Q2d1m">
             <NavLink
@@ -142,15 +130,6 @@ const Header: React.FC = () => {
               data-new="false"
             >
               <span className="sub_menu_label__1q_VA">장바구니</span>
-            </NavLink>
-          </li>
-          <li className="sub_menu_item__Q2d1m">
-            <NavLink
-              to="/coupon/list"
-              className={"sub_menu_link__3BySZ"}
-              data-new="false"
-            >
-              <span className="sub_menu_label__1q_VA">쿠폰함</span>
             </NavLink>
           </li>
         </ul>

@@ -394,11 +394,18 @@ const Item = () => {
       <div className="container">
         <div className="row s_product_inner">
           <div className="col-lg-6">
-            <div className="owl-carousel owl-theme s_Product_carousel owl-loaded owl-drag">
+            <div>
               <div className="owl-stage-outer">
                 <div className="owl-stage">
                   <div className="owl-item active">
-                    <div className="item-single-prd">
+                    <div
+                      className="item-single-prd"
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
                       <img
                         className="item-image"
                         src={itemDetail?.thumbnailImage}
@@ -418,17 +425,14 @@ const Item = () => {
                   <span>Category</span> : {itemDetail?.category}
                 </li>
                 <li>
-                  <span>
-                    Availability:{" "}
-                    {itemDetail?.stock && itemDetail.stock > 0
-                      ? "Available"
-                      : "Sold Out"}
-                  </span>
+                  <span>Sotck</span> : {itemDetail?.stock}
                 </li>
               </ul>
               <p>{itemDetail?.description}</p>
-              <div className="nice-select">
-                <label htmlFor="qty">Quantity:</label>
+              <div className="qty-container">
+                <label htmlFor="qty" className="m-3">
+                  <h6>수량:</h6>
+                </label>
                 <select
                   name="qty"
                   id="qty"
@@ -443,13 +447,15 @@ const Item = () => {
                     </option>
                   ))}
                 </select>
-                <br />
-                {/* 카트에 추가 버튼 */}
-                <button onClick={addToCart} className="button primary-btn">
-                  Add to Cart
-                </button>
-                <button onClick={handleOrderButtonClick}>주문하기</button>
               </div>
+              <br />
+              {/* 카트에 추가 버튼 */}
+              <button onClick={addToCart} className="white_button mr-3">
+                장바구니 추가
+              </button>
+              <button onClick={handleOrderButtonClick} className="button">
+                주문하기
+              </button>
             </div>
           </div>
         </div>

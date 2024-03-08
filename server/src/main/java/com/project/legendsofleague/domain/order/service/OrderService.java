@@ -165,7 +165,7 @@ public class OrderService {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
 
-        if (!order.getMember().equals(member)) {
+        if (!order.getMember().getId().equals(member.getId())) {
             throw new RuntimeException("유효하지 않은 요청입니다.");
         }
 

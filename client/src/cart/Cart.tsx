@@ -1,8 +1,7 @@
-import axios from "axios";
 import React, { useState, useEffect, MouseEvent, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { TypePredicateKind } from "typescript";
 import AxiosInstance from "../common/AxiosInstance";
+import BlogBanner from "../layout/BlogBanner";
 
 const Cart = () => {
   const modalBackground = useRef();
@@ -11,6 +10,7 @@ const Cart = () => {
   const [selectedItemToUpdate, setSelectedItemToUpdate] = useState<{
     cartItemId: number;
     count: number;
+    stock: number;
   } | null>(null);
 
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ const Cart = () => {
       name: string;
       price: number;
       count: number;
+      stock: number;
     }[]
   >([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -32,6 +33,7 @@ const Cart = () => {
   const handleCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCount(parseInt(e.target.value));
   };
+
   useEffect(() => {
     fetchCartItemList();
   }, []);
@@ -48,13 +50,22 @@ const Cart = () => {
 
   const handleUpdateQuantity = async (
     updatedCount: number,
-    cartItemId: number
+    cartItemId: number,
+    stock: number
   ) => {
     const url = `http://localhost:8080/cart/${cartItemId}/update`;
-    console.log("hello");
+
+    if (updatedCount > stock) {
+      alert("입력한 수량이 재고를 초과합니다!");
+      return;
+    }
+
+    if (updatedCount < 0) {
+      alert("0보다 큰 값을 입력해주세요!");
+      return;
+    }
 
     try {
-      // 예시로 서버에 업데이트 요청을 보내는 코드
       const response = await AxiosInstance.post(url, {
         cartItemId: cartItemId,
         count: updatedCount,
@@ -142,190 +153,220 @@ const Cart = () => {
   };
 
   return (
-    <section className="cart_area">
-      <div className="container">
-        <div className="cart_inner">
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">Select</th>
-                  <th scope="col">Product</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">주문관리</th>
-                  <th scope="col">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cartItemList.length === 0 ? (
+    <>
+      <BlogBanner title="Shopping Cart"></BlogBanner>
+      <section className="cart_area">
+        <div className="container">
+          <div className="cart_inner">
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
                   <tr>
-                    <td>장바구니가 비어 있습니다.</td>
+                    <th className="col-1">Select</th>
+                    <th className="col-6">Product</th>
+                    <th className="col-2">Price</th>
+                    <th className="col-1">Quantity</th>
+                    <th className="col-2">Management</th>
+                    <th className="col-2">Total</th>
                   </tr>
-                ) : (
-                  cartItemList.map(
-                    (
-                      item: {
-                        cartItemId: number;
-                        thumbnailImage: string;
-                        name: string;
-                        price: number;
-                        count: number;
-                      },
-                      index: number
-                    ) => (
-                      <tr key={index}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={selectedItems.includes(item.cartItemId)}
-                            onChange={() =>
-                              handleCheckboxChange(item.cartItemId)
-                            }
-                          />
-                        </td>
-                        <td>
-                          <div className="media">
-                            <div className="d-flex">
-                              <img
-                                className="thumbnail_url"
-                                src={item.thumbnailImage}
-                                alt=""
-                              />
-                            </div>
-                            <div className="media-body">
-                              <p>{item.name}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <h5>{item.price.toLocaleString()} 원</h5>
-                        </td>
-                        <td>
-                          <p>{item.count}</p>
-                        </td>
-                        <td>
-                          {/* 모달 열기 버튼 */}
-                          <button
-                            onClick={() => {
-                              setShowModal(true);
-                              setSelectedItemToUpdate({
-                                cartItemId: item.cartItemId,
-                                count: item.count,
-                              });
-                              console.log(showModal);
-                              console.log(selectedItemToUpdate);
-                            }}
-                            // className="plain-btn btn"
-                            className={"modal-open-btn"}
-                          >
-                            수량변경
-                          </button>
-                          <a
-                            onClick={() => {
-                              const confirmed =
-                                window.confirm("선택한 아이템을 삭제할까요?");
-                              if (confirmed) {
-                                deleteCartItemAndUpdateList([item.cartItemId]);
+                </thead>
+                <tbody>
+                  {cartItemList.length === 0 ? (
+                    <tr>
+                      <td className="empty-cart" colSpan={6}>
+                        장바구니가 비어 있습니다.
+                      </td>
+                    </tr>
+                  ) : (
+                    cartItemList.map(
+                      (
+                        item: {
+                          cartItemId: number;
+                          thumbnailImage: string;
+                          name: string;
+                          price: number;
+                          count: number;
+                          stock: number;
+                        },
+                        index: number
+                      ) => (
+                        <tr key={index}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedItems.includes(item.cartItemId)}
+                              onChange={() =>
+                                handleCheckboxChange(item.cartItemId)
                               }
-                            }}
-                            className="plain-btn btn"
-                          >
-                            삭제하기
-                          </a>
-                        </td>
-
-                        <td>
-                          <h5>
-                            {(item.price * item.count).toLocaleString()} 원
-                          </h5>
-                        </td>
-                      </tr>
+                            />
+                          </td>
+                          <td>
+                            <div className="media">
+                              <div className="d-flex">
+                                <img
+                                  className="thumbnail_url"
+                                  src={item.thumbnailImage}
+                                  alt=""
+                                />
+                              </div>
+                              <div className="media-body">
+                                <h5>{item.name}</h5>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <h5>{item.price.toLocaleString()}원</h5>
+                          </td>
+                          <td>
+                            <h5>{item.count}</h5>
+                          </td>
+                          <td>
+                            {/* 모달 열기 버튼 */}
+                            <button
+                              onClick={() => {
+                                setShowModal(true);
+                                setSelectedItemToUpdate({
+                                  cartItemId: item.cartItemId,
+                                  count: item.count,
+                                  stock: item.stock,
+                                });
+                                console.log(showModal);
+                                console.log(selectedItemToUpdate);
+                              }}
+                              // className="plain-btn btn"
+                              className="btn btn-light mb-3"
+                            >
+                              수량변경
+                            </button>
+                            <button
+                              onClick={() => {
+                                const confirmed =
+                                  window.confirm("선택한 아이템을 삭제할까요?");
+                                if (confirmed) {
+                                  deleteCartItemAndUpdateList([
+                                    item.cartItemId,
+                                  ]);
+                                }
+                              }}
+                              className="btn btn-light"
+                            >
+                              삭제하기
+                            </button>
+                          </td>
+                          <td>
+                            <h5>
+                              {(item.price * item.count).toLocaleString()}원
+                            </h5>
+                          </td>
+                        </tr>
+                      )
                     )
-                  )
-                )}
+                  )}
 
-                {cartItemList.length !== 0 && (
-                  <tr>
+                  {cartItemList.length !== 0 && (
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>
+                        <h5>Subtotal</h5>
+                      </td>
+                      <td>
+                        <h5>
+                          {cartItemList
+                            .reduce(
+                              (total: number, item) =>
+                                (total += item.price * item.count),
+                              0
+                            )
+                            .toLocaleString()}
+                          원
+                        </h5>
+                      </td>
+                    </tr>
+                  )}
+                  <tr className="out_button_area">
+                    <td className="d-none-l"></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td>
-                      <h5>Subtotal</h5>
+                      <div className="checkout_btn_inner d-flex align-items-center">
+                        <button
+                          className="white_button"
+                          onClick={handleDeleteClick}
+                          disabled={selectedItemCount === 0} // 선택된 아이템이 없을때 비활성화
+                          style={{ fontSize: "12px" }}
+                        >
+                          선택 삭제
+                        </button>
+                        <button
+                          className="primary-btn ml-2"
+                          onClick={handleOrderClick}
+                          disabled={selectedItemCount === 0} // 선택된 아이템이 없을때 비활성화
+                        >
+                          주문하기
+                        </button>
+                      </div>
                     </td>
-                    <td>
-                      <h5>
-                        {cartItemList
-                          .reduce(
-                            (total: number, item) =>
-                              (total += item.price * item.count),
-                            0
-                          )
-                          .toLocaleString()}
-                        원
-                      </h5>
-                    </td>
+                    <td></td>
                   </tr>
-                )}
-                <tr className="out_button_area">
-                  <td className="d-none-l"></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <div className="checkout_btn_inner d-flex align-items-center">
-                      <button
-                        onClick={handleDeleteClick}
-                        disabled={selectedItemCount === 0} // 선택된 아이템이 없을때 비활성화
-                      >
-                        선택 삭제
-                      </button>
-                      <button
-                        className="primary-btn ml-2"
-                        onClick={handleOrderClick}
-                        disabled={selectedItemCount === 0} // 선택된 아이템이 없을때 비활성화
-                      >
-                        주문하기
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
-      {showModal && (
-        <div
-          className={"modal-container"}
-          onClick={(e) => {
-            if (e.target === modalBackground.current) {
-              setShowModal(false);
-            }
-          }}
-        >
-          <div className={"modal-content"}>
-            <p>수량: {selectedItemToUpdate?.count}</p>
-            <input type="number" value={count} onChange={handleCountChange} />
-            <button
-              className={"modal-open-btn"}
-              onClick={() =>
-                handleUpdateQuantity(
-                  count || 0,
-                  selectedItemToUpdate?.cartItemId || 0
-                )
+        {showModal && (
+          <div
+            className={"modal-container"}
+            onClick={(e) => {
+              if (e.target === modalBackground.current) {
+                setShowModal(false);
               }
-            >
-              확인
-            </button>
-            <button
-              className={"modal-close-btn"}
-              onClick={() => setShowModal(false)}
-            >
-              닫기
-            </button>
+            }}
+          >
+            <div className={"modal-content"}>
+              <div className="modal-box">
+                <div className="qty-box">
+                  <p>재고(Stock): {selectedItemToUpdate?.stock}</p>
+                </div>
+                <div>
+                  <input
+                    className="form-control"
+                    type="number"
+                    value={count}
+                    onChange={handleCountChange}
+                  />
+                </div>
+                <div className="modal-open-btn-box">
+                  <button
+                    className="button"
+                    onClick={() =>
+                      handleUpdateQuantity(
+                        count || 0,
+                        selectedItemToUpdate?.cartItemId || 0,
+                        selectedItemToUpdate?.stock || 0
+                      )
+                    }
+                  >
+                    확인
+                  </button>
+                </div>
+                <div className="modal-close-btn-box">
+                  <button
+                    className="white_button"
+                    onClick={() => setShowModal(false)}
+                  >
+                    닫기
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-    </section>
+        )}
+      </section>
+    </>
   );
 };
 export default Cart;

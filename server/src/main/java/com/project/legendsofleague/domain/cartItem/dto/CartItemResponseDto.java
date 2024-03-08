@@ -18,6 +18,7 @@ public class CartItemResponseDto {
     private String thumbnailImage;
 
     private Integer count;
+    private Integer stock;
 
 
     public static CartItemResponseDto toDto(CartItem cartItem) {
@@ -29,6 +30,7 @@ public class CartItemResponseDto {
         cartItemResponseDto.category = item.getCategory().getDisplayName();
         cartItemResponseDto.thumbnailImage = item.getThumbnailImage();
         cartItemResponseDto.count = cartItem.getCount();
+        cartItemResponseDto.stock = item.getStock();
 
         return cartItemResponseDto;
     }
