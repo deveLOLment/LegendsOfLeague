@@ -254,6 +254,7 @@ const ItemCreate: React.FC = () => {
       });
       console.log("Response:", response.data);
       alert("아이템이 생성되었습니다!");
+      window.location.reload();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -314,8 +315,8 @@ const ItemCreate: React.FC = () => {
             <option value="">카테고리 선택</option>
             <option value="CLOTHING">의류</option>
             <option value="ACCESSORIES">액세서리</option>
-            <option value="STATIONERY">문구류</option>
-            <option value="SPORTS_OUTDOOR">스포츠 및 야외용품</option>
+            <option value="FIGURE">피규어</option>
+            <option value="DOLL">인형</option>
           </select>
         </div>
         <div className="form-group">
