@@ -7,6 +7,7 @@ import "../aroma-master/vendors/themify-icons/themify-icons.css";
 import { truncateTitle } from "../common/utils";
 import BlogBanner from "../layout/BlogBanner";
 
+
 interface ItemListResponseDto {
   id: number;
   name: string;

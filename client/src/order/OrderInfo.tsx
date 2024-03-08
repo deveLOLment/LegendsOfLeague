@@ -131,6 +131,10 @@ const OrderInfo = () => {
                         : {orderInfo.orderStatus}
                       </td>
                     </tr>
+                    <tr>
+                      <td>Status</td>
+                      <td>: {orderInfo.orderStatus}</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
