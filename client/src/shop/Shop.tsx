@@ -7,7 +7,6 @@ import "../aroma-master/vendors/themify-icons/themify-icons.css";
 import { truncateTitle } from "../common/utils";
 import BlogBanner from "../layout/BlogBanner";
 
-
 interface ItemListResponseDto {
   id: number;
   name: string;
@@ -274,11 +273,11 @@ const Shop: FC = () => {
                             type="radio"
                             id="footwear"
                             name="category"
-                            value="STATIONERY"
+                            value="FIGURE"
                             onChange={handleCategoryChange}
-                            checked={state.category === "STATIONERY"}
+                            checked={state.category === "FIGURE"}
                           />
-                          <label htmlFor="footwear">문구류</label>
+                          <label htmlFor="footwear">피규어</label>
                         </li>
                         <li className="filter-list">
                           <input
@@ -286,11 +285,11 @@ const Shop: FC = () => {
                             type="radio"
                             id="bayItem"
                             name="category"
-                            value="SPORTS_OUTDOOR"
+                            value="DOLL"
                             onChange={handleCategoryChange}
-                            checked={state.category === "SPORTS_OUTDOOR"}
+                            checked={state.category === "DOLL"}
                           />
-                          <label htmlFor="bayItem">스포츠 및 야외용품</label>
+                          <label htmlFor="bayItem">인형</label>
                         </li>
                       </ul>
                     </form>
