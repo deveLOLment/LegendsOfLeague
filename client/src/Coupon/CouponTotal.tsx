@@ -45,34 +45,36 @@ const CouponTotal = () => {
     fetchRegisteredCouponList();
   }, []);
   return (
-    <div className="right_area">
-      <div className="PCommonTopBox">
-        <div className="PCommonTab">
-          <a
-            className="PCommonTab__button"
-            onClick={() => handleActiveComponent("list")}
-          >
-            {" "}
-            보유 쿠폰 <span>{registeredCouponList.length}</span>
-          </a>
-          <a
-            className="PCommonTab__button"
-            onClick={() => handleActiveComponent("register")}
-          >
-            {" "}
-            쿠폰 받기 <span>{notRegisteredCouponList.length}</span>
-          </a>
+    <div className="container">
+      <div className="right_area">
+        <div className="PCommonTopBox">
+          <div className="PCommonTab">
+            <a
+              className="PCommonTab__button"
+              onClick={() => handleActiveComponent("list")}
+            >
+              {" "}
+              보유 쿠폰 <span>{registeredCouponList.length}</span>
+            </a>
+            <a
+              className="PCommonTab__button"
+              onClick={() => handleActiveComponent("register")}
+            >
+              {" "}
+              쿠폰 받기 <span>{notRegisteredCouponList.length}</span>
+            </a>
+          </div>
         </div>
+        {activeComponent === "register" ? (
+          <CouponRegister
+            couponList={notRegisteredCouponList}
+            fetchNotRegisteredCouponList={fetchNotRegisteredCouponList}
+            fetchRegisteredCouponList={fetchRegisteredCouponList}
+          />
+        ) : (
+          <CouponList couponList={registeredCouponList} />
+        )}
       </div>
-      {activeComponent === "register" ? (
-        <CouponRegister
-          couponList={notRegisteredCouponList}
-          fetchNotRegisteredCouponList={fetchNotRegisteredCouponList}
-          fetchRegisteredCouponList={fetchRegisteredCouponList}
-        />
-      ) : (
-        <CouponList couponList={registeredCouponList} />
-      )}
     </div>
   );
 };

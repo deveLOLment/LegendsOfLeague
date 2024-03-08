@@ -3,6 +3,7 @@ import { OrderListModel } from "./OrderModels";
 import { Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../common/AxiosInstance";
+import BlogBanner from "../layout/BlogBanner";
 
 const dummyData: OrderListModel[] = [
   {
@@ -51,21 +52,24 @@ const OrderList = () => {
 
   return (
     <>
+      <BlogBanner title="OrderConfirmation"></BlogBanner>
       {!orderList || orderList.length === 0 ? (
         <div>Waiting</div>
       ) : (
-        <div className="container">
-          <div>
-            <h2>주문 내역 조회</h2>
+        <section className="order_details section-margin--small">
+          <div className="container">
+            <p className="text-center billing-alert">
+              Thank you. Your order has been received.
+            </p>
+            <Row>
+              {orderList.map((order) => (
+                <Col xs={6} key={order.orderId}>
+                  <OrderThumbnailInfo key={order.orderId} order={order} />
+                </Col>
+              ))}
+            </Row>
           </div>
-          <Row>
-            {orderList.map((order) => (
-              <Col xs={6} key={order.orderId}>
-                <OrderThumbnailInfo key={order.orderId} order={order} />
-              </Col>
-            ))}
-          </Row>
-        </div>
+        </section>
       )}
     </>
   );
@@ -80,10 +84,23 @@ const OrderThumbnailInfo: React.FC<{ order: OrderListModel }> = ({ order }) => {
   };
   return (
     <div className="mb-4">
-      <div className="confirmation-card">
+      <div
+        className={`${
+          order.orderStatus === "결제완료"
+            ? "confirmation-card"
+            : "failure-card"
+        }`}
+      >
         <h3 className="billing-title">Order Info</h3>
         <div style={{ textAlign: "right" }}>
-          <button onClick={handleNavigation}>
+          <button
+            className={`${
+              order.orderStatus === "결제완료"
+                ? "btn btn-secondary"
+                : "btn btn-light"
+            }`}
+            onClick={handleNavigation}
+          >
             <span>Detail</span>
           </button>
         </div>
@@ -107,7 +124,14 @@ const OrderThumbnailInfo: React.FC<{ order: OrderListModel }> = ({ order }) => {
             </tr>
             <tr>
               <td>State</td>
-              <td>: {order.orderStatus}</td>
+              <td
+                style={{
+                  color: order.orderStatus === "결제완료" ? "green" : "darkred",
+                  fontSize: "15px",
+                }}
+              >
+                : {order.orderStatus}
+              </td>
             </tr>
           </tbody>
         </table>
