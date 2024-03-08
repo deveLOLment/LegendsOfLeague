@@ -58,6 +58,8 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
     } catch (error) {
       alert("리뷰 작성에 실패했습니다!");
     }
+
+    setItemReviewCreateForm({ score: 0, content: "" });
   };
 
   return (
@@ -142,56 +144,36 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
             <div className="col-lg-6">
               <div className="review_box">
                 <h4>Add a Review</h4>
-                <p>Your Rating:</p>
-                <ul className="list">
-                  <li>
-                    <a>
-                      <i className="fa fa-star"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fa fa-star"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fa fa-star"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fa fa-star"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fa fa-star"></i>
-                    </a>
-                  </li>
-                </ul>
-                <p>Outstanding</p>
                 <form className="form-contact form-review mt-3">
                   <div className="form-group">
-                    <input
+                    <select
                       className="form-control different-control w-100"
                       name="score"
                       id="score"
-                      placeholder="Enter Score"
-                      type="number"
+                      value={itemReviewCreateForm.score}
                       onChange={(e) =>
                         setItemReviewCreateForm({
                           ...itemReviewCreateForm,
                           score: Number(e.target.value),
                         })
                       }
-                    />
+                    >
+                      <option value="0" disabled selected>
+                        Select Score
+                      </option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
                   </div>
                   <div className="form-group">
                     <textarea
                       className="form-control different-control w-100"
                       name="textarea"
                       id="textarea"
+                      value={itemReviewCreateForm.content}
                       placeholder="Enter Message"
                       onChange={(e) =>
                         setItemReviewCreateForm({
@@ -204,7 +186,8 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
                   <div className="form-group text-center text-md-right">
                     <button
                       type="submit"
-                      className="button "
+                      className="white_button"
+                      style={buttonStyle}
                       onClick={handleReview}
                     >
                       제출
@@ -220,11 +203,16 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
   );
 };
 
+const buttonStyle = {
+  width: "100px",
+  padding: "0px",
+};
+
 const ItemReviewRow: React.FC<{ itemReview: ItemReviewModel }> = ({
   itemReview,
 }) => {
   return (
-    <div className="review_item">
+    <div className="review_item" style={{ margin: "10px" }}>
       <div className="media">
         <div className="media-body">
           <h4>{itemReview.nickname}</h4>

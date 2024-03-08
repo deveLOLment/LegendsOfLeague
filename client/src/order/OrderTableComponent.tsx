@@ -12,15 +12,15 @@ const OrderItemList: React.FC<{
     <table className="table">
       <thead>
         <tr>
-          <th scope="col">Item ID</th>
-          <th scope="col">Product Name</th>
-          <th scope="col">Quantity</th>
-          <th scope="col">가격</th>
-          <th scope="col">쿠폰 목록</th>
-          <th scope="col">최종 가격</th>
+          <th className="col-1">Item ID</th>
+          <th className="col-6">Product Name</th>
+          <th className="col-1">Quantity</th>
+          <th className="col-1">Price</th>
+          <th className="col-3">Coupon</th>
+          <th className="col-2">Final Price</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody style={{ fontSize: "18px" }}>
         {itemList.map((item) => (
           <ItemTableRow
             key={item.id}

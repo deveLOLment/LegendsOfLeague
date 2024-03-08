@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import AxiosInstance from "../../common/AxiosInstance";
+import { formatDate } from "../../common/utils.js";
 
 interface ItemCommentCreateModel {
   content: string;
@@ -100,9 +101,10 @@ const ItemComment: React.FC<{ itemId: number }> = ({ itemId }) => {
                     <button
                       type="submit"
                       onClick={handleParentItemCommentSubmit}
-                      className="btn primary-btn"
+                      className="white_button"
+                      style={buttonStyle}
                     >
-                      Submit Now
+                      Submit
                     </button>
                   </div>
                 </form>
@@ -113,6 +115,11 @@ const ItemComment: React.FC<{ itemId: number }> = ({ itemId }) => {
       )}
     </>
   );
+};
+
+const buttonStyle = {
+  width: "100px",
+  padding: "0px",
 };
 
 const ItemCommentParentRow: React.FC<{
@@ -145,7 +152,7 @@ const ItemCommentParentRow: React.FC<{
       <div className="media">
         <div className="media-body">
           <h4>{parentItemComment.nickname}</h4>
-          <h5>{parentItemComment.createdDate.toString()}</h5>
+          <h5>{formatDate(parentItemComment.createdDate.toString())}</h5>
           <div>
             <a
               className="reply_btn"
@@ -154,40 +161,43 @@ const ItemCommentParentRow: React.FC<{
             >
               Reply
             </a>
-
-            {showReply && (
-              <div className="col-lg-6">
-                <div className="review_box">
-                  <h4>Post a comment</h4>
-                  <form
-                    className="row contact_form"
-                    id="contactForm"
-                    onSubmit={handleParentItemCommentSubmit}
-                  >
-                    <div className="col-md-12">
-                      <div className="form-group">
-                        <textarea
-                          className="form-control"
-                          name="message"
-                          id="message"
-                          placeholder="Message"
-                          onChange={(e) => setMessage(e.target.value)}
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div className="col-md-12 text-right">
-                      <button type="submit" className="btn primary-btn">
-                        Submit Now
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
       <p className="item-comment">{parentItemComment.content}</p>
+      {showReply && (
+        <div className="review_item reply">
+          <div className="review_box">
+            <h4>Post a comment</h4>
+            <form
+              className="row contact_form"
+              id="contactForm"
+              onSubmit={handleParentItemCommentSubmit}
+            >
+              <div className="col-md-12">
+                <div className="form-group">
+                  <textarea
+                    className="form-control"
+                    name="message"
+                    id="message"
+                    placeholder="Message"
+                    onChange={(e) => setMessage(e.target.value)}
+                  ></textarea>
+                </div>
+              </div>
+              <div className="col-md-12 text-right">
+                <button
+                  type="submit"
+                  className="white_button"
+                  style={buttonStyle}
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {parentItemComment.childCommentList.map((childItemComment) => (
         <ItemCommentChildRow
           key={childItemComment.id}
@@ -206,7 +216,7 @@ const ItemCommentChildRow: React.FC<{
       <div className="media">
         <div className="media-body">
           <h4>{childItemComment.nickname}</h4>
-          <h5>{childItemComment.createdDate.toString()}</h5>
+          <h5>{formatDate(childItemComment.createdDate)}</h5>
         </div>
       </div>
       <p className="item-comment">{childItemComment.content}</p>
