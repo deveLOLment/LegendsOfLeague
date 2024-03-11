@@ -12,6 +12,7 @@ import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoSuccessRequest
 import com.project.legendsofleague.domain.purchase.exception.ExternalApiResponseException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,12 +46,13 @@ public class KakaoService {
     @Value("${kakaoPay.secretKey}")
     private String secretKey;
 
-    @Transactional
+    @Transactional(noRollbackFor = ExternalApiResponseException.class)
     public KakaoReadyResponseDto kakaoPay(Long memberId, Long purchaseId) {
 
+        AtomicBoolean flag = new AtomicBoolean(true);
         final Integer tax_free_amount = 0;
 
-        Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
+        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
             throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
@@ -74,21 +76,25 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
+                afterPurchaseService.handleFailPurchase(purchase);
                 throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
+
+        if(!flag.get()){
+            return null;
+        }
 
         String tid = map.get("tid");
         String next_redirect_pc_url = map.get("next_redirect_pc_url");
 
         return KakaoReadyResponseDto.toDto(next_redirect_pc_url, tid);
-
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = ExternalApiResponseException.class)
     public Boolean kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
 
-        Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
+        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
             throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
         });
 
@@ -108,6 +114,7 @@ public class KakaoService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
+                afterPurchaseService.handleFailPurchase(purchase);
                 throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
@@ -115,7 +122,6 @@ public class KakaoService {
         return afterPurchaseService.finishPurchase(purchaseId, tid);
     }
 
-    @Transactional
     public void cancelPurchase(Purchase purchase) throws JsonProcessingException {
 
         KakaoCancelRequestDto kakaoCancelRequestDto = new KakaoCancelRequestDto(cid,
@@ -140,7 +146,7 @@ public class KakaoService {
             })
             .block();
 
-        afterPurchaseService.cancelPurchase(purchase);
+        afterPurchaseService.refundPurchase(purchase);
     }
 
 

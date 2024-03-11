@@ -132,14 +132,13 @@ public class MemberCouponService {
 
             if (itemCouponMap.containsKey(itemId)) {
                 itemMemberCouponMap.computeIfAbsent(itemId,
-                        k -> new ArrayList<>(itemCouponMap.get(itemId)))
-                    .addAll(itemCouponMap.get(itemId));
+                        k -> new ArrayList<>(itemCouponMap.get(itemId)));
+
             }
 
             if (categoryCouponMap.containsKey(category)) {
                 itemMemberCouponMap.computeIfAbsent(itemId,
-                        k -> new ArrayList<>(categoryCouponMap.get(category)))
-                    .addAll(categoryCouponMap.get(category));
+                        k -> new ArrayList<>(categoryCouponMap.get(category)));
             }
         });
 

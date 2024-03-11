@@ -16,7 +16,7 @@ const KakaoPayApprove = () => {
         console.log(tid);
         console.log(pgToken);
         const url =
-          "http://localhost:8080/purchase/approve?pg_token=" +
+          "/purchase/approve?pg_token=" +
           pgToken +
           "&tid=" +
           tid +
@@ -25,7 +25,9 @@ const KakaoPayApprove = () => {
         const response = await AxiosInstance.get(url);
 
         navigate("/purchase/success");
-      } catch (error) {}
+      } catch (error) {
+        navigate("/purchase/fail");
+      }
     };
 
     fetchPayUrl();

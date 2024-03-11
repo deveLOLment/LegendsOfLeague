@@ -6,7 +6,9 @@ import static com.project.legendsofleague.domain.order.domain.QOrder.order;
 import static com.project.legendsofleague.domain.purchase.domain.QPurchase.purchase;
 
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
+import com.project.legendsofleague.domain.purchase.domain.PurchaseStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +28,9 @@ public class CustomPurchaseRepositoryImpl implements CustomPurchaseRepository {
 
     @Override
     public Optional<Purchase> queryPurchase(Long purchaseId) {
-        Purchase findPurchase = queryFactory.selectFrom(purchase)
+        Purchase findPurchase = queryFactory.selectFrom(purchase).distinct()
             .leftJoin(purchase.order, order).fetchJoin()
+            .leftJoin(order.orderItemList).fetchJoin()
             .leftJoin(order.member, member).fetchJoin()
             .where(purchase.id.eq(purchaseId))
             .fetchOne();
@@ -45,5 +48,15 @@ public class CustomPurchaseRepositoryImpl implements CustomPurchaseRepository {
             .fetchOne();
 
         return Optional.ofNullable(findPurchase);
+    }
+
+    @Override
+    public List<Purchase> queryPurchaseByPurchaseStatus(PurchaseStatus purchaseStatus) {
+        return queryFactory.selectFrom(purchase).distinct()
+            .leftJoin(purchase.order, order).fetchJoin()
+            .leftJoin(order.orderItemList).fetchJoin()
+            .leftJoin(order.member, member).fetchJoin()
+            .where(purchase.purchaseStatus.eq(purchaseStatus))
+            .fetch();
     }
 }
