@@ -37,7 +37,7 @@ const Games = () => {
 
   const getGames = async () => {
     try {
-      const url = "http://localhost:8080/games/schedule";
+      const url = "/games/schedule";
       const response = await AxiosInstance.get(url);
       const fetchedGames = response.data;
       setGames(fetchedGames);

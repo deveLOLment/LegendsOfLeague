@@ -15,10 +15,7 @@ const TossPayApprove = () => {
         const orderId = searchParams.get("orderId");
         const paymentKey = searchParams.get("paymentKey");
         const amount = searchParams.get("amount");
-        const url =
-          "http://localhost:8080/purchase/toss-pay/approve" +
-          "?purchaseId=" +
-          purchaseId;
+        const url = "/purchase/toss-pay/approve" + "?purchaseId=" + purchaseId;
         const response = await AxiosInstance.post(url, {
           orderId: orderId,
           paymentKey: paymentKey,

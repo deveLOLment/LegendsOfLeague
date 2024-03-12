@@ -48,9 +48,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         ResponseCookie cookie = createCookieTemp("Authorization", token);
         response.addHeader("Set-Cookie", cookie.toString());
-        response.sendRedirect("https://develolment.site");
-    
-}
+        response.sendRedirect("https://develolment.site/success");
+    }
 
     // 쿠키 생성
     private Cookie createCookie(String key, String value) {
