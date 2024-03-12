@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -43,8 +44,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 //        String token = jwtUtil.createJwt(username, role, 60*60*1000L);
         String token = jwtUtil.createJwt(username, role, 30 * 60 * 1000L);
-        response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000");
+//        response.addCookie(createCookie("Authorization", token));
+
+        ResponseCookie cookie = createCookieTemp("Authorization", token);
+        response.addHeader("Set-Cookie", cookie.toString());
+        response.sendRedirect("https://develolment.site/success");
     }
 
     // 쿠키 생성
@@ -57,5 +61,15 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setHttpOnly(false);
 
         return cookie;
+    }
+
+    private ResponseCookie createCookieTemp(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(false)
+                .secure(true)
+                .maxAge(30 * 60)
+                .build();
     }
 }

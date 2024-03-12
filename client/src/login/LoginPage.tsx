@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AxiosInstance from "../common/AxiosInstance";
 
 // 구글 로그인 버튼 이미지 경로
 // import googleLoginImage from '/login/googleLogin.png';
@@ -12,8 +13,8 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const url = "http://localhost:8080/login";
-      const response = await axios.post(
+      const url = "/login";
+      const response = await AxiosInstance.post(
         url,
         {
           username: username,
@@ -35,7 +36,8 @@ const LoginPage: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href =
+      "https://15.164.169.174.nip.io/oauth2/authorization/google";
   };
 
   return (

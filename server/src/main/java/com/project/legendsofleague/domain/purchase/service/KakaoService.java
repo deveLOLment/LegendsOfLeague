@@ -146,7 +146,6 @@ public class KakaoService {
             })
             .block();
 
-        afterPurchaseService.refundPurchase(purchase);
     }
 
 
