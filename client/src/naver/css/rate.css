@@ -8757,6 +8757,7 @@ button.graph_item__22IOC:disabled:hover:before {
   display: -moz-box;
   display: -ms-flexbox;
   display: flex;
+  justify-content: center;
 }
 @media (min-width: 769px) {
   .community_container__FmFdx {
