@@ -224,12 +224,6 @@ const Order = () => {
                             ) : (
                               <a className="button button-paypal">구매</a>
                             )}
-                            <a
-                              className="button button-paypal"
-                              onClick={purchaseStart}
-                            >
-                              구매
-                            </a>
                           </div>
                         </div>
                       </div>
