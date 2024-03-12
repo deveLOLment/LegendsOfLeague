@@ -84,7 +84,6 @@ public class TossService {
             })
             .block();
 
-        afterPurchaseService.refundPurchase(purchase);
     }
 
     private String getAuthorizations() {
