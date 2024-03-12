@@ -1,0 +1,25 @@
+.save-button,
+.cancel-button,
+.edit-button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+.edit-button {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+}
