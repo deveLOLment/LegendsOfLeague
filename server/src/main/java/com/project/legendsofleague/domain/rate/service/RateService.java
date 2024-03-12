@@ -56,31 +56,29 @@ public class RateService {
         List<Rate> rates = rateRepository.findAllByMemberAndGame(member, game);
         RateResponseDto rateResponseDto;
 
-        for (Rate rate : rates) {
-            log.info("게임ID={}", rate.getGame().getId());
-            log.info("선수={}", rate.getPlayerInGame().getPlayer().getPlayerName());
-            log.info("평점={}", rate.getScore());
-            int sum = 0;
-            PlayerInGame playerInGame = rate.getPlayerInGame();
-            List<Rate> ratesForAverage = rateRepository.findAllByPlayerInGameAndScoreNot(playerInGame, -1);
-            if (ratesForAverage.isEmpty()) {
-                rateResponseDto = RateResponseDto.toDto(rate, "");
-            } else {
-                for (Rate rateForAverage : ratesForAverage) {
-                    sum += rateForAverage.getScore();
-                }
+        if(!rates.isEmpty()) {
+            for (Rate rate : rates) {
+                log.info("게임ID={}", rate.getGame().getId());
+                log.info("선수={}", rate.getPlayerInGame().getPlayer().getPlayerName());
+                log.info("평점={}", rate.getScore());
+                int sum = 0;
+                PlayerInGame playerInGame = rate.getPlayerInGame();
+                List<Rate> ratesForAverage = rateRepository.findAllByPlayerInGameAndScoreNot(playerInGame, -1);
 
-                double average = (double) sum / ratesForAverage.size();
-                // DecimalFormat 객체 생성
-                DecimalFormat df = new DecimalFormat("#.0");
+                    for (Rate rateForAverage : ratesForAverage) {
+                        sum += rateForAverage.getScore();
+                    }
 
-                // 소수점 첫째 자리까지만 표시
-                String formattedDouble = df.format(average);
-                rateResponseDto = RateResponseDto.toDto(rate, formattedDouble);
+                    double average = (double) sum / ratesForAverage.size();
+                    // DecimalFormat 객체 생성
+                    DecimalFormat df = new DecimalFormat("#.0");
+
+                    // 소수점 첫째 자리까지만 표시
+                    String formattedDouble = df.format(average);
+                    rateResponseDto = RateResponseDto.toDto(rate, formattedDouble);
+                list.add(rateResponseDto);
             }
-            list.add(rateResponseDto);
         }
         return list;
-
     }
 }

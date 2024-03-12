@@ -3,22 +3,19 @@ import "./RatePicker.css";
 
 interface Props {
   playerId: number;
-  isActive: boolean | undefined;
   onRateChange: (playerId: number, score: string) => void;
 }
 
-const RatePicker: React.FC<Props> = ({ playerId, isActive, onRateChange }) => {
+const RatePicker: React.FC<Props> = ({ playerId, onRateChange }) => {
   const [selectedScore, setSelectedScore] = useState(""); // 선택된 점수를 저장할 상태
   const [isEditMode, setIsEditMode] = useState(true); // 수정 모드 상태
   const [isButtonVisible, setIsButtonVisible] = useState(true); // 수정 버튼의 가시성 상태
 
   useEffect(() => {
-    if (isActive) {
-      setIsEditMode(false);
-      setIsButtonVisible(false);
-      onRateChange(playerId, selectedScore);
-    }
-  }, [isActive]);
+    // setIsEditMode(false);
+    setIsButtonVisible(false);
+    onRateChange(playerId, selectedScore);
+  }, [selectedScore]);
 
   const handleScoreChange = (e: {
     target: { value: React.SetStateAction<string> };
@@ -51,11 +48,9 @@ const RatePicker: React.FC<Props> = ({ playerId, isActive, onRateChange }) => {
         <>
           <div>
             <span>{selectedScore}</span>
-            {isButtonVisible && (
-              <button className="edit-button" onClick={handleEditButtonClick}>
-                Edit
-              </button>
-            )}
+            <button className="edit-button" onClick={handleEditButtonClick}>
+              Edit
+            </button>
           </div>
         </>
       )}
