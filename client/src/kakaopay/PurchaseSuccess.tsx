@@ -10,20 +10,11 @@ interface PurchaseSuccessModel {
   totalPrice: number;
 }
 
-const dummyPurchaseSuccessData: PurchaseSuccessModel = {
-  id: 1,
-  orderCode: "ABC123",
-  orderDate: new Date("2024-02-26T10:30:00"),
-  totalPrice: 150.99,
-};
-
 const PurchaseSuccess = () => {
   const purchaseId = localStorage.getItem("purchaseId");
   const navigate = useNavigate();
 
-  const [purchaseModel, setPurchaseModel] = useState<PurchaseSuccessModel>(
-    dummyPurchaseSuccessData
-  );
+  const [purchaseModel, setPurchaseModel] = useState<PurchaseSuccessModel>();
 
   useEffect(() => {
     const fetchPurchaseInfo = async () => {
@@ -55,15 +46,15 @@ const PurchaseSuccess = () => {
         <tbody>
           <tr>
             <td>OrderCode</td>
-            <td>: {purchaseModel.orderCode}</td>
+            <td>: {purchaseModel?.orderCode}</td>
           </tr>
           <tr>
             <td>Date</td>
-            <td>: {purchaseModel.orderDate.toLocaleString()}</td>
+            <td>: {purchaseModel?.orderDate.toLocaleString()}</td>
           </tr>
           <tr>
             <td>Total</td>
-            <td>: {purchaseModel.totalPrice}</td>
+            <td>: {purchaseModel?.totalPrice}</td>
           </tr>
         </tbody>
       </table>

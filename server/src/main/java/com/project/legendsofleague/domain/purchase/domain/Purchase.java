@@ -3,6 +3,7 @@ package com.project.legendsofleague.domain.purchase.domain;
 import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.order.domain.Order;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Purchase extends BaseEntity {
 
-    @OneToMany(mappedBy = "purchase")
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.REMOVE)
     private final List<MemberCoupon> memberCouponList = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,7 +82,8 @@ public class Purchase extends BaseEntity {
         }
     }
 
-    public void cancelPurchase() {
-        this.purchaseStatus = PurchaseStatus.CANCEL;
+
+    public void updatePurchaseStatus(PurchaseStatus purchaseStatus) {
+        this.purchaseStatus = purchaseStatus;
     }
 }

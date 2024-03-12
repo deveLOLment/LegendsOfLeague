@@ -107,5 +107,6 @@ public class JWTFilter extends OncePerRequestFilter {
         String excludePath = "/register";
         String path = request.getRequestURI();
         return path.startsWith(excludePath);
+        //TODO 필요한 url 넣어서 사용하면 필터안거침
     }
 }
