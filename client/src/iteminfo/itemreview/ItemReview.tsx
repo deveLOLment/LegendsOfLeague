@@ -33,7 +33,7 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
     });
 
   const fetchData = async () => {
-    const url = `http://localhost:8080/items/${itemId}/reviews`;
+    const url = `/items/${itemId}/reviews`;
 
     try {
       const response = await AxiosInstance.get(url);
@@ -51,7 +51,7 @@ const ItemReview: React.FC<{ itemId: number }> = ({ itemId }) => {
     event.preventDefault();
 
     try {
-      const url = `http://localhost:8080/items/${itemId}/reviews`;
+      const url = `/items/${itemId}/reviews`;
       const response = await AxiosInstance.post(url, itemReviewCreateForm);
       console.log(response.data);
       fetchData();

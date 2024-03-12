@@ -55,7 +55,7 @@ const Order = () => {
   const [finalTotalPrice, setFinalTotalPrice] = useState<number>(0);
 
   const fetchOrderItemList = async () => {
-    const url = "http://localhost:8080/order/" + initialOrderId;
+    const url = "/order/" + initialOrderId;
     try {
       const response = await AxiosInstance.get(url);
       console.log(response);
@@ -113,7 +113,7 @@ const Order = () => {
   };
 
   const purchaseStart = async () => {
-    const url = "http://localhost:8080/purchase/ready";
+    const url = "/purchase/ready";
 
     const itemList = convertItemCouponAppliedModelList();
     let totalPrice = 0;
