@@ -10,7 +10,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -80,10 +79,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = jwtUtil.createJwt(username, role, 30 * 60 * 1000L);
 
         System.out.println("토큰 출력:" + token);
-        ResponseCookie cookie = createCookieTemp("Authorization", token);
-        response.addHeader("Set-Cookie", cookie.toString());
 
-//        response.addCookie(createCookie("Authorization", token));
+
+        response.addCookie(createCookie("Authorization", token));
 
 //        response.addHeader("Authorization", "Bearer " + token);
 
@@ -102,16 +100,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setHttpOnly(true);
 
         return cookie;
-    }
-
-    private ResponseCookie createCookieTemp(String key, String value) {
-        return ResponseCookie.from(key, value)
-                .path("/")
-                .sameSite("None")
-                .httpOnly(false)
-                .secure(true)
-                .maxAge(30 * 60)
-                .build();
     }
 
     @Override
