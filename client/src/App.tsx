@@ -10,6 +10,7 @@ function App() {
   return (
     <CommonLayout>
       <>
+        <GamesRoutes />
         <TossPayRoutes />
         <KakaoPayRoutes />
         <OrderRoutes />
@@ -29,5 +30,6 @@ import ChatRouter from "./chat/ChatRouter";
 import CommonLayout from "./layout/CommonLayout";
 import CartRoutes from "./cart/CartRoutes";
 import ShopRoutes from "./shop/ShopRoutes";
+import GamesRoutes from "./games/GamesRoutes";
 
 export default App;

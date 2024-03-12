@@ -3,13 +3,20 @@ package com.project.legendsofleague.domain.item.domain;
 
 import com.project.legendsofleague.common.BaseEntity;
 import com.project.legendsofleague.domain.item.dto.ItemRequestDto;
-import jakarta.persistence.*;
+import com.project.legendsofleague.domain.purchase.exception.NotEnoughStockException;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -45,16 +52,6 @@ public class Item extends BaseEntity {
      * ItemImage는 1대N 매핑이 되어 있음.
      */
 
-    public static Item forDummyData(String name, ItemCategory category) {
-        Item item = new Item();
-        item.name = name;
-        item.stock = 100;
-        item.price = 10000;
-        item.category = category;
-        item.thumbnailImage = "https://legends-of-league.s3.ap-northeast-2.amazonaws.com/4e36ed3d-e577-4677-acab-eb04d3d47e21.jpeg";
-
-        return item;
-    }
 
     public static Item toEntity(ItemRequestDto itemRequestDto, String thumbnailImage) {
         Item item = new Item();
@@ -69,6 +66,9 @@ public class Item extends BaseEntity {
     }
 
     public void removeStock(Integer count) {
+        if(this.stock < count) {
+            throw new NotEnoughStockException();
+        }
         this.stock -= count;
     }
 

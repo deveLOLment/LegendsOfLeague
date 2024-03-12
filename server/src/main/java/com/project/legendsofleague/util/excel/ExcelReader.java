@@ -129,10 +129,10 @@ public class ExcelReader {
         Map<String, Integer> columnIndexMap = new HashMap<>();
         columnIndexMap.put("Team1", 0);
         columnIndexMap.put("Team2", 1);
-        columnIndexMap.put("Team1Players", 2);
-        columnIndexMap.put("Team2Players", 3);
-        columnIndexMap.put("GameId", 4);
-        columnIndexMap.put("MatchId", 5);
+        columnIndexMap.put("Team1Players", 3);
+        columnIndexMap.put("Team2Players", 4);
+        columnIndexMap.put("GameId", 5);
+        columnIndexMap.put("MatchId", 6);
 
         List<Map<String, String>> rostersByGame = new ArrayList<>();
 

@@ -1,6 +1,7 @@
 package com.project.legendsofleague.domain.member.domain;
 
 import com.project.legendsofleague.common.BaseEntity;
+import com.project.legendsofleague.domain.member.dto.OAuth2Response;
 import com.project.legendsofleague.domain.member.dto.RegisterDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -84,5 +85,8 @@ public class Member extends BaseEntity {
         return member;
     }
 
-
+    public void updateUser(OAuth2Response oAuth2Response) {
+        this.nickname = oAuth2Response.getName();
+        this.email = oAuth2Response.getEmail();
+    }
 }

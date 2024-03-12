@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
@@ -193,18 +194,12 @@ public class OrderService {
 
         Order order = orderItems.get(0).getOrder();
 
-        if (checkItemStock(orderItems)) {
-            removeStock(orderItems);
+        //아이템 제고에 문제가 없다면 order의 상태를 SUCCESS로 변경, 결제 완료된 총 totalPrice 초기화, orderDate를 결제 완료 시간으로 변경
+        order.changeStatusToSuccess(time, totalPrice);
+        //주문 내역 중 장바구니에 있던 아이템이 있다면 장바구니에서 해당 아이템 삭제하기
+        cartItemService.deleteOrderedCartItem(order.getMember(), orderItems);
 
-            //아이템 제고에 문제가 없다면 order의 상태를 SUCCESS로 변경, 결제 완료된 총 totalPrice 초기화, orderDate를 결제 완료 시간으로 변경
-            order.changeStatusToSuccess(time, totalPrice);
-            //주문 내역 중 장바구니에 있던 아이템이 있다면 장바구니에서 해당 아이템 삭제하기
-            cartItemService.deleteOrderedCartItem(order.getMember(), orderItems);
-            return true;
-        } else {
-            order.changeStatusToCancel();
-            return false;
-        }
+        return true;
     }
 
 
@@ -225,7 +220,8 @@ public class OrderService {
         return true;
     }
 
-    private void removeStock(List<OrderItem> orderItems) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void removeStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             Item item = orderItem.getItem();
             Integer count = orderItem.getCount();
