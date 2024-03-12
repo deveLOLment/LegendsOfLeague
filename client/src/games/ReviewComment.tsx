@@ -132,7 +132,9 @@ const ReviewComment: React.FC<Props> = ({ gameId }) => {
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <div>
-                    <div>{reviewComment.username}</div>
+                    <div>
+                      <strong>{reviewComment.username}</strong>
+                    </div>
                     <div>{reviewComment.reviewComment}</div>
                   </div>
                   <div>

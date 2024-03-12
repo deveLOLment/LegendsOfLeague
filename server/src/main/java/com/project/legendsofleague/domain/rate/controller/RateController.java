@@ -36,7 +36,6 @@ public class RateController {
     public String ratePlayers(@CurrentMember Member member, @RequestBody RateRequestDto rateRequestDto, @PathVariable Long gameId) {
         log.info("RateController.ratePlayers");
         log.info("넘어온 데이터들={}", rateRequestDto);
-
         rateService.saveRate(member, rateRequestDto, gameId);
         return "ok";
     }
