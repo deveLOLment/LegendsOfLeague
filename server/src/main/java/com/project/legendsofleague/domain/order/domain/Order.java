@@ -103,9 +103,6 @@ public class Order extends BaseEntity {
 
     public void refundOrder() {
         this.orderStatus = REFUND;
-        for (OrderItem orderItem : orderItemList) {
-            orderItem.getItem().addStock(orderItem.getCount());
-        }
     }
 
 
