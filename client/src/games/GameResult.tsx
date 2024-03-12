@@ -4,8 +4,7 @@ import "../naver/css/rate.css";
 import RatePicker from "./RatePicker";
 
 interface Props {
-  gameId: number | undefined;
-  isActive: boolean | undefined;
+  gameId: number;
 }
 
 interface Player {
@@ -42,46 +41,51 @@ interface RateResponseDto {
   average: string | null;
 }
 
-const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
+const GameResult: React.FC<Props> = ({ gameId }) => {
   const [results, setResults] = useState<GameResultData>();
-  const [isTimeEnd, setIsTimeEnd] = useState<boolean>(false);
   const [playerScores, setPlayerScores] = useState<{ [key: number]: string }>(
     {}
   );
-  const [isCompleteRates, setIsCompleteRates] = useState<boolean>(false);
+  const [isVoted, setIsVoted] = useState<boolean | undefined>();
   const [playerRates, setPlayerRates] = useState<RateResponseDto[]>([]);
 
   useEffect(() => {
-    setIsTimeEnd(false);
-    // setPlayerScores({});
+    setPlayerScores({});
     getTeamsAndRostersInGame();
   }, [gameId]);
 
   const getTeamsAndRostersInGame = async () => {
-    try {
-      const url = `/games/${gameId}`;
-      console.log(url);
-      const response = await AxiosInstance.get(url);
-      console.log(response.data);
-      setResults(response.data);
-    } catch (error) {
-      console.error("Error fetching games:", error);
-    }
+    const url = `/games/${gameId}`;
+    console.log(url);
+    await AxiosInstance.get(url)
+      .then(function (response) {
+        console.log("팀, 로스터 가져오기: ", response.data);
+        setResults(response.data);
+        getRates();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   const getRates = async () => {
     console.log("각 게임의 출전 선수 평점들 가져오기");
     const url = `/rate/${gameId}`;
-    try {
-      const response = await AxiosInstance.get(url);
-      if (response.status === 200) {
-        console.log("저장된 평점 가져오기 성공:", response);
-        const responseData: RateResponseDto[] = response.data;
-        setPlayerRates(responseData);
-      }
-    } catch (error) {
-      console.error("저장된 평점 가져오기 실패:", error);
-    }
+
+    await AxiosInstance.get(url)
+      .then(function (response) {
+        console.log("넘어온 평점 정보: ", response);
+        if (response.data === "") {
+          setIsVoted(false);
+        } else {
+          setIsVoted(true);
+          const responseData: RateResponseDto[] = response.data;
+          setPlayerRates(responseData);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   const handleRateChange = (playerId: number, score: string) => {
@@ -95,10 +99,6 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
 
   useEffect(() => {
     console.log("선수ID 평점 저장: ", playerScores);
-    if (Object.keys(playerScores).length > 0) {
-      setIsCompleteRates(true);
-      handleSubmit();
-    }
   }, [playerScores]);
 
   const handleSubmit = async () => {
@@ -176,7 +176,7 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                             <span className="review_name_text__dj2wk">
                               {player.playerName}
                             </span>
-                            {isCompleteRates ? (
+                            {isVoted ? (
                               <div>
                                 {/* playerRates가 존재하고 playerId가 일치하는 RateDto를 찾아 average를 표시 */}
                                 <span>평균: </span>
@@ -185,6 +185,7 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                                     (r) => r.playerId === player.playerId
                                   )?.average || "x"}
                                 </span>
+                                <span></span>
                                 <span>내 점수: </span>
                                 <span className="score">
                                   {playerRates?.find(
@@ -194,10 +195,8 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                               </div>
                             ) : (
                               <div>
-                                {/* isTimeEnd가 false일 때 보여줄 UI */}
                                 <RatePicker
                                   playerId={player.playerId}
-                                  isActive={isActive}
                                   onRateChange={handleRateChange}
                                 />
                               </div>
@@ -229,7 +228,7 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                             <span className="review_name_text__dj2wk">
                               {player.playerName}
                             </span>
-                            {isCompleteRates ? (
+                            {isVoted ? (
                               <div>
                                 {/* playerRates가 존재하고 playerId가 일치하는 RateDto를 찾아 average를 표시 */}
                                 <span>평균: </span>
@@ -238,6 +237,7 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                                     (r) => r.playerId === player.playerId
                                   )?.average || "x"}
                                 </span>
+                                <span></span>
                                 <span>내 점수: </span>
                                 <span className="score">
                                   {playerRates?.find(
@@ -250,7 +250,6 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                                 {/* isTimeEnd가 false일 때 보여줄 UI */}
                                 <RatePicker
                                   playerId={player.playerId}
-                                  isActive={isActive}
                                   onRateChange={handleRateChange}
                                 />
                               </div>
@@ -262,9 +261,11 @@ const GameResult: React.FC<Props> = ({ gameId, isActive }) => {
                   </ul>
                 </div>
               </div>
+              <button type="button" onClick={handleSubmit}>
+                투표
+              </button>
             </div>
           </div>
-          {/* <ReviewComment/> */}
         </div>
       )}
     </div>

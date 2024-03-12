@@ -25,7 +25,11 @@ public class RateController {
     public ResponseEntity<List<RateResponseDto>> getRates(@CurrentMember Member member, @PathVariable Long gameId) {
         log.info("RateController.getRates");
         List<RateResponseDto> rates = rateService.findRates(member, gameId);
-        return new ResponseEntity<>(rates, HttpStatus.OK);
+        if (rates.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(rates, HttpStatus.OK);
+        }
     }
 
     @PostMapping("/{gameId}")

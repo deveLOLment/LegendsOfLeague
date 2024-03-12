@@ -4,7 +4,6 @@ import AxiosInstance from "../common/AxiosInstance";
 
 interface Props {
   gameId: number | undefined;
-  isActive: boolean | undefined;
 }
 
 interface ReviewCommentRequestDto {
@@ -24,7 +23,7 @@ interface BuffRequestDto {
   reviewCommentId: number;
 }
 
-const ReviewComment: React.FC<Props> = ({ gameId, isActive }) => {
+const ReviewComment: React.FC<Props> = ({ gameId }) => {
   const [comment, setComment] = useState<string>("");
   const [reviewComments, setReviewComments] = useState<ReviewCommentData[]>();
 
