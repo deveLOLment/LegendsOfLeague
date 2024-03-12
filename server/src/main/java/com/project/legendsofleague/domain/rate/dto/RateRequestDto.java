@@ -3,10 +3,10 @@ package com.project.legendsofleague.domain.rate.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public class RosterDto {
+import java.util.List;
 
-    private Long player;
-    private Integer score;
+@Getter
+public class RateRequestDto {
+
+    private List<RateDto> playerScores;
 }

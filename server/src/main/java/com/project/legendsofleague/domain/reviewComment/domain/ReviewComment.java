@@ -33,6 +33,11 @@ public class ReviewComment extends BaseEntity {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    private int buffCount;
+
+    public void updateBuffCount(Integer buffCount) {
+        this.buffCount += buffCount;
+    }
     public static ReviewComment toEntity(ReviewCommentRequest reviewCommentRequest) {
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.comment = reviewCommentRequest.getComment();
