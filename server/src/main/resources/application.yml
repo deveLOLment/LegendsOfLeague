@@ -1,0 +1,24 @@
+spring:
+  config:
+    import:
+      env.yml
+      ,s3.yml
+      ,kakaoPay.yml
+      ,tossPay.yml
+      ,jwt.yml
+      ,excel.yml
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 1000
+
+server:
+  servlet:
+    session:
+      timeout: 90m

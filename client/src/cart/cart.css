@@ -1,0 +1,43 @@
+.thumbnail_url {
+  width: 100px;
+  height: 100px;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 5rem;
+}
+
+.modal-open-btn-box {
+  margin: 10px;
+}
+
+.modal-container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.modal-content {
+  text-align: center;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  width: 300px;
+  height: 220px;
+  padding: 15px;
+}
+
+.qty-box {
+  font-size: 16px;
+  margin: 10px;
+}
