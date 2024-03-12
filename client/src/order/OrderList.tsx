@@ -36,7 +36,7 @@ const OrderList = () => {
   const [orderList, setOrderList] = useState<OrderListModel[]>();
 
   const fetchData = async () => {
-    const url = "http://localhost:8080/orders";
+    const url = "/orders";
 
     const response = await AxiosInstance.get(url);
     const responseData: OrderListModel[] = response.data;
