@@ -1,13 +1,12 @@
 package com.project.legendsofleague.domain.purchase.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
+import com.project.legendsofleague.common.exception.NotFoundInputValueException;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossCancelRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.toss.TossPayApproveRequestDto;
 import com.project.legendsofleague.domain.purchase.exception.ExternalApiResponseException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
@@ -26,14 +25,16 @@ public class TossService {
     private final PurchaseRepository purchaseRepository;
     private final AfterPurchaseService afterPurchaseService;
 
-    private final ObjectMapper objectMapper;
 
     @Value("${toss.secret-key}")
     private String tossSecretKey;
 
-    @Transactional
-    public Boolean tossPaySuccess(Long purchaseId, TossPayApproveRequestDto requestDto)
-        throws UnsupportedEncodingException {
+    @Transactional(noRollbackFor = ExternalApiResponseException.class)
+    public Boolean tossPaySuccess(Long purchaseId, TossPayApproveRequestDto requestDto) {
+
+        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
+        });
 
         String authorizations = getAuthorizations();
 
@@ -51,6 +52,7 @@ public class TossService {
             .retrieve()
             .bodyToMono(Map.class)
             .onErrorResume(e -> {
+                afterPurchaseService.handleFailPurchase(purchase);
                 throw GlobalExceptionFactory.getInstance(ExternalApiResponseException.class);
             })
             .block();
@@ -82,7 +84,7 @@ public class TossService {
             })
             .block();
 
-        afterPurchaseService.cancelPurchase(purchase);
+        afterPurchaseService.refundPurchase(purchase);
     }
 
     private String getAuthorizations() {

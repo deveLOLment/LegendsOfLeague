@@ -7,11 +7,13 @@ import com.project.legendsofleague.common.exception.WrongInputException;
 import com.project.legendsofleague.domain.coupon.service.CouponService;
 import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
+import com.project.legendsofleague.domain.item.service.ItemStockFacade;
 import com.project.legendsofleague.domain.member.domain.Member;
 import com.project.legendsofleague.domain.member.repository.MemberRepository;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
 import com.project.legendsofleague.domain.order.domain.Order;
+import com.project.legendsofleague.domain.order.dto.OrderItemStockDto;
 import com.project.legendsofleague.domain.order.repository.order.OrderRepository;
 import com.project.legendsofleague.domain.order.service.OrderService;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
@@ -21,7 +23,6 @@ import com.project.legendsofleague.domain.purchase.dto.PurchaseResponseDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseStartRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.PurchaseSuccessResponseDto;
 import com.project.legendsofleague.domain.purchase.exception.InvalidMemberCouponException;
-import com.project.legendsofleague.domain.purchase.exception.NotEnoughStockException;
 import com.project.legendsofleague.domain.purchase.exception.WrongPriceException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.List;
@@ -38,6 +39,7 @@ public class BeforePurchaseService {
 
     private final PurchaseRepository purchaseRepository;
     private final ItemRepository itemRepository;
+    private final ItemStockFacade itemStockFacade;
 
     private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
@@ -55,13 +57,10 @@ public class BeforePurchaseService {
     /*
     결제 시작 전 체크 로직
      */
-
-
     @Transactional
     public PurchaseResponseDto startPurchase(Member member,
         PurchaseStartRequestDto purchaseStartRequestDto) {
 
-        //실제 코드
         Long orderId = purchaseStartRequestDto.getOrderId();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> {
             throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
@@ -90,10 +89,6 @@ public class BeforePurchaseService {
         //총 가격 검증
         checkTotalPrice(itemList, purchaseTotalPrice);
 
-        //재고 체크
-        checkItemStock(itemList, itemMap);
-
-
         /*
         결제 진행
          */
@@ -108,6 +103,14 @@ public class BeforePurchaseService {
             = Purchase.toEntity(quantity, orderName, purchaseTotalPrice, purchaseType,
             order);
         purchaseRepository.save(createdPurchase);
+
+        //재고 차감
+        List<OrderItemStockDto> orderItemStockDtoList = itemList.stream()
+            .map(itemCouponAppliedDto -> new OrderItemStockDto(itemMap.get(itemCouponAppliedDto.getItemId()),
+                itemCouponAppliedDto.getQuantity()))
+            .collect(Collectors.toList());
+
+        itemStockFacade.decreaseStock(orderItemStockDtoList);
 
         //쿠폰과 결제 연결하기
         for (MemberCoupon memberCoupon : memberCouponMap.values()) {
@@ -143,7 +146,16 @@ public class BeforePurchaseService {
             tossService.cancelPurchase(purchase);
         }
 
-        afterPurchaseService.cancelPurchase(purchase);
+        afterPurchaseService.refundPurchase(purchase);
+    }
+
+    @Transactional(readOnly = true)
+    public PurchaseSuccessResponseDto queryPurchaseInfo(Long purchaseId) {
+        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
+            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
+        });
+
+        return PurchaseSuccessResponseDto.from(purchase);
     }
 
 
@@ -187,27 +199,7 @@ public class BeforePurchaseService {
         }
     }
 
-    /**
-     * 구매할 각 item의 재고를 체크하는 로직 해당 로직에서 재고를 차감하지는 않음.
-     *
-     * @param itemList
-     * @param itemMap
-     */
-    private void checkItemStock(List<ItemCouponAppliedDto> itemList,
-        Map<Long, Item> itemMap) {
-        for (ItemCouponAppliedDto dto : itemList) {
-            Integer quantity = dto.getQuantity();
-            Long itemId = dto.getItemId();
-            Item item = itemMap.get(itemId);
-            if (item == null) {
-                throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
-            }
-            Integer stock = item.getStock();
-            if (stock < quantity) {
-                throw GlobalExceptionFactory.getInstance(NotEnoughStockException.class);
-            }
-        }
-    }
+
 
     /**
      * 주문 이름을 만들어주는 메서드
@@ -226,12 +218,5 @@ public class BeforePurchaseService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public PurchaseSuccessResponseDto queryPurchaseInfo(Long purchaseId) {
-        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
-            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
-        });
 
-        return PurchaseSuccessResponseDto.from(purchase);
-    }
 }

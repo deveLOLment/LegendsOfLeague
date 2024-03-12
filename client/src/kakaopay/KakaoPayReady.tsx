@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AxiosInstance from "../common/AxiosInstance";
 
 export interface KakaoPayReadyResponseDto {
@@ -10,6 +10,7 @@ export interface KakaoPayReadyResponseDto {
 
 const KakaoPayReady = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const purchaseId = location.state.id;
   console.log("", location);
   console.log(purchaseId);
@@ -17,9 +18,7 @@ const KakaoPayReady = () => {
   useEffect(() => {
     const fetchPayUrl = async () => {
       try {
-        const url =
-          "http://localhost:8080/purchase/kakao-pay/ready?purchaseId=" +
-          purchaseId;
+        const url = "/purchase/kakao-pay/ready?purchaseId=" + purchaseId;
         const response = await AxiosInstance.get(url);
         const paymentUrl = response.data.redirectUrl;
         const tid = response.data.tid;
@@ -29,7 +28,9 @@ const KakaoPayReady = () => {
         localStorage.setItem("tid", tid);
 
         window.location.href = paymentUrl;
-      } catch (error) {}
+      } catch (error) {
+        navigate("/purchase/fail");
+      }
     };
 
     fetchPayUrl();

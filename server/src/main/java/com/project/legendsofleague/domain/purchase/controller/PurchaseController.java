@@ -70,7 +70,7 @@ public class PurchaseController {
         @CurrentMember Member member
     ) throws JsonProcessingException {
 
-        if (!kakaoService.kakaoPaySuccess(purchaseId, pgToken, tid)) {
+        if(!kakaoService.kakaoPaySuccess(purchaseId, pgToken, tid)) {
             purchaseCancel(member, purchaseId);
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
