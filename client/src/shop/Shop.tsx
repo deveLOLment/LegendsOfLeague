@@ -90,7 +90,7 @@ function reducer(state: State, action: Action): State {
 }
 
 const Shop: FC = () => {
-  const staticUrl = "http://localhost:8080";
+  const staticUrl = "";
   const navigate = useNavigate();
   const location = useLocation();
 

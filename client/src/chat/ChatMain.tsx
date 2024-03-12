@@ -31,7 +31,7 @@ const ChatMain = () => {
   }, [messages]); // messages가 변경될 때마다 스크롤 위치를 가장 아래로 이동
 
   const connectSocket = async () => {
-    const socket = new SockJS("http://localhost:8080/ws-stomp");
+    const socket = new SockJS("https://15.164.169.174.nip.io/ws-stomp");
     const stompClient = WebStomp.over(socket);
 
     stompClient.connect({}, () => {
@@ -45,7 +45,7 @@ const ChatMain = () => {
   };
 
   const initializeChat = async () => {
-    const url = "http://localhost:8080/chat/enterUser";
+    const url = "/chat/enterUser";
     const response = await axiosInstance
       .get(url)
       .then(function (response) {
