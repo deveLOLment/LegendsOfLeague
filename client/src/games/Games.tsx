@@ -23,7 +23,7 @@ interface GameScheduleData {
 
 const Games = () => {
   const [games, setGames] = useState<GameScheduleData[]>([]);
-  const [selectedGameId, setSelectedGameId] = useState<number>(1); // 선택된 경기 상태 추가
+  const [selectedGameId, setSelectedGameId] = useState<number | undefined>(); // 선택된 경기 상태 추가
   const plugins = [new Arrow()];
 
   useEffect(() => {
@@ -36,6 +36,7 @@ const Games = () => {
       const response = await AxiosInstance.get(url);
       const fetchedGames = response.data;
       setGames(fetchedGames);
+      setSelectedGameId(fetchedGames[0].gameId);
     } catch (error) {
       console.error("Error fetching games:", error);
     }

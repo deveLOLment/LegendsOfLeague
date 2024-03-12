@@ -4,7 +4,7 @@ import "../naver/css/layout.css";
 
 const CommonLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div>
+    <div className="layout_wrapper__1VlyL">
       <Header />
       {children}
     </div>

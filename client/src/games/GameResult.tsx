@@ -4,7 +4,7 @@ import "../naver/css/rate.css";
 import RatePicker from "./RatePicker";
 
 interface Props {
-  gameId: number;
+  gameId: number | undefined;
 }
 
 interface Player {
