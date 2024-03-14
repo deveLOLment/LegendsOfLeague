@@ -47,7 +47,7 @@ const Games = () => {
   };
 
   return (
-    <div className="layout_container__wBrag">
+    <div className="game_container">
       <div className="layout_content__2OO80">
         <div className="community_container__FmFdx">
           <div className="community_contents__1d9Is">

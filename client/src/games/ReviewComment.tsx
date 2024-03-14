@@ -14,7 +14,7 @@ interface ReviewCommentRequestDto {
 interface ReviewCommentData {
   reviewCommentId: number;
   gameId: number;
-  username: string;
+  nickname: string;
   reviewComment: string;
   buffCount: number;
 }
@@ -127,13 +127,13 @@ const ReviewComment: React.FC<Props> = ({ gameId }) => {
         <div className="comment_list_wrap__1c4Ku">
           {reviewComments ? (
             reviewComments.map((reviewComment) => (
-              <div key={reviewComment.reviewCommentId}>
+              <div className="comment_box" key={reviewComment.reviewCommentId}>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <div>
                     <div>
-                      <strong>{reviewComment.username}</strong>
+                      <strong>{reviewComment.nickname}</strong>
                     </div>
                     <div>{reviewComment.reviewComment}</div>
                   </div>
@@ -144,9 +144,9 @@ const ReviewComment: React.FC<Props> = ({ gameId }) => {
                         handleBuffButton(reviewComment.reviewCommentId)
                       }
                     >
-                      <span>버프</span>
+                      <span>좋아요👍</span>
                     </button>
-                    <span>{reviewComment.buffCount}</span>
+                    <span className="like_box">{reviewComment.buffCount}</span>
                   </div>
                 </div>
               </div>
