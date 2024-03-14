@@ -4120,6 +4120,10 @@
 .notice_wrap__fqEOT .notice_text__1v2bd em {
   font-weight: 700;
 }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 /* reviewComment.css */
 .comment_list_wrap__1c4Ku {
   margin-top: 20px;
@@ -4150,6 +4154,11 @@
   background-color: #0056b3;
 }
 
-.comment_list_wrap__1c4Ku span {
-  margin-left: 5px;
+.comment_box {
+  margin: 10px;
+}
+
+.like_box {
+  margin-left: 15px;
+  font-size: 20px;
 }
