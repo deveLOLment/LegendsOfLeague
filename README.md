@@ -154,7 +154,7 @@ Legends of League 프로젝트는 리그 오브 레전드(LoL)과 관련된 종�
             <td width="200">같이 일하고 싶은 개발자가 되자</td>
             <td width="200">도전과 성장을 통해 발전하는 개발자</td>
             <td width="200">어쩌다 보니 백엔드 개발자</td>
-            <td width="200"></td>
+            <td width="200">부족해도 꾸준하게!</td>
             <td width="200">항상 꼼꼼하고 행복하게 코딩하자~</td>
         </tr>
     </tbody>
