@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class ReviewCommentResponseDto {
     private Long reviewCommentId;
     private Long gameId;
-    private String username;
+    private String nickname;
     private String reviewComment;
     private int buffCount;
 
@@ -21,7 +21,7 @@ public class ReviewCommentResponseDto {
         ReviewCommentResponseDto reviewCommentResponseDto = new ReviewCommentResponseDto();
         reviewCommentResponseDto.reviewCommentId = reviewComment.getId();
         reviewCommentResponseDto.gameId = reviewComment.getGame().getId();
-        reviewCommentResponseDto.username = reviewComment.getMember().getUsername();
+        reviewCommentResponseDto.nickname = reviewComment.getMember().getNickname();
         reviewCommentResponseDto.reviewComment = reviewComment.getComment();
         reviewCommentResponseDto.buffCount = reviewComment.getBuffCount();
         return reviewCommentResponseDto;

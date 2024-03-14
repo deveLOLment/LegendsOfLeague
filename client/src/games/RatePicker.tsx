@@ -30,8 +30,7 @@ const RatePicker: React.FC<Props> = ({ playerId, onRateChange }) => {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      {/* 옵션 선택 메뉴 */}
+    <div>
       {isEditMode ? (
         <>
           <select value={selectedScore} onChange={handleScoreChange}>
@@ -41,15 +40,14 @@ const RatePicker: React.FC<Props> = ({ playerId, onRateChange }) => {
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
-            {/* 추가적인 옵션들 */}
           </select>
         </>
       ) : (
         <>
-          <div>
-            <span>{selectedScore}</span>
+          <div className="rate-box">
+            <div className="selected-box">{selectedScore}</div>
             <button className="edit-button" onClick={handleEditButtonClick}>
-              Edit
+              수정
             </button>
           </div>
         </>

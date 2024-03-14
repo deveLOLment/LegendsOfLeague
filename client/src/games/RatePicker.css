@@ -23,3 +23,12 @@
   color: white;
   border: none;
 }
+
+.selected-box {
+  margin: 5px;
+}
+
+.rate-box {
+  display: flex;
+  align-items: center;
+}

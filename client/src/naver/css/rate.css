@@ -3669,6 +3669,8 @@ button.graph_item__22IOC:disabled:hover:before {
   display: -moz-box;
   display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   margin-top: 18px;
   padding-bottom: 20px;
 }
@@ -3677,6 +3679,7 @@ button.graph_item__22IOC:disabled:hover:before {
   display: -moz-box;
   display: -ms-flexbox;
   display: flex;
+  flex: 1;
   -webkit-flex-direction: column;
   -moz-box-orient: vertical;
   -moz-box-direction: normal;
@@ -8881,4 +8884,13 @@ button.graph_item__22IOC:disabled:hover:before {
 }
 .community_fixed__33Vi1 {
   position: fixed;
+}
+.vote_button_box {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.game_container {
+  display: flex;
+  justify-content: center;
 }

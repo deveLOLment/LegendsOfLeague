@@ -157,7 +157,7 @@ const GameResult: React.FC<Props> = ({ gameId }) => {
               <div className="review_team_area__bL195">
                 <div className="review_player_area__1YtxS">
                   <div className="review_team_name__3E9su">
-                    {results.blue.teamName}
+                    <h5>{results.blue.teamName}</h5>
                   </div>
                   <ul>
                     {results.blue.rosters.map((player, index) => (
@@ -174,24 +174,26 @@ const GameResult: React.FC<Props> = ({ gameId }) => {
                             }}
                           >
                             <span className="review_name_text__dj2wk">
-                              {player.playerName}
+                              <h6>{player.playerName}</h6>
                             </span>
                             {isVoted ? (
                               <div>
                                 {/* playerRates가 존재하고 playerId가 일치하는 RateDto를 찾아 average를 표시 */}
-                                <span>평균: </span>
-                                <span className="average">
-                                  {playerRates?.find(
+                                {playerRates
+                                  ?.filter(
                                     (r) => r.playerId === player.playerId
-                                  )?.average || "x"}
-                                </span>
-                                <span></span>
-                                <span>내 점수: </span>
-                                <span className="score">
-                                  {playerRates?.find(
-                                    (r) => r.playerId === player.playerId
-                                  )?.score || "x"}
-                                </span>
+                                  )
+                                  .map((rate) => (
+                                    <React.Fragment key={rate.playerId}>
+                                      <span className="average">
+                                        <h5 className="average">
+                                          {rate.average === "NaN"
+                                            ? "없음"
+                                            : rate.average || 0}
+                                        </h5>
+                                      </span>
+                                    </React.Fragment>
+                                  ))}
                               </div>
                             ) : (
                               <div>
@@ -209,7 +211,7 @@ const GameResult: React.FC<Props> = ({ gameId }) => {
                 </div>
                 <div className="review_player_area__1YtxS">
                   <div className="review_team_name__3E9su">
-                    {results.red.teamName}
+                    <h5>{results.red.teamName}</h5>
                   </div>
                   <ul>
                     {results.red.rosters.map((player, index) => (
@@ -226,24 +228,26 @@ const GameResult: React.FC<Props> = ({ gameId }) => {
                             }}
                           >
                             <span className="review_name_text__dj2wk">
-                              {player.playerName}
+                              <h6>{player.playerName}</h6>
                             </span>
                             {isVoted ? (
                               <div>
                                 {/* playerRates가 존재하고 playerId가 일치하는 RateDto를 찾아 average를 표시 */}
-                                <span>평균: </span>
-                                <span className="average">
-                                  {playerRates?.find(
+                                {playerRates
+                                  ?.filter(
                                     (r) => r.playerId === player.playerId
-                                  )?.average || "x"}
-                                </span>
-                                <span></span>
-                                <span>내 점수: </span>
-                                <span className="score">
-                                  {playerRates?.find(
-                                    (r) => r.playerId === player.playerId
-                                  )?.score || "x"}
-                                </span>
+                                  )
+                                  .map((rate) => (
+                                    <React.Fragment key={rate.playerId}>
+                                      <span>
+                                        <h5 className="average">
+                                          {rate.average === "NaN"
+                                            ? "없음"
+                                            : rate.average || 0}
+                                        </h5>
+                                      </span>
+                                    </React.Fragment>
+                                  ))}
                               </div>
                             ) : (
                               <div>
@@ -260,10 +264,18 @@ const GameResult: React.FC<Props> = ({ gameId }) => {
                     ))}
                   </ul>
                 </div>
+                {!isVoted && (
+                  <div className="vote_button_box">
+                    <button
+                      className="white_button"
+                      type="button"
+                      onClick={handleSubmit}
+                    >
+                      투표
+                    </button>
+                  </div>
+                )}
               </div>
-              <button type="button" onClick={handleSubmit}>
-                투표
-              </button>
             </div>
           </div>
         </div>

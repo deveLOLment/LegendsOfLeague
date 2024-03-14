@@ -350,8 +350,11 @@ const Shop: FC = () => {
                           <div className="card-body">
                             <p>{item.category}</p>
                             <h6 className="card-product__title">
-                              <a>{truncateTitle(item.name)}</a>
+                              <b>
+                                <a>{truncateTitle(item.name)}</a>
+                              </b>
                             </h6>
+                            <h6>{item?.price.toLocaleString()} 원</h6>
                           </div>
                         </div>
                       </div>

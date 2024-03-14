@@ -63,16 +63,10 @@ const Header: React.FC = () => {
         </div>
         <div className="header_button__3XaEu">
           <div className="meta_container__35H5h">
-            <div className="ticket_container__2iJfs">
-              <Link
-                to="/coupon/total"
-                className="ticket_container-ticket__3wtdH"
-              >
-                <span className="ticket_container-ticket__label__9E6b1">
-                  쿠폰
-                </span>
-              </Link>
-            </div>
+            <Link
+              to="/coupon/total"
+              className="ticket_container-ticket__3wtdH"
+            ></Link>
             <Link to="/login" className="meta_profile__2eIqF">
               <span className="meta_label__1Kbvf">프로필</span>
             </Link>
