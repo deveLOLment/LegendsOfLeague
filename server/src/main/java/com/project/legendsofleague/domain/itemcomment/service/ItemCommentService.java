@@ -9,7 +9,6 @@ import com.project.legendsofleague.domain.itemcomment.dto.ParentItemCommentRespo
 import com.project.legendsofleague.domain.itemcomment.repository.ItemCommentRepository;
 import com.project.legendsofleague.domain.member.domain.Member;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public class ItemCommentService {
     public List<ParentItemCommentResponseDto> queryItemCommentList(Member member, Long itemId) {
         return itemCommentRepository.queryParentCommentList(itemId).stream()
             .map(ParentItemCommentResponseDto::from)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Transactional
@@ -36,10 +35,9 @@ public class ItemCommentService {
             throw new NotFoundInputValueException();
         });
 
-        // TODO : 어떤 회원이 댓글을 작성할수 있을지 비즈니스 로직 작성
-
         ItemComment itemComment = ItemComment.from(dto.getContent(), item, member,
             dto.getParentCommentId());
+
         itemCommentRepository.save(itemComment);
     }
 }

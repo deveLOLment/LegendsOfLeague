@@ -7,6 +7,7 @@ import com.project.legendsofleague.domain.itemreview.service.ItemReviewService;
 import com.project.legendsofleague.domain.member.domain.CurrentMember;
 import com.project.legendsofleague.domain.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "아이템 평점", description = "아이템 평점 관련 API")
 @RequiredArgsConstructor
 public class ItemReviewController {
 

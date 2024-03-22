@@ -84,7 +84,6 @@ public class TossService {
             })
             .block();
 
-        afterPurchaseService.refundPurchase(purchase);
     }
 
     private String getAuthorizations() {
@@ -93,6 +92,4 @@ public class TossService {
             StandardCharsets.UTF_8));
         return "Basic " + new String(encodedBytes);
     }
-
-
 }

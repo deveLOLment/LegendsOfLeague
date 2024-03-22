@@ -45,7 +45,11 @@ public class TeamInGame {
 
     public static TeamInGame toEntity(String team1Score, Camp camp, String uniqueGame) {
         TeamInGame teamInGame = new TeamInGame();
-        teamInGame.score = Integer.valueOf(team1Score);
+        if(team1Score.isEmpty()) {
+            teamInGame.score = 0;
+        } else {
+            teamInGame.score = Integer.valueOf(team1Score);
+        }
         teamInGame.camp = camp;
         teamInGame.uniqueGame = uniqueGame;
         return teamInGame;

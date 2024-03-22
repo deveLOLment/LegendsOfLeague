@@ -1,13 +1,13 @@
 package com.project.legendsofleague.db.playerInGame.service;
 
-import com.project.legendsofleague.db.team.domain.Team;
-import com.project.legendsofleague.db.teamInGame.domain.TeamInGame;
-import com.project.legendsofleague.db.teamInGame.repository.TeamInGameRepository;
 import com.project.legendsofleague.db.player.domain.Player;
 import com.project.legendsofleague.db.player.repository.PlayerRepository;
 import com.project.legendsofleague.db.playerInGame.domain.PlayerInGame;
 import com.project.legendsofleague.db.playerInGame.repository.PlayerInGameRepository;
+import com.project.legendsofleague.db.team.domain.Team;
 import com.project.legendsofleague.db.team.repository.TeamRepository;
+import com.project.legendsofleague.db.teamInGame.domain.TeamInGame;
+import com.project.legendsofleague.db.teamInGame.repository.TeamInGameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

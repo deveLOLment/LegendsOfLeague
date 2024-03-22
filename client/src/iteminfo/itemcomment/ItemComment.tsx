@@ -29,7 +29,7 @@ const ItemComment: React.FC<{ itemId: number }> = ({ itemId }) => {
   const [message, setMessage] = useState<string>("");
 
   const fetchData = async () => {
-    const url = `http://localhost:8080/items/${itemId}/comments`;
+    const url = `/items/${itemId}/comments`;
 
     try {
       const response = await AxiosInstance.get(url);
@@ -49,7 +49,7 @@ const ItemComment: React.FC<{ itemId: number }> = ({ itemId }) => {
       parentCommentId: -1,
     };
 
-    const url = `http://localhost:8080/items/${itemId}/comments`;
+    const url = `/items/${itemId}/comments`;
 
     try {
       const response = await AxiosInstance.post(url, itemCommentCreateModel);
@@ -136,7 +136,7 @@ const ItemCommentParentRow: React.FC<{
       parentCommentId: parentItemComment.id,
     };
 
-    const url = `http://localhost:8080/items/${exampleItemId}/comments`;
+    const url = `/items/${exampleItemId}/comments`;
 
     try {
       const response = await AxiosInstance.post(url, itemCommentCreateModel);

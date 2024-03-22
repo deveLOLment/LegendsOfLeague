@@ -52,7 +52,7 @@ const CouponCreate = () => {
   };
 
   const createCoupon = async () => {
-    const url = "http://localhost:8080/coupons";
+    const url = "/coupons";
 
     try {
       const response = await AxiosInstance.post(url, formData);
@@ -71,7 +71,7 @@ const CouponCreate = () => {
   };
 
   const fetchCategoryList = async () => {
-    const url = "http://localhost:8080/items/categories";
+    const url = "/items/categories";
 
     const response = await AxiosInstance.get(url);
 
@@ -81,7 +81,7 @@ const CouponCreate = () => {
   };
 
   const fetchItemSelectList = async () => {
-    const url = "http://localhost:8080/items";
+    const url = "/items";
 
     const response = await AxiosInstance.get(url);
 

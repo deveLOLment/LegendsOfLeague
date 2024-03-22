@@ -25,7 +25,7 @@ const Coupon = ({
   };
 
   const registerCoupon = async () => {
-    const url = "http://localhost:8080/member-coupons/";
+    const url = "/member-coupons/";
 
     try {
       //TODO : 로그인한 쿠키값이 존재하면 넘기기

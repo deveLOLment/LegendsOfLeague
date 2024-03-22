@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TossPayApproveRequestDto {
-
     private String paymentKey;
     private String orderId;
     private Integer amount;
