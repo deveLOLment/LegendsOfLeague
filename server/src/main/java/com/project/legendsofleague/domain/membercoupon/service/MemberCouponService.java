@@ -12,6 +12,7 @@ import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponCreateDto
 import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponResponseDto;
 import com.project.legendsofleague.domain.membercoupon.exception.AlreadyRegisteredCouponException;
 import com.project.legendsofleague.domain.membercoupon.exception.NotEnoughCouponStockException;
+import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRedisRepository;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class MemberCouponService {
 
     private final MemberCouponRepository memberCouponRepository;
     private final CouponRepository couponRepository;
+    private final MemberCouponRedisRepository memberCouponRedisRepository;
 
     /**
      * 등록 가능한 쿠폰을 회원이 쿠폰을 등록하는 메서드.
@@ -36,34 +38,39 @@ public class MemberCouponService {
      * @param memberCouponCreateDto
      */
     @Transactional
-    public void createMemberCoupon(Long memberId, MemberCouponCreateDto memberCouponCreateDto) {
-        Coupon coupon = couponRepository.findById(memberCouponCreateDto.getCouponId())
+    public void registerMemberCoupon(Long memberId, MemberCouponCreateDto memberCouponCreateDto) {
+        Long couponId = memberCouponCreateDto.getCouponId();
+        Coupon coupon = couponRepository.findById(couponId)
             .orElseThrow(() -> {
                 throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
             });
 
-        //등록 가능한 쿠폰인지 검증하는 로직
-        validateRegisterCoupon(coupon);
+        //이미 등록한 쿠폰인지 체크하는 로직
+        validateAlreadyRegisteredCoupon(coupon);
 
-        //MemberCoupon 엔티티 만들고 저장
-        memberCouponRepository.save(MemberCoupon.toEntity(memberId, coupon));
+        Long memberCouponCount = memberCouponRedisRepository.increaseMemberCouponCount(couponId);
 
-        //등록한 쿠폰의 재고 하나 줄이기.
-        coupon.decreaseCouponStock();
-    }
-
-    /**
-     * 회원이 쿠폰을 등록할때 유효성 검증 로직 메서드.
-     *
-     * @param coupon
-     */
-    private void validateRegisterCoupon(Coupon coupon) {
-        //쿠폰 재고 체크
-        if (coupon.getStock() <= 0) {
+        if (memberCouponCount > coupon.getStock()) {
             throw GlobalExceptionFactory.getInstance(NotEnoughCouponStockException.class);
         }
 
-        //이미 등록된 쿠폰인지 체크하는 로직
+        try{
+            //MemberCoupon 엔티티 만들고 저장
+            memberCouponRepository.save(MemberCoupon.toEntity(memberId, coupon));
+        }catch (Exception e){
+            //MemberCoupon Entity 생성 및 저장에 실패한 경우 -> Redis의 쿠폰 생성량 차감
+            memberCouponRedisRepository.decreaseMemberCouponCount(couponId);
+            throw e;
+        }
+
+    }
+
+    /**
+     * 회원이 쿠폰을 등록할때 이미 등록한 회원인지 체크하는 메서드
+     *
+     * @param coupon
+     */
+    private void validateAlreadyRegisteredCoupon(Coupon coupon) {
         memberCouponRepository.findByCouponId(coupon.getId()).ifPresent(memberCoupon -> {
             throw GlobalExceptionFactory.getInstance(AlreadyRegisteredCouponException.class);
         });
@@ -151,4 +158,6 @@ public class MemberCouponService {
 
         return couponMap;
     }
+
+
 }

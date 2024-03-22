@@ -21,7 +21,6 @@ import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.purchase.dto.ItemCouponAppliedDto;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +57,7 @@ public class CouponService {
         return couponRepository.queryApplicableCoupons(
                 memberId).stream()
             .map(CouponResponseDto::new)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**
@@ -71,7 +70,8 @@ public class CouponService {
      */
     public Boolean checkValidity(Map<Long, MemberCoupon> memberCouponMap,
         List<ItemCouponAppliedDto> itemCouponList,
-        Map<Long, Item> itemMap) {
+        Map<Long, Item> itemMap
+    ) {
         for (ItemCouponAppliedDto dto : itemCouponList) {
             MemberCoupon memberCoupon = memberCouponMap.get(dto.getMemberCouponId());
             Integer price = dto.getPrice();
@@ -87,14 +87,12 @@ public class CouponService {
             }
 
             //쿠폰의 종류에 따라서 검증
-            CouponValidator couponValidator = getCouponValidator(
-                memberCoupon.getCoupon().getCouponType());
+            CouponValidator couponValidator
+                = getCouponValidator(memberCoupon.getCoupon().getCouponType());
 
-            if (!couponValidator.validate(memberCoupon.getCoupon(), item,
-                price, quantity)) {
+            if (!couponValidator.validate(memberCoupon.getCoupon(), item, price, quantity)) {
                 return false;
             }
-
         }
         return true;
     }

@@ -6,6 +6,7 @@ import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponCreateDto
 import com.project.legendsofleague.domain.membercoupon.dto.MemberCouponResponseDto;
 import com.project.legendsofleague.domain.membercoupon.service.MemberCouponService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "회원의 쿠폰", description = "회원 쿠폰 관련 API")
 @RequestMapping("/member-coupons")
 public class MemberCouponController {
 
@@ -29,7 +31,7 @@ public class MemberCouponController {
         @RequestBody MemberCouponCreateDto memberCouponCreateDto,
         @CurrentMember Member member) {
 
-        memberCouponService.createMemberCoupon(member.getId(), memberCouponCreateDto);
+        memberCouponService.registerMemberCoupon(member.getId(), memberCouponCreateDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

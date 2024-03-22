@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface CustomPurchaseRepository {
 
-    Optional<Purchase> queryPurchaseByIdWithMemberCoupon(Long purchaseId);
-
     Optional<Purchase> queryPurchase(Long purchaseId);
 
     Optional<Purchase> queryPurchaseByOrderId(Long orderId);

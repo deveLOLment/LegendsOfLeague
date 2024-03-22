@@ -17,8 +17,16 @@ spring:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 1000
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 server:
   servlet:
     session:
       timeout: 90m
+
+#logging:
+#  level:
+#    root: debug

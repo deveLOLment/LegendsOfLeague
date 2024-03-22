@@ -92,6 +92,4 @@ public class TossService {
             StandardCharsets.UTF_8));
         return "Basic " + new String(encodedBytes);
     }
-
-
 }

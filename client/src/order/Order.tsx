@@ -214,7 +214,7 @@ const Order = () => {
                             <div className="check"></div>
                           </div>
                           <div className="text-center">
-                            {provider === "" ? (
+                            {/* {provider === "" ? (
                               <a
                                 className="button button-paypal"
                                 onClick={purchaseStart}
@@ -223,7 +223,13 @@ const Order = () => {
                               </a>
                             ) : (
                               <a className="button button-paypal">구매</a>
-                            )}
+                            )} */}
+                            <a
+                              className="button button-paypal"
+                              onClick={purchaseStart}
+                            >
+                              구매
+                            </a>
                           </div>
                         </div>
                       </div>

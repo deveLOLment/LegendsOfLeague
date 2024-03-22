@@ -8,7 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class TossCancelRequestDto {
-
     private String cancelReason;
-
 }
