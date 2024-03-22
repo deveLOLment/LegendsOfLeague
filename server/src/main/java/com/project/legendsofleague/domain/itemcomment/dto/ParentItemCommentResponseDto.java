@@ -19,7 +19,6 @@ public class ParentItemCommentResponseDto {
     private List<ChildItemCommentResponseDto> childCommentList = new ArrayList<>();
 
     public static ParentItemCommentResponseDto from(ItemComment itemComment){
-
         ParentItemCommentResponseDto parentItemCommentResponseDto = new ParentItemCommentResponseDto();
         parentItemCommentResponseDto.id = itemComment.getId();
         parentItemCommentResponseDto.content = itemComment.getContent();

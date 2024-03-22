@@ -1,9 +1,9 @@
 package com.project.legendsofleague.domain.purchase.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.legendsofleague.common.exception.GlobalExceptionFactory;
 import com.project.legendsofleague.common.exception.NotFoundInputValueException;
+import com.project.legendsofleague.domain.member.domain.Member;
 import com.project.legendsofleague.domain.purchase.domain.Purchase;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoCancelRequestDto;
 import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoReadyRequestDto;
@@ -12,7 +12,6 @@ import com.project.legendsofleague.domain.purchase.dto.kakao.KakaoSuccessRequest
 import com.project.legendsofleague.domain.purchase.exception.ExternalApiResponseException;
 import com.project.legendsofleague.domain.purchase.repository.PurchaseRepository;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,14 +25,7 @@ public class KakaoService {
 
     private final WebClient.Builder webClientBuilder;
     private final PurchaseRepository purchaseRepository;
-
-    private final ObjectMapper objectMapper;
-
     private final AfterPurchaseService afterPurchaseService;
-
-
-    //임시 코드
-    String partner_user_id = "testMemberNickname";
 
     @Value("${kakaoPay.cid}")
     String cid;
@@ -47,9 +39,9 @@ public class KakaoService {
     private String secretKey;
 
     @Transactional(noRollbackFor = ExternalApiResponseException.class)
-    public KakaoReadyResponseDto kakaoPay(Long memberId, Long purchaseId) {
+    public KakaoReadyResponseDto kakaoPay(Member member, Long purchaseId) {
 
-        AtomicBoolean flag = new AtomicBoolean(true);
+        String partner_user_id = member.getNickname();
         final Integer tax_free_amount = 0;
 
         Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
@@ -81,10 +73,6 @@ public class KakaoService {
             })
             .block();
 
-        if(!flag.get()){
-            return null;
-        }
-
         String tid = map.get("tid");
         String next_redirect_pc_url = map.get("next_redirect_pc_url");
 
@@ -92,7 +80,8 @@ public class KakaoService {
     }
 
     @Transactional(noRollbackFor = ExternalApiResponseException.class)
-    public Boolean kakaoPaySuccess(Long purchaseId, String pgToken, String tid) {
+    public Boolean kakaoPaySuccess(Member member, Long purchaseId, String pgToken, String tid) {
+        String partner_user_id = member.getNickname();
 
         Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
             throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
@@ -146,7 +135,6 @@ public class KakaoService {
             })
             .block();
 
-        afterPurchaseService.refundPurchase(purchase);
     }
 
 

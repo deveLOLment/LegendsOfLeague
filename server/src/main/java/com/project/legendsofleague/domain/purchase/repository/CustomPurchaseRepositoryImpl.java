@@ -18,15 +18,6 @@ public class CustomPurchaseRepositoryImpl implements CustomPurchaseRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<Purchase> queryPurchaseByIdWithMemberCoupon(Long purchaseId) {
-        Purchase findPurchase = queryFactory.selectFrom(purchase)
-            .leftJoin(purchase.memberCouponList).fetchJoin()
-            .where(purchase.id.eq(purchaseId))
-            .fetchOne();
-        return Optional.ofNullable(findPurchase);
-    }
-
-    @Override
     public Optional<Purchase> queryPurchase(Long purchaseId) {
         Purchase findPurchase = queryFactory.selectFrom(purchase).distinct()
             .leftJoin(purchase.order, order).fetchJoin()

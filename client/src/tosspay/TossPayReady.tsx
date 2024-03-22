@@ -28,8 +28,8 @@ export function TossPayReady() {
               orderId: purchaseInfo.orderCode,
               orderName: purchaseInfo.orderName,
               customerName: purchaseInfo.memberNickname,
-              successUrl: "http://localhost:3000/purchase/tossPay/success",
-              failUrl: "http://localhost:8080/fail",
+              successUrl: "https://develolment.site/purchase/tossPay/success",
+              failUrl: "https://develolment.site/fail",
               flowMode: "DIRECT",
               easyPay: "토스페이",
             });

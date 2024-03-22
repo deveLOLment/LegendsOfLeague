@@ -14,7 +14,6 @@ public class ChildItemCommentResponseDto {
     private Long parentCommentId;
 
     public static ChildItemCommentResponseDto from(ItemComment itemComment){
-
         ChildItemCommentResponseDto childItemCommentResponseDto = new ChildItemCommentResponseDto();
         childItemCommentResponseDto.id = itemComment.getId();
         childItemCommentResponseDto.content = itemComment.getContent();

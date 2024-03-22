@@ -1,10 +1,10 @@
 import React, { ReactNode } from "react";
 import Header from "./Header";
-import { Outlet } from "react-router-dom";
+import "../naver/css/layout.css";
 
 const CommonLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="home_container__1zgYr">
+    <div>
       <Header />
       {children}
     </div>

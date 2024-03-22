@@ -39,7 +39,7 @@ const Cart = () => {
   }, []);
 
   const fetchCartItemList = async () => {
-    const url = "http://localhost:8080/carts";
+    const url = "/carts";
     try {
       const response = await AxiosInstance.get(url);
       setCartItemList(response.data);
@@ -53,7 +53,7 @@ const Cart = () => {
     cartItemId: number,
     stock: number
   ) => {
-    const url = `http://localhost:8080/cart/${cartItemId}/update`;
+    const url = `/cart/${cartItemId}/update`;
 
     if (updatedCount > stock) {
       alert("입력한 수량이 재고를 초과합니다!");
@@ -89,7 +89,7 @@ const Cart = () => {
   };
 
   const deleteCartItemAndUpdateList = async (cartItemDeleteList: number[]) => {
-    const url = "http://localhost:8080/cart/delete";
+    const url = "/cart/delete";
 
     const cartItemDeleteRequestList = cartItemDeleteList.map((itemId) => {
       return { cartItemId: itemId };
@@ -131,7 +131,7 @@ const Cart = () => {
 
     console.log(cartItemOrderRequestList);
 
-    const url = "http://localhost:8080/order/cart";
+    const url = "/order/cart";
     // 서버로 선택된 아이템들의 정보를 보내는 요청을 보냄
 
     try {
