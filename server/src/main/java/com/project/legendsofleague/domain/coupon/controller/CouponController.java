@@ -6,6 +6,7 @@ import com.project.legendsofleague.domain.coupon.service.CouponService;
 import com.project.legendsofleague.domain.member.domain.CurrentMember;
 import com.project.legendsofleague.domain.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "쿠폰", description = "쿠폰 관련 API")
 @RequestMapping("/coupons")
 public class CouponController {
 
@@ -35,10 +37,11 @@ public class CouponController {
         description = "회원이 아직 등록하지 않았으나 수량이 남아 등록할수 있는 쿠폰 전체 조회 API")
     @GetMapping()
     public ResponseEntity<List<CouponResponseDto>> getApplicableCoupons(
-        @CurrentMember Member member) {
+        @CurrentMember Member member
+    ) {
 
-        List<CouponResponseDto> couponResponseDtoList = couponService.getApplicableCoupons(
-            member.getId());
+        List<CouponResponseDto> couponResponseDtoList
+            = couponService.getApplicableCoupons(member.getId());
         return new ResponseEntity<List<CouponResponseDto>>(couponResponseDtoList, HttpStatus.OK);
     }
 }

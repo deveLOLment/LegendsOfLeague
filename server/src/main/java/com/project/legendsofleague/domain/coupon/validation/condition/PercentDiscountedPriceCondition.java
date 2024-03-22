@@ -13,6 +13,7 @@ public class PercentDiscountedPriceCondition implements CouponValidationConditio
     public Boolean checkValidation(Coupon coupon, Item item, Integer price, Integer quantity) {
         Integer discountPrice =
             item.getPrice() * quantity * (100 - coupon.getDiscountPrice()) / 100;
+
         //최대 할인 가격 검증 && 최소 가격
         discountPrice =
             discountPrice > coupon.getMaxPrice() ? coupon.getMaxPrice() : discountPrice;

@@ -6,6 +6,7 @@ import com.project.legendsofleague.domain.itemcomment.service.ItemCommentService
 import com.project.legendsofleague.domain.member.domain.CurrentMember;
 import com.project.legendsofleague.domain.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
+@Tag(name = "아이템 댓글", description = "아이템 댓글 관련 API")
 @RestController
 public class ItemCommentController {
 
@@ -24,16 +26,21 @@ public class ItemCommentController {
 
     @Operation(summary = "해당 아이템의 모든 댓글 조회")
     @GetMapping("/items/{itemId}/comments")
-    public ResponseEntity<List<ParentItemCommentResponseDto>> queryItemCommentList(@CurrentMember Member member, @PathVariable("itemId") Long itemId) {
-        List<ParentItemCommentResponseDto> dtoList = itemCommentService.queryItemCommentList(
-            member, itemId);
+    public ResponseEntity<List<ParentItemCommentResponseDto>> queryItemCommentList(
+        @CurrentMember Member member,
+        @PathVariable("itemId") Long itemId
+    ) {
+        List<ParentItemCommentResponseDto> dtoList
+            = itemCommentService.queryItemCommentList(member, itemId);
         return new ResponseEntity<List<ParentItemCommentResponseDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "해당 아이템에 리뷰 작성")
     @PostMapping("/items/{itemId}/comments")
-    public ResponseEntity<Void> createItemComment(@CurrentMember Member member, @PathVariable("itemId") Long itemId, @RequestBody
-        ItemCommentCreateRequestDto itemCommentCreateRequestDto) {
+    public ResponseEntity<Void> createItemComment(@CurrentMember Member member,
+        @PathVariable("itemId") Long itemId,
+        @RequestBody ItemCommentCreateRequestDto itemCommentCreateRequestDto
+    ) {
         itemCommentService.createItemComment(member, itemId, itemCommentCreateRequestDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

@@ -12,6 +12,7 @@ import com.project.legendsofleague.domain.purchase.service.BeforePurchaseService
 import com.project.legendsofleague.domain.purchase.service.KakaoService;
 import com.project.legendsofleague.domain.purchase.service.TossService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.UnsupportedEncodingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "결제", description = "결제 관련 API")
 @RequiredArgsConstructor
 public class PurchaseController {
 
@@ -34,9 +36,10 @@ public class PurchaseController {
     @Operation(summary = "결제 정보 조회 API")
     @GetMapping("/purchases/{purchaseId}")
     public ResponseEntity<PurchaseSuccessResponseDto> queryPurchaseInfo(
-        @PathVariable("purchaseId") Long purchaseId) {
-        PurchaseSuccessResponseDto dto = beforePurchaseService.queryPurchaseInfo(
-            purchaseId);
+        @PathVariable("purchaseId") Long purchaseId
+    ) {
+        PurchaseSuccessResponseDto dto
+            = beforePurchaseService.queryPurchaseInfo(purchaseId);
 
         return new ResponseEntity<PurchaseSuccessResponseDto>(dto, HttpStatus.OK);
     }
@@ -45,10 +48,11 @@ public class PurchaseController {
     @PostMapping("/purchase/ready")
     public ResponseEntity<PurchaseResponseDto> startPurchase(
         @RequestBody PurchaseStartRequestDto purchaseStartRequestDto,
-        @CurrentMember Member member) {
+        @CurrentMember Member member
+    ) {
 
-        PurchaseResponseDto purchaseResponseDto = beforePurchaseService.startPurchase(member,
-            purchaseStartRequestDto);
+        PurchaseResponseDto purchaseResponseDto
+            = beforePurchaseService.startPurchase(member,purchaseStartRequestDto);
 
         return new ResponseEntity<PurchaseResponseDto>(purchaseResponseDto, HttpStatus.OK);
     }
@@ -57,8 +61,9 @@ public class PurchaseController {
     @GetMapping("/purchase/kakao-pay/ready")
     public ResponseEntity<KakaoReadyResponseDto> kakaoPay(
         @RequestParam(value = "purchaseId") Long purchaseId,
-        @CurrentMember Member member) {
-        KakaoReadyResponseDto dto = kakaoService.kakaoPay(member.getId(), purchaseId);
+        @CurrentMember Member member
+    ) {
+        KakaoReadyResponseDto dto = kakaoService.kakaoPay(member, purchaseId);
         return new ResponseEntity<KakaoReadyResponseDto>(dto, HttpStatus.OK);
     }
 
@@ -70,7 +75,7 @@ public class PurchaseController {
         @CurrentMember Member member
     ) throws JsonProcessingException {
 
-        if(!kakaoService.kakaoPaySuccess(purchaseId, pgToken, tid)) {
+        if(!kakaoService.kakaoPaySuccess(member, purchaseId, pgToken, tid)) {
             purchaseCancel(member, purchaseId);
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -79,9 +84,8 @@ public class PurchaseController {
     @Operation(summary = "주문 취소 API.")
     @GetMapping("/purchase/cancel")
     public ResponseEntity<Void> purchaseCancel(@CurrentMember Member member,
-        @RequestParam("orderId") Long orderId)
-        throws JsonProcessingException {
-
+        @RequestParam("orderId") Long orderId
+    ) throws JsonProcessingException {
         beforePurchaseService.cancelPurchase(member, orderId);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

@@ -31,10 +31,12 @@ public class Coupon extends BaseEntity {
 
     @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
     private final List<MemberCoupon> memberCouponList = new ArrayList<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coupon_id")
     private Long id;
+
     private String name;
     private String description;
     private Integer stock;
@@ -44,10 +46,13 @@ public class Coupon extends BaseEntity {
     private Integer discountPrice;
     private Integer minPrice;
     private Integer maxPrice;
+
     @Enumerated(value = EnumType.STRING)
     private ItemCategory appliedCategory;
+
     @Enumerated(value = EnumType.STRING)
     private CouponType couponType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
@@ -79,7 +84,7 @@ public class Coupon extends BaseEntity {
         return coupon;
     }
 
-    public void decreaseCouponStock() {
-        this.stock--;
+    public void decreaseCouponStock(Long count) {
+        this.stock -= count.intValue();
     }
 }

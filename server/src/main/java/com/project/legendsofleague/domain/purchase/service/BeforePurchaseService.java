@@ -9,7 +9,6 @@ import com.project.legendsofleague.domain.item.domain.Item;
 import com.project.legendsofleague.domain.item.repository.ItemRepository;
 import com.project.legendsofleague.domain.item.service.ItemStockFacade;
 import com.project.legendsofleague.domain.member.domain.Member;
-import com.project.legendsofleague.domain.member.repository.MemberRepository;
 import com.project.legendsofleague.domain.membercoupon.domain.MemberCoupon;
 import com.project.legendsofleague.domain.membercoupon.repository.MemberCouponRepository;
 import com.project.legendsofleague.domain.order.domain.Order;
@@ -39,19 +38,14 @@ public class BeforePurchaseService {
 
     private final PurchaseRepository purchaseRepository;
     private final ItemRepository itemRepository;
-    private final ItemStockFacade itemStockFacade;
-
-    private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
     private final OrderRepository orderRepository;
 
     private final OrderService orderService;
-
+    private final ItemStockFacade itemStockFacade;
     private final KakaoService kakaoService;
     private final TossService tossService;
-
     private final CouponService couponService;
-
     private final AfterPurchaseService afterPurchaseService;
 
     /*
@@ -106,7 +100,8 @@ public class BeforePurchaseService {
 
         //재고 차감
         List<OrderItemStockDto> orderItemStockDtoList = itemList.stream()
-            .map(itemCouponAppliedDto -> new OrderItemStockDto(itemMap.get(itemCouponAppliedDto.getItemId()),
+            .map(itemCouponAppliedDto -> new OrderItemStockDto(
+                itemMap.get(itemCouponAppliedDto.getItemId()),
                 itemCouponAppliedDto.getQuantity()))
             .collect(Collectors.toList());
 
@@ -151,9 +146,9 @@ public class BeforePurchaseService {
 
     @Transactional(readOnly = true)
     public PurchaseSuccessResponseDto queryPurchaseInfo(Long purchaseId) {
-        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() -> {
-            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
-        });
+        Purchase purchase = purchaseRepository.queryPurchase(purchaseId).orElseThrow(() ->
+            GlobalExceptionFactory.getInstance(NotFoundInputValueException.class)
+        );
 
         return PurchaseSuccessResponseDto.from(purchase);
     }
@@ -192,13 +187,13 @@ public class BeforePurchaseService {
      * @param purchaseTotalPrice
      */
     private void checkTotalPrice(List<ItemCouponAppliedDto> itemList, Integer purchaseTotalPrice) {
-        int totalPrice = itemList.stream().mapToInt(ItemCouponAppliedDto::getPrice)
+        int totalPrice = itemList.stream()
+            .mapToInt(ItemCouponAppliedDto::getPrice)
             .sum();
         if (totalPrice != purchaseTotalPrice) {
             throw GlobalExceptionFactory.getInstance(WrongPriceException.class);
         }
     }
-
 
 
     /**
@@ -214,7 +209,7 @@ public class BeforePurchaseService {
         } else {
             String exampleItemName = itemNameList.get(0);
 
-            return exampleItemName + " 외 " + quantity + "건";
+            return exampleItemName + " 외 " + (quantity - 1) + "건";
         }
     }
 

@@ -6,5 +6,4 @@ import java.util.List;
 public interface CustomCouponRepository {
 
     List<Coupon> queryApplicableCoupons(Long memberId);
-
 }

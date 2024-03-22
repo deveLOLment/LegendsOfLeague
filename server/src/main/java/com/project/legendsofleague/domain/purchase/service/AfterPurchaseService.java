@@ -35,16 +35,17 @@ public class AfterPurchaseService {
      */
     @Transactional
     public Boolean finishPurchase(Long purchaseId, String code) {
-        Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(() -> {
-            throw GlobalExceptionFactory.getInstance(NotFoundInputValueException.class);
-        });
+        Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(
+            () -> GlobalExceptionFactory.getInstance(NotFoundInputValueException.class)
+        );
 
         purchase.updatePurchaseCode(code);
 
         //사용한 쿠폰 처리
         LocalDate usedDate = LocalDate.now();
         purchase.getMemberCouponList().forEach(
-            memberCoupon -> memberCoupon.updatedUsedHistory(usedDate));
+            memberCoupon -> memberCoupon.updatedUsedHistory(usedDate)
+        );
 
         //OrderDate, OrderId, TotalPrice를 orderservice의 특정 메서드로 넘기기
         return orderService.successPurchase(LocalDateTime.now(), purchase.getOrder().getId(),
@@ -69,9 +70,9 @@ public class AfterPurchaseService {
 
         //재고 롤백
         List<OrderItem> orderItemList = purchase.getOrder().getOrderItemList();
-
-        itemStockFacade.increaseStock(toOrderItemStockDtoList(
-            orderItemList));
+        itemStockFacade.increaseStock(
+            toOrderItemStockDtoList(orderItemList)
+        );
     }
 
 
@@ -80,8 +81,9 @@ public class AfterPurchaseService {
         Order order = purchase.getOrder();
 
         //차감했던 재고 복구
-        itemStockFacade.increaseStock(toOrderItemStockDtoList(
-            order.getOrderItemList()));
+        itemStockFacade.increaseStock(
+            toOrderItemStockDtoList(order.getOrderItemList())
+        );
 
         //구매상태 CANCEL로 변경하기
         purchase.updatePurchaseStatus(PurchaseStatus.CANCEL);
@@ -95,10 +97,8 @@ public class AfterPurchaseService {
     }
 
     private List<OrderItemStockDto> toOrderItemStockDtoList(List<OrderItem> orderItemList) {
-        List<OrderItemStockDto> orderItemStockDtoList = orderItemList.stream()
-            .map(orderItem -> new OrderItemStockDto(orderItem.getItem(), orderItem.getCount()))
+        return orderItemList.stream()
+            .map(OrderItemStockDto::new)
             .toList();
-        return orderItemStockDtoList;
     }
-
 }
