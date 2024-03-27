@@ -7,7 +7,7 @@ API 스웨거 링크: https://15.164.169.174.nip.io/swagger-ui/index.html#/<br>
 배포 사이트: https://develolment.site/
 
 ## 서비스 설명
-Legends of League 프로젝트는 리그 오브 레전드(LoL)과 관련된 종합 커뮤니트 사이트입니다.
+Legends of League 프로젝트는 리그 오브 레전드(LoL)와 관련된 종합 커뮤니티 사이트입니다.
 이 프로젝트는 LoL 시즌 게임의 요약 결과를 제공하고, 게임에 참가한 프로게이머(플레이어)들에 대한 투표 기능을 포함하고 있습니다.
 또한, LoL과 관련된 상품을 구매할 수 있는 쇼핑몰과, 간단한 채팅 기능도 지원합니다.
 
